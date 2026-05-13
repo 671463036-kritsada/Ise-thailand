@@ -93,7 +93,7 @@ function Navbar() {
     }, [])
 
     const handleSentTypeIdProject = (type_id) => {
-        navigate(`/projects?typeId=${encodeURIComponent(type_id)}`)
+        navigate(`/projects?typeId=${type_id}`)
     }
 
     const navStyle = {
