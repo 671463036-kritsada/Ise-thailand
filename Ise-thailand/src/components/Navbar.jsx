@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 
-
 const INSTITUTE_MENUS = [
     { label: 'โครงการ/งานวิจัย ภายใต้สถาบันเศรษฐกิจพอเพียง', path: '/research' },
     { label: 'EBOOK', path: '/ebook' },
@@ -9,22 +8,6 @@ const INSTITUTE_MENUS = [
     { label: 'สื่อนวัตกรรมการเรียนรู้', path: '/media' },
     { label: 'วีดีทัศน์', path: '/video' },
 ]
-
-// CSS variable shortcuts
-const C = {
-    forestGreen: 'var(--color-forest-green)',
-    green: 'var(--color-green)',
-    greenLight: 'var(--color-green-light)',
-    white: 'var(--color-white)',
-    deepText: 'var(--color-deep-text)',
-    mutedText: 'var(--color-muted-text)',
-}
-
-// Dropdown menu styles
-const dropdownStyle = {
-    backgroundColor: C.white,
-    border: `1px solid ${C.greenLight}`,
-}
 
 const dropdownItemBase = {
     display: 'block',
@@ -45,10 +28,10 @@ function DropdownItem({ onClick, children, strong }) {
             onClick={onClick}
             style={{
                 ...dropdownItemBase,
-                color: hovered || strong ? C.deepText : C.mutedText,
+                color: hovered || strong ? 'var(--color-deep-text)' : 'var(--color-muted-text)',
                 fontWeight: strong ? 600 : 400,
-                backgroundColor: hovered ? 'rgba(186,200,177,0.2)' : 'transparent',
-                borderBottom: strong ? `1px solid rgba(186,200,177,0.3)` : 'none',
+                backgroundColor: hovered ? 'var(--color-surface-3)' : 'transparent',
+                borderBottom: strong ? '1px solid var(--color-border)' : 'none',
             }}
             onMouseEnter={() => setHovered(true)}
             onMouseLeave={() => setHovered(false)}
@@ -77,10 +60,8 @@ function Navbar() {
                 if (!res.ok) throw new Error(`HTTP error: ${res.status}`)
                 const data = await res.json()
                 setTypeProject(data.data || [])
-                console.log('Fetched project types:', data)
             } catch (err) {
                 console.error('API error:', err)
-                setError(err.message)  // ถ้ามี state สำหรับ error
             }
         }
         fetchData()
@@ -96,55 +77,59 @@ function Navbar() {
         navigate(`/projects?typeId=${type_id}`)
     }
 
-    const navStyle = {
-        backgroundColor: scrolled ? 'rgba(64,78,59,0.97)' : 'rgba(64,78,59,0.92)',
-        borderBottom: '1px solid rgba(186,200,177,0.3)',
-        boxShadow: scrolled ? '0 2px 16px rgba(64,78,59,0.2)' : 'none',
-        backdropFilter: 'blur(12px)',
-        WebkitBackdropFilter: 'blur(12px)',
-    }
-
     return (
-        <nav className="w-full fixed top-0 left-0 z-50  transition-all duration-500" style={navStyle} >
-
-            {/* Top accent line */}
-            <div style={{ height: '2px', background: `linear-gradient(to right, transparent, ${C.green}, ${C.greenLight})` }} />
+        <nav
+            className="w-full fixed top-0 left-0 z-50 transition-all duration-500"
+            style={{
+                backgroundColor: scrolled ? 'rgba(64,78,59,0.97)' : 'rgba(64,78,59,0.92)',
+                borderBottom: '1px solid rgba(186,200,177,0.25)',
+                boxShadow: scrolled ? '0 2px 20px rgba(40,56,36,0.25)' : 'none',
+                backdropFilter: 'blur(12px)',
+                WebkitBackdropFilter: 'blur(12px)',
+            }}
+        >
+            {/* Gold top accent line */}
+            <div style={{
+                height: '2px',
+                background: 'linear-gradient(to right, transparent, var(--color-gold), var(--color-gold-border), transparent)',
+            }} />
 
             <div className="max-w-7xl mx-auto px-8 h-14 flex items-center justify-center gap-8">
 
-                {/* หน้าหลัก */}
                 <NavLink href="/">หน้าหลัก</NavLink>
-
                 <Dot />
 
                 {/* ศาสตร์ของพระราชา */}
                 <DropdownMenu label="ศาสตร์ของพระราชา">
-                    <div style={{ height: '2px', background: `linear-gradient(to right, ${C.green}, ${C.forestGreen})` }} />
+                    <GradientBar />
                     <DropdownItem onClick={() => navigate('/projects')} strong>ดูทั้งหมด</DropdownItem>
                     {typeProject.map((data) => (
-                        <DropdownItem key={data.type_id} onClick={() => handleSentTypeIdProject(data.type_id)}>{data.type_name}</DropdownItem>
+                        <DropdownItem key={data.type_id} onClick={() => handleSentTypeIdProject(data.type_id)}>
+                            {data.type_name}
+                        </DropdownItem>
                     ))}
                 </DropdownMenu>
-
                 <Dot />
 
                 {/* งานภายใต้สถาบัน */}
                 <DropdownMenu label="งานภายใต้สถาบันเศรษฐกิจพอเพียง">
-                    <div style={{ height: '2px', background: `linear-gradient(to right, ${C.green}, ${C.forestGreen})` }} />
+                    <GradientBar />
                     {INSTITUTE_MENUS.map((menu) => (
-                        <DropdownItem key={menu.path} onClick={() => navigate(menu.path)}>{menu.label}</DropdownItem>
+                        <DropdownItem key={menu.path} onClick={() => navigate(menu.path)}>
+                            {menu.label}
+                        </DropdownItem>
                     ))}
                 </DropdownMenu>
-
                 <Dot />
 
-                {/* สถาบันเศรษฐกิจพอเพียง */}
                 <NavLink as="button" onClick={() => navigate('/institute')}>สถาบันเศรษฐกิจพอเพียง</NavLink>
 
                 {/* Separator */}
-                <span style={{ width: '1px', height: '16px', background: `linear-gradient(to bottom, transparent, ${C.greenLight}, transparent)` }} />
+                <span style={{
+                    width: '1px', height: '16px',
+                    background: 'linear-gradient(to bottom, transparent, rgba(186,200,177,0.5), transparent)',
+                }} />
 
-                {/* เข้าสู่ระบบ */}
                 <OutlineButton onClick={() => navigate('/login')}>เข้าสู่ระบบ</OutlineButton>
 
                 {/* Language Switcher */}
@@ -163,9 +148,13 @@ function Navbar() {
                     {langOpen && (
                         <div
                             className="absolute top-full right-0 mt-3 w-36 rounded-xl shadow-xl z-50 overflow-hidden"
-                            style={dropdownStyle}
+                            style={{
+                                backgroundColor: 'var(--color-white)',
+                                border: '1px solid var(--color-border)',
+                                boxShadow: '0 8px 24px var(--color-shadow-lg)',
+                            }}
                         >
-                            <div style={{ height: '2px', background: `linear-gradient(to right, ${C.green}, ${C.forestGreen})` }} />
+                            <GradientBar />
                             {languages.map((lang) => {
                                 const isSelected = selectedLang.code === lang.code
                                 return (
@@ -177,7 +166,8 @@ function Navbar() {
                                         <span className="flex items-center gap-3">
                                             <span>{lang.label}</span>
                                             {isSelected && (
-                                                <svg className="w-3 h-3 ml-auto" fill="currentColor" viewBox="0 0 20 20" style={{ color: C.green }}>
+                                                <svg className="w-3 h-3 ml-auto" fill="currentColor" viewBox="0 0 20 20"
+                                                    style={{ color: 'var(--color-green)' }}>
                                                     <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414L8.414 15l-4.121-4.121a1 1 0 011.414-1.414L8.414 12.172l7.879-7.879a1 1 0 011.414 0z" clipRule="evenodd" />
                                                 </svg>
                                             )}
@@ -188,40 +178,54 @@ function Navbar() {
                         </div>
                     )}
                 </div>
-
             </div>
         </nav>
     )
 }
 
-// --- Sub-components ---
+// ── Sub-components ──────────────────────────────
+
+function GradientBar() {
+    return (
+        <div style={{
+            height: '2px',
+            background: 'linear-gradient(to right, var(--color-green), var(--color-forest-green))',
+        }} />
+    )
+}
 
 function Dot() {
-    return <span style={{ width: '4px', height: '4px', borderRadius: '9999px', backgroundColor: 'var(--color-green)', opacity: 0.4, flexShrink: 0 }} />
+    return (
+        <span style={{
+            width: '4px', height: '4px',
+            borderRadius: 'var(--radius-full)',
+            backgroundColor: 'var(--color-green-light)',
+            opacity: 0.5,
+            flexShrink: 0,
+        }} />
+    )
 }
 
 function NavLink({ href, onClick, children }) {
     const [hovered, setHovered] = useState(false)
-    const base = {
-        fontSize: '0.75rem',
-        fontWeight: 500,
-        color: hovered ? '#ffffff' : 'rgba(255,255,255,0.9)',
-        letterSpacing: '0.1em',
-        whiteSpace: 'nowrap',
-        background: 'none',
-        border: 'none',
-        cursor: 'pointer',
-        padding: 0,
-        position: 'relative',
-        transition: 'color 0.2s',
-        textDecoration: 'none',
-    }
     const Tag = href ? 'a' : 'button'
     return (
         <Tag
             href={href}
             onClick={onClick}
-            style={base}
+            style={{
+                fontSize: '0.75rem',
+                fontWeight: 500,
+                color: hovered ? 'var(--color-white)' : 'rgba(255,255,255,0.85)',
+                letterSpacing: '0.1em',
+                whiteSpace: 'nowrap',
+                background: 'none',
+                border: 'none',
+                cursor: 'pointer',
+                padding: 0,
+                transition: 'color 0.2s',
+                textDecoration: 'none',
+            }}
             onMouseEnter={() => setHovered(true)}
             onMouseLeave={() => setHovered(false)}
         >
@@ -234,8 +238,7 @@ function DropdownMenu({ label, children }) {
     const [open, setOpen] = useState(false)
     const [hovered, setHovered] = useState(false)
     return (
-        <div
-            className="relative"
+        <div className="relative"
             onMouseEnter={() => setOpen(true)}
             onMouseLeave={() => setOpen(false)}
         >
@@ -244,7 +247,7 @@ function DropdownMenu({ label, children }) {
                 style={{
                     fontSize: '0.75rem',
                     fontWeight: 500,
-                    color: hovered ? '#ffffff' : 'rgba(255,255,255,0.9)',
+                    color: hovered ? 'var(--color-white)' : 'rgba(255,255,255,0.85)',
                     letterSpacing: '0.1em',
                     whiteSpace: 'nowrap',
                     background: 'none',
@@ -264,10 +267,13 @@ function DropdownMenu({ label, children }) {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 9l-7 7-7-7" />
                 </svg>
             </button>
+
             <div
-                className="absolute top-full left-0 mt-3 w-64 rounded-xl shadow-xl z-50 overflow-hidden transition-all duration-200"
+                className="absolute top-full left-0 mt-3 w-64 rounded-xl z-50 overflow-hidden transition-all duration-200"
                 style={{
-                    ...dropdownStyle,
+                    backgroundColor: 'var(--color-white)',
+                    border: '1px solid var(--color-border)',
+                    boxShadow: '0 8px 24px var(--color-shadow-lg)',
                     opacity: open ? 1 : 0,
                     visibility: open ? 'visible' : 'hidden',
                     transform: open ? 'translateY(0)' : 'translateY(6px)',
@@ -288,13 +294,13 @@ function OutlineButton({ onClick, children }) {
             style={{
                 fontSize: '0.75rem',
                 fontWeight: 500,
-                color: hovered ? '#ffffff' : 'rgba(255,255,255,0.9)',
+                color: hovered ? 'var(--color-white)' : 'rgba(255,255,255,0.85)',
                 letterSpacing: '0.1em',
                 whiteSpace: 'nowrap',
                 padding: '6px 16px',
-                borderRadius: '4px',
-                border: hovered ? '1px solid rgba(255,255,255,0.6)' : '1px solid rgba(255,255,255,0.3)',
-                backgroundColor: hovered ? 'rgba(255,255,255,0.15)' : 'transparent',
+                borderRadius: 'var(--radius-sm)',
+                border: hovered ? '1px solid rgba(255,255,255,0.55)' : '1px solid rgba(255,255,255,0.25)',
+                backgroundColor: hovered ? 'rgba(255,255,255,0.12)' : 'transparent',
                 cursor: 'pointer',
                 transition: 'all 0.2s',
             }}
