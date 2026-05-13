@@ -1,0 +1,217 @@
+import { useState, useMemo } from 'react'
+
+const MOCK_DATA = [
+    { id: 1, title: 'การบริหารจัดการเครือข่ายเศรษฐกิจพอเพียงแบบบูรณาการ', category: 'โครงการพัฒนาแบบ บูรณาการ และ อื่นๆ', researcher: 'อัจฉรา โยมสินธุ์' },
+    { id: 2, title: 'การบริหารราชการแผ่นดินบนพื้นฐานหลักปรัชญาของเศรษฐกิจพอเพียง ระยะที่ 1', category: 'โครงการภายใต้สถาบันเศรษฐกิจพอเพียง', researcher: 'กัลยาณี เสนาสุ' },
+    { id: 3, title: 'การสำรวจการรับรู้และความเข้าใจของประชาชนเกี่ยวกับปรัชญาของเศรษฐกิจพอเพียง', category: 'โครงการภายใต้สถาบันเศรษฐกิจพอเพียง', researcher: 'นิดาโพลล์ -' },
+    { id: 4, title: 'บทเรียนเชิงปฏิบัติเพื่อการบรรลุเป้าหมายการพัฒนาที่ยั่งยืน', category: 'โครงการภายใต้สถาบันเศรษฐกิจพอเพียง', researcher: 'ณดา จันทร์สม' },
+    { id: 5, title: 'รายงานผลการทำกิจกรรมส่งเสริมและสนับสนุนการวิจัย การสำรวจการรับรู้และความเข้าใจของประชาชน', category: 'ไม่ระบุ', researcher: 'นิดาโพลล์ -' },
+    { id: 6, title: 'โครงการ กลไกการขับเคลื่อนเพื่อการเติบโตทางเศรษฐกิจอย่างยั่งยืนด้วยหลักปรัชญาของเศรษฐกิจพอเพียง : กรณีศึกษาจังหวัดลำปาง', category: 'โครงการภายใต้สถาบันเศรษฐกิจพอเพียง', researcher: 'ปริเยศ สิทธิสรวง' },
+    { id: 7, title:     'โครงการกลยุทธ์การน้อมนำหลักปรัชญาของเศรษฐกิจพอเพียงสู่การประยุกต์ใช้ในการดำเนินชีวิตอย่างยั่งยืนสำหรับเยาวชนในอนุภาคลุ่มน้ำโขง', category: 'โครงการภายใต้สถาบันเศรษฐกิจพอเพียง', researcher: 'นาวิน พรมใจสา' },
+    { id: 8, title: 'โครงการการจัดการความรู้สู่การพัฒนาที่ยั่งยืนตามปรัชญาของเศรษฐกิจพอเพียง กรณีศึกษากลุ่มมหาวิทยาลัยราชภัฏกลุ่มศรีอยุธยา', category: 'โครงการภายใต้สถาบันเศรษฐกิจพอเพียง', researcher: 'กมลวรรณ วรรณรนัง' },
+    { id: 9, title: 'โครงการการพัฒนาชุมชนต้นแบบเพื่อการยกระดับคุณภาพชีวิตภายใต้ปรัชญาของเศรษฐกิจพอเพียงสู่ความยั่งยืนของประเทศระยะที่ 1', category: 'โครงการภายใต้สถาบันเศรษฐกิจพอเพียง', researcher: 'วารุณี ศรีสงคราม' },
+    { id: 10, title: 'โครงการการพัฒนารูปแบบเครือข่ายความร่วมมือจากวิธีปฏิบัติของชุมชนต้นแบบเพื่อการเรียนรู้เพื่อการพัฒนาที่ยั่งยืน', category: 'โครงการภายใต้สถาบันเศรษฐกิจพอเพียง', researcher: 'หนึ่งฤทัย เอกธรรมทัศน์' },
+]
+
+const PAGE_SIZE_OPTIONS = [5, 10, 25, 50]
+
+function CategoryBadge({ category }) {
+    const isUnspecified = category === 'ไม่ระบุ'
+    return (
+        <span
+            className="inline-block px-2 py-0.5 rounded-full text-xs font-medium whitespace-nowrap"
+            style={{
+                backgroundColor: isUnspecified
+                    ? 'rgba(186,200,177,0.2)'
+                    : 'rgba(123,150,105,0.15)',
+                color: isUnspecified
+                    ? 'var(--color-text-muted)'
+                    : 'var(--color-primary-dark)',
+                border: `1px solid ${isUnspecified ? 'var(--color-primary-light)' : 'var(--color-primary)'}`,
+                fontSize: 'var(--font-size-xs)',
+            }}
+        >
+            {category}
+        </span>
+    )
+}
+
+export default function ResearchPage() {
+    const [search, setSearch] = useState('')
+    const [pageSize, setPageSize] = useState(10)
+    const [currentPage, setCurrentPage] = useState(1)
+
+    const filtered = useMemo(() => {
+        const q = search.toLowerCase()
+        return MOCK_DATA.filter((item) =>
+            item.title.toLowerCase().includes(q) ||
+            item.category.toLowerCase().includes(q) ||
+            item.researcher.toLowerCase().includes(q)
+        )
+    }, [search])
+
+    const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize))
+    const paginated = filtered.slice((currentPage - 1) * pageSize, currentPage * pageSize)
+
+    const handleSearch = (e) => { setSearch(e.target.value); setCurrentPage(1) }
+    const handlePageSize = (e) => { setPageSize(Number(e.target.value)); setCurrentPage(1) }
+    const goPage = (p) => setCurrentPage(Math.max(1, Math.min(totalPages, p)))
+
+    const from = filtered.length === 0 ? 0 : (currentPage - 1) * pageSize + 1
+    const to = Math.min(currentPage * pageSize, filtered.length)
+
+    return (
+        <div className="min-h-screen">
+
+            {/* Page header */}
+            <div className="mb-6">
+                <h1
+                    className="font-semibold leading-tight"
+                    style={{ color: 'var(--color-text)', fontSize: 'var(--font-size-xl)', fontWeight: 'var(--font-weight-semibold)' }}
+                >
+                    โครงการ / งานวิจัย
+                </h1>
+                <p style={{ color: 'var(--color-text-muted)', fontSize: 'var(--font-size-sm)', marginTop: 2 }}>
+                    ภายใต้สถาบันเศรษฐกิจพอเพียง
+                </p>
+            </div>
+
+            {/* Controls */}
+            <div className="flex justify-between items-center mb-4 flex-wrap gap-3">
+                <div className="flex items-center gap-2">
+                    <span style={{ color: 'var(--color-text-muted)', fontSize: 'var(--font-size-sm)' }}>แสดง</span>
+                    <select
+                        value={pageSize}
+                        onChange={handlePageSize}
+                        className="rounded-lg px-2 py-1.5 focus:outline-none"
+                        style={{
+                            border: '1px solid var(--color-primary-light)',
+                            fontSize: 'var(--font-size-sm)',
+                            color: 'var(--color-text)',
+                            backgroundColor: 'var(--color-surface)',
+                        }}
+                    >
+                        {PAGE_SIZE_OPTIONS.map((n) => <option key={n} value={n}>{n}</option>)}
+                    </select>
+                    <span style={{ color: 'var(--color-text-muted)', fontSize: 'var(--font-size-sm)' }}>รายการ</span>
+                </div>
+
+                <div className="relative flex items-center">
+                    <svg className="absolute left-2.5 w-4 h-4 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24" style={{ color: 'var(--color-text-muted)' }}>
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-4.35-4.35M17 11A6 6 0 111 11a6 6 0 0116 0z" />
+                    </svg>
+                    <input
+                        type="text"
+                        value={search}
+                        onChange={handleSearch}
+                        placeholder="ค้นหา..."
+                        className="rounded-lg pl-8 pr-3 py-1.5 focus:outline-none"
+                        style={{
+                            border: '1px solid var(--color-primary-light)',
+                            fontSize: 'var(--font-size-sm)',
+                            color: 'var(--color-text)',
+                            backgroundColor: 'var(--color-surface)',
+                            width: 200,
+                        }}
+                    />
+                </div>
+            </div>
+
+            {/* Table */}
+            <div
+                className="rounded-xl overflow-hidden"
+                style={{ border: '1px solid var(--color-primary-light)', backgroundColor: 'var(--color-surface)' }}
+            >
+                <table className="w-full" style={{ fontSize: 'var(--font-size-sm)', tableLayout: 'fixed' }}>
+                    <colgroup>
+                        <col style={{ width: '48%' }} />
+                        <col style={{ width: '32%' }} />
+                        <col style={{ width: '20%' }} />
+                    </colgroup>
+                    <thead>
+                        <tr style={{ backgroundColor: 'var(--color-primary-dark)', borderBottom: '1px solid var(--color-primary)' }}>
+                            {['ชื่อโครงการ', 'ประเภทโครงการ', 'ชื่อนักวิจัย'].map((col) => (
+                                <th
+                                    key={col}
+                                    className="px-5 py-3 text-left"
+                                    style={{ color: '#fff', fontWeight: 'var(--font-weight-medium)', fontSize: 'var(--font-size-xs)' }}
+                                >
+                                    {col}
+                                </th>
+                            ))}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {paginated.length === 0 ? (
+                            <tr>
+                                <td colSpan={3} className="py-12 text-center" style={{ color: 'var(--color-text-muted)', fontSize: 'var(--font-size-sm)' }}>
+                                    ไม่พบข้อมูล
+                                </td>
+                            </tr>
+                        ) : (
+                            paginated.map((item, index) => (
+                                <tr
+                                    key={item.id}
+                                    style={{
+                                        backgroundColor: index % 2 === 0 ? 'var(--color-surface)' : 'rgba(186,200,177,0.12)',
+                                        borderBottom: '1px solid rgba(186,200,177,0.3)',
+                                    }}
+                                >
+                                    <td className="px-5 py-3" style={{ color: 'var(--color-text)', lineHeight: 'var(--line-height-relaxed)' }}>
+                                        {item.title}
+                                    </td>
+                                    <td className="px-5 py-3">
+                                        <CategoryBadge category={item.category} />
+                                    </td>
+                                    <td className="px-5 py-3" style={{ color: 'var(--color-text-muted)' }}>
+                                        {item.researcher}
+                                    </td>
+                                </tr>
+                            ))
+                        )}
+                    </tbody>
+                </table>
+            </div>
+
+            {/* Pagination */}
+            <div className="flex justify-between items-center mt-4 flex-wrap gap-2">
+                <span style={{ color: 'var(--color-text-muted)', fontSize: 'var(--font-size-xs)' }}>
+                    แสดง {from}–{to} จาก {filtered.length} รายการ
+                </span>
+                <div className="flex gap-1">
+                    <button
+                        onClick={() => goPage(currentPage - 1)}
+                        disabled={currentPage === 1}
+                        className="px-3 py-1.5 rounded-lg disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                        style={{ border: '1px solid var(--color-primary-light)', color: 'var(--color-text-muted)', backgroundColor: 'var(--color-surface)', fontSize: 'var(--font-size-xs)' }}
+                    >
+                        ←
+                    </button>
+                    {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
+                        <button
+                            key={p}
+                            onClick={() => goPage(p)}
+                            className="px-3 py-1.5 rounded-lg transition-colors"
+                            style={{
+                                border: `1px solid ${p === currentPage ? 'var(--color-primary-dark)' : 'var(--color-primary-light)'}`,
+                                backgroundColor: p === currentPage ? 'var(--color-primary-dark)' : 'var(--color-surface)',
+                                color: p === currentPage ? '#fff' : 'var(--color-text-muted)',
+                                fontSize: 'var(--font-size-xs)',
+                            }}
+                        >
+                            {p}
+                        </button>
+                    ))}
+                    <button
+                        onClick={() => goPage(currentPage + 1)}
+                        disabled={currentPage === totalPages}
+                        className="px-3 py-1.5 rounded-lg disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                        style={{ border: '1px solid var(--color-primary-light)', color: 'var(--color-text-muted)', backgroundColor: 'var(--color-surface)', fontSize: 'var(--font-size-xs)' }}
+                    >
+                        →
+                    </button>
+                </div>
+            </div>
+        </div>
+    )
+}
