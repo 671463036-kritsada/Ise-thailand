@@ -4,13 +4,13 @@ import { useSearchParams, useNavigate } from 'react-router-dom'
 export default function ProjectsPage() {
   const [searchParams, setSearchParams] = useSearchParams()
   const [search, setSearch] = useState('')
-  const [selectedProjectByTypeId, setSelectedProjectByTypeId] = useState('ทั้งหมด')
+  const [selectedTypeId, setSelectedTypeId] = useState('ทั้งหมด')
   const [dropdownOpen, setDropdownOpen] = useState(false)
   const dropdownRef = useRef(null)
   const navigate = useNavigate()
-  
+
   const [projects, setProjects] = useState([])
-  const [typeProject, setTypeProject] = useState([])
+  const [typeProject, setTypeProject] = useState([]) // [{ type_id, type_name }, ...]
 
   // ปิด dropdown เมื่อคลิกข้างนอก
   useEffect(() => {
@@ -23,20 +23,23 @@ export default function ProjectsPage() {
     return () => document.removeEventListener('mousedown', handleClickOutside)
   }, [])
 
+  // sync URL param → state
   useEffect(() => {
-    const cat = decodeURIComponent(searchParams.get('typeId') || '')
-    setSelectedCategory(cat || 'ทั้งหมด')
+    const typeId = searchParams.get('typeId') || ''
+    setSelectedTypeId(typeId || 'ทั้งหมด')
   }, [searchParams])
 
+  console.log('select Type id', selectedTypeId);
 
-  // fetch project data
+  // fetch projects
   useEffect(() => {
     const fetchProjects = async () => {
       try {
-        const res = await fetch('http://localhost:2000/api/project')
+        const res = await fetch('http://localhost:2000/api/project/')
         if (!res.ok) throw new Error(`HTTP error: ${res.status}`)
         const data = await res.json()
         setProjects(data.data || [])
+        console.log('project data ', data.data)
       } catch (err) {
         console.error('API error:', err)
       }
@@ -44,15 +47,14 @@ export default function ProjectsPage() {
     fetchProjects()
   }, [])
 
-  // fetch project types for dropdown
+  // fetch types — เก็บ object ไว้เต็มๆ เพื่อใช้ทั้ง type_id และ type_name
   useEffect(() => {
     const fetchTypeProject = async () => {
       try {
         const res = await fetch('http://localhost:2000/api/royal/types')
         if (!res.ok) throw new Error(`HTTP error: ${res.status}`)
         const data = await res.json()
-        // เพิ่ม "ทั้งหมด" ไว้ตัวแรก
-        setTypeProject(['ทั้งหมด', ...(data.data || []).map(t => t.type_name)])
+        setTypeProject(data.data || [])
       } catch (err) {
         console.error('API error:', err)
       }
@@ -60,17 +62,25 @@ export default function ProjectsPage() {
     fetchTypeProject()
   }, [])
 
+  // filter ด้วย type_id
   const filtered = useMemo(() => {
+    console.log('selectedTypeId:', JSON.stringify(selectedTypeId))
+    console.log('sample type_id:', JSON.stringify(projects[0]?.type_id))
     return projects.filter((p) => {
-      const matchCat = selectedCategory === 'ทั้งหมด' || p.type_name === selectedCategory
+      const matchType = selectedTypeId === 'ทั้งหมด' || p.type_id === selectedTypeId
       const matchSearch = (p.name_thai ?? '').toLowerCase().includes(search.toLowerCase())
-      return matchCat && matchSearch
+      return matchType && matchSearch
     })
-  }, [selectedCategory, search, projects])
+  }, [selectedTypeId, search, projects])
 
-  const handleCategory = (cat) => {
-    setSelectedCategory(cat)
-    setSearchParams(cat !== 'ทั้งหมด' ? { category: encodeURIComponent(cat) } : {})
+  // label ที่แสดงใน dropdown button
+  const selectedLabel = selectedTypeId === 'ทั้งหมด'
+    ? 'ทั้งหมด'
+    : typeProject.find(t => t.type_id === selectedTypeId)?.type_name ?? 'ทั้งหมด'
+
+  const handleSelectType = (typeId) => {
+    setSelectedTypeId(typeId)
+    setSearchParams(typeId !== 'ทั้งหมด' ? { typeId } : {})
     setSearch('')
     setDropdownOpen(false)
   }
@@ -88,7 +98,7 @@ export default function ProjectsPage() {
         </h1>
       </div>
 
-      {/* Search + Dropdown — row เดียวกัน */}
+      {/* Search + Dropdown */}
       <div className="flex gap-3 mb-8 items-center">
 
         {/* Search */}
@@ -121,29 +131,23 @@ export default function ProjectsPage() {
             onClick={() => setDropdownOpen(o => !o)}
             className="flex items-center gap-2 px-4 py-3 rounded-2xl transition-colors duration-150"
             style={{
-              backgroundColor: selectedCategory !== 'ทั้งหมด'
-                ? 'var(--color-primary-dark)'
-                : 'var(--color-surface)',
+              backgroundColor: selectedTypeId !== 'ทั้งหมด' ? 'var(--color-primary-dark)' : 'var(--color-surface)',
               border: '1px solid var(--color-primary-light)',
-              color: selectedCategory !== 'ทั้งหมด'
-                ? '#ffffff'
-                : 'var(--color-text)',
+              color: selectedTypeId !== 'ทั้งหมด' ? '#ffffff' : 'var(--color-text)',
               fontSize: 'var(--font-size-sm)',
               minWidth: 180,
             }}
           >
             <svg className="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"
-              style={{ color: selectedCategory !== 'ทั้งหมด' ? '#ffffff' : 'var(--color-text-muted)' }}>
+              style={{ color: selectedTypeId !== 'ทั้งหมด' ? '#ffffff' : 'var(--color-text-muted)' }}>
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4h13M3 8h9m-9 4h6m4 0l4-4m0 0l4 4m-4-4v12" />
             </svg>
-            <span className="flex-1 text-left truncate">
-              {selectedCategory}
-            </span>
+            <span className="flex-1 text-left truncate">{selectedLabel}</span>
             <svg
               className="w-4 h-4 flex-shrink-0 transition-transform duration-200"
               style={{
                 transform: dropdownOpen ? 'rotate(180deg)' : 'rotate(0deg)',
-                color: selectedCategory !== 'ทั้งหมด' ? '#ffffff' : 'var(--color-text-muted)',
+                color: selectedTypeId !== 'ทั้งหมด' ? '#ffffff' : 'var(--color-text-muted)',
               }}
               fill="none" stroke="currentColor" viewBox="0 0 24 24"
             >
@@ -162,39 +166,30 @@ export default function ProjectsPage() {
                 top: '100%',
               }}
             >
-              {typeProject.map((cat, i) => {
-                const isSelected = selectedCategory === cat
+              {/* ตัวเลือก "ทั้งหมด" */}
+              {[{ type_id: 'ทั้งหมด', type_name: 'ทั้งหมด' }, ...typeProject].map((t, i, arr) => {
+                const isSelected = selectedTypeId === t.type_id
                 return (
                   <button
-                    key={i}
-                    onClick={() => handleCategory(cat)}
+                    key={t.type_id}
+                    onClick={() => handleSelectType(t.type_id)}
                     className="w-full flex items-center gap-3 px-4 py-3 text-left transition-colors duration-100"
                     style={{
-                      backgroundColor: isSelected
-                        ? 'rgba(123,150,105,0.12)'
-                        : 'transparent',
-                      borderBottom: i < typeProject.length - 1
-                        ? '1px solid rgba(186,200,177,0.3)'
-                        : 'none',
-                      color: isSelected
-                        ? 'var(--color-primary-dark)'
-                        : 'var(--color-text)',
+                      backgroundColor: isSelected ? 'rgba(123,150,105,0.12)' : 'transparent',
+                      borderBottom: i < arr.length - 1 ? '1px solid rgba(186,200,177,0.3)' : 'none',
+                      color: isSelected ? 'var(--color-primary-dark)' : 'var(--color-text)',
                       fontSize: 'var(--font-size-sm)',
                     }}
-                    onMouseEnter={e => {
-                      if (!isSelected) e.currentTarget.style.backgroundColor = 'rgba(186,200,177,0.15)'
-                    }}
-                    onMouseLeave={e => {
-                      if (!isSelected) e.currentTarget.style.backgroundColor = 'transparent'
-                    }}
+                    onMouseEnter={e => { if (!isSelected) e.currentTarget.style.backgroundColor = 'rgba(186,200,177,0.15)' }}
+                    onMouseLeave={e => { if (!isSelected) e.currentTarget.style.backgroundColor = 'transparent' }}
                   >
-                    {isSelected && (
-                      <svg className="w-3.5 h-3.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"
-                        style={{ color: 'var(--color-primary-dark)' }}>
+                    {isSelected
+                      ? <svg className="w-3.5 h-3.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" style={{ color: 'var(--color-primary-dark)' }}>
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
                       </svg>
-                    )}
-                    <span className={isSelected ? '' : 'ml-[22px]'}>{cat}</span>
+                      : <span className="w-3.5 flex-shrink-0" />
+                    }
+                    <span>{t.type_name}</span>
                   </button>
                 )
               })}
@@ -206,15 +201,15 @@ export default function ProjectsPage() {
       {/* Result count */}
       <p className="mb-5" style={{ color: 'var(--color-text-muted)', fontSize: 'var(--font-size-xs)' }}>
         {filtered.length} โครงการ
-        {selectedCategory !== 'ทั้งหมด' && (
+        {selectedTypeId !== 'ทั้งหมด' && (
           <span className="ml-1" style={{ color: 'var(--color-primary)' }}>
-            ใน "{selectedCategory}"
+            ใน "{selectedLabel}"
           </span>
         )}
-        {selectedCategory !== 'ทั้งหมด' && (
+        {selectedTypeId !== 'ทั้งหมด' && (
           <button
-            onClick={() => handleCategory('ทั้งหมด')}
-            className="ml-2 underline transition-colors"
+            onClick={() => handleSelectType('ทั้งหมด')}
+            className="ml-2 underline"
             style={{ color: 'var(--color-text-muted)', fontSize: 'var(--font-size-xs)' }}
             onMouseEnter={e => e.currentTarget.style.color = 'var(--color-primary-dark)'}
             onMouseLeave={e => e.currentTarget.style.color = 'var(--color-text-muted)'}
@@ -241,7 +236,8 @@ export default function ProjectsPage() {
               className="relative h-64 rounded-2xl overflow-hidden cursor-pointer group shadow-sm hover:shadow-xl transition-all duration-300"
             >
               <img
-                src={project.image}
+                // src={project.image}
+                src='/public/images/imageProjecAll/imageProject1/project2/image1.jpg'
                 alt={project.name_thai}
                 className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
               />
@@ -251,7 +247,7 @@ export default function ProjectsPage() {
               />
               <div className="absolute top-3 left-3">
                 <span
-                  className="text-xs font-medium px-2.5 py-1 rounded-full backdrop-blur-sm"
+                  className="px-2.5 py-1 rounded-full backdrop-blur-sm"
                   style={{
                     color: '#ffffff',
                     backgroundColor: 'rgba(123,150,105,0.4)',
