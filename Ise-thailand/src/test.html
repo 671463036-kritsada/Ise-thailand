@@ -1,0 +1,1167 @@
+<!-- image.png -->
+<!doctype html>
+
+<html lang="th">
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>ติดต่อสถาบัน - Contact Us</title>
+    <!-- Tailwind CSS CDN with plugins -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <!-- Google Fonts for Thai Language (Sarabun is commonly used for official/academic Thai sites) -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&amp;display=swap"
+      rel="stylesheet"
+    />
+    <style data-purpose="typography">
+      body {
+        font-family: "Sarabun", sans-serif;
+      }
+    </style>
+    <style data-purpose="custom-colors">
+      /* Custom brand colors based on the image */
+      .bg-brand-dark {
+        background-color: #3d4a35;
+      }
+      .bg-brand-cream {
+        background-color: #fdfbe2;
+      }
+      .bg-brand-green {
+        background-color: #00a651;
+      }
+      .text-brand-dark {
+        color: #3d4a35;
+      }
+      .border-brand-dark {
+        border-color: #3d4a35;
+      }
+    </style>
+  </head>
+  <body class="bg-brand-cream min-h-screen">
+    <!-- BEGIN: MainHeader -->
+    <header
+      class="bg-brand-dark text-white px-4 py-3 shadow-md"
+      data-purpose="main-header"
+    >
+      <div class="max-w-7xl mx-auto flex items-center justify-between">
+        <!-- Navigation Links -->
+        <nav class="hidden lg:flex items-center space-x-6 text-sm font-medium">
+          <a class="hover:opacity-80" href="#">หน้าหลัก</a>
+          <div
+            class="flex items-center space-x-1 cursor-pointer hover:opacity-80"
+          >
+            <span>ศาสตร์ของพระราชา</span>
+            <svg
+              class="w-4 h-4"
+              fill="none"
+              stroke="currentColor"
+              viewbox="0 0 24 24"
+            >
+              <path
+                d="M19 9l-7 7-7-7"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+              ></path>
+            </svg>
+          </div>
+          <div
+            class="flex items-center space-x-1 cursor-pointer hover:opacity-80"
+          >
+            <span>งานภายใต้สถาบันเศรษฐกิจพอเพียง</span>
+            <svg
+              class="w-4 h-4"
+              fill="none"
+              stroke="currentColor"
+              viewbox="0 0 24 24"
+            >
+              <path
+                d="M19 9l-7 7-7-7"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+              ></path>
+            </svg>
+          </div>
+          <a class="hover:opacity-80" href="#">สถาบันเศรษฐกิจพอเพียง</a>
+        </nav>
+        <!-- Header Actions -->
+        <div class="flex items-center space-x-4">
+          <!-- Login Button -->
+          <a
+            class="border border-white/40 px-6 py-1.5 rounded-lg text-sm hover:bg-white/10 transition-colors"
+            data-purpose="login-button"
+            href="#"
+          >
+            เข้าสู่ระบบ
+          </a>
+          <!-- Language Switcher -->
+          <div class="relative group" data-purpose="language-switcher">
+            <button
+              class="bg-white/10 px-4 py-1.5 rounded-lg text-sm flex items-center space-x-2 border border-white/20"
+            >
+              <span>TH</span>
+              <svg
+                class="w-3 h-3"
+                fill="none"
+                stroke="currentColor"
+                viewbox="0 0 24 24"
+              >
+                <path
+                  d="M19 9l-7 7-7-7"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                ></path>
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    </header>
+    <!-- END: MainHeader -->
+    <!-- BEGIN: MainContent -->
+    <main class="py-12 px-4" data-purpose="content-wrapper">
+      <div class="max-w-4xl mx-auto">
+        <!-- Contact Form Card -->
+        <section
+          class="bg-white rounded-[2rem] shadow-sm p-10 md:p-16"
+          data-purpose="contact-form-card"
+        >
+          <div class="text-center mb-10">
+            <h1
+              class="text-3xl font-bold text-gray-800"
+              data-purpose="form-title"
+            >
+              ติดต่อสถาบัน
+            </h1>
+          </div>
+          <form action="#" class="space-y-6" method="POST">
+            <!-- Name Row -->
+            <div
+              class="grid grid-cols-1 md:grid-cols-2 gap-6"
+              data-purpose="form-row-name"
+            >
+              <div class="space-y-2">
+                <label class="block text-gray-700 font-medium" for="first_name"
+                  >ชื่อ :</label
+                >
+                <input
+                  class="w-full border-gray-300 rounded-full py-3 px-6 focus:ring-brand-green focus:border-brand-green transition-all"
+                  id="first_name"
+                  name="first_name"
+                  placeholder="ชื่อ"
+                  type="text"
+                />
+              </div>
+              <div class="space-y-2">
+                <label class="block text-gray-700 font-medium" for="last_name"
+                  >นามสกุล :</label
+                >
+                <input
+                  class="w-full border-gray-300 rounded-full py-3 px-6 focus:ring-brand-green focus:border-brand-green transition-all"
+                  id="last_name"
+                  name="last_name"
+                  placeholder="นามสกุล"
+                  type="text"
+                />
+              </div>
+            </div>
+            <!-- Email Row -->
+            <div class="space-y-2" data-purpose="form-row-email">
+              <label class="block text-gray-700 font-medium" for="email"
+                >อีเมล :</label
+              >
+              <input
+                class="w-full border-gray-300 rounded-full py-3 px-6 focus:ring-brand-green focus:border-brand-green transition-all"
+                id="email"
+                name="email"
+                placeholder="อีเมล"
+                type="email"
+              />
+            </div>
+            <!-- Phone Row -->
+            <div class="space-y-2" data-purpose="form-row-phone">
+              <label class="block text-gray-700 font-medium" for="phone"
+                >เบอร์โทรติดต่อ :</label
+              >
+              <input
+                class="w-full border-gray-300 rounded-full py-3 px-6 focus:ring-brand-green focus:border-brand-green transition-all"
+                id="phone"
+                name="phone"
+                placeholder="เบอร์โทรติดต่อ"
+                type="tel"
+              />
+            </div>
+            <!-- Details Row -->
+            <div class="space-y-2" data-purpose="form-row-details">
+              <label class="block text-gray-700 font-medium" for="details"
+                >รายละเอียด :</label
+              >
+              <textarea
+                class="w-full border-gray-300 rounded-[1.5rem] py-4 px-6 focus:ring-brand-green focus:border-brand-green transition-all resize-none"
+                id="details"
+                name="details"
+                placeholder="รายละเอียด"
+                rows="6"
+              ></textarea>
+            </div>
+            <!-- Submit Button Container -->
+            <div class="flex justify-center pt-6" data-purpose="form-actions">
+              <button
+                class="bg-brand-green hover:bg-green-600 text-white font-medium px-12 py-3 rounded-full shadow-lg transform hover:scale-105 transition-all duration-200"
+                type="submit"
+              >
+                ส่งข้อมูล
+              </button>
+            </div>
+          </form>
+        </section>
+      </div>
+    </main>
+    <!-- END: MainContent -->
+    <!-- BEGIN: FooterSpacer -->
+    <!-- Adding some space at the bottom to match the visual weight of the screenshot -->
+    <footer class="h-20"></footer>
+    <!-- END: FooterSpacer -->
+  </body>
+</html>
+
+<!-- หน้าติดต่อเรา (Contact Us) -->
+<!doctype html>
+
+<html lang="th">
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700;800&amp;family=Inter:wght@400;500;600;700&amp;display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+      rel="stylesheet"
+    />
+    <title>ติดต่อเรา - แบบ 2 คอลัมน์</title>
+    <script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "surface-container-lowest": "#ffffff",
+              primary: "#173124",
+              outline: "#727973",
+              "on-primary-fixed-variant": "#324c3e",
+              secondary: "#006d33",
+              "tertiary-container": "#5a3939",
+              "surface-container": "#efeeeb",
+              "surface-container-low": "#f4f3f1",
+              "error-container": "#ffdad6",
+              "outline-variant": "#c2c8c2",
+              "on-tertiary-fixed-variant": "#603e3e",
+              tertiary: "#412424",
+              "tertiary-fixed": "#ffdad9",
+              "on-error-container": "#93000a",
+              "surface-container-high": "#e9e8e5",
+              "on-secondary-fixed-variant": "#005225",
+              "on-surface": "#1a1c1b",
+              "tertiary-fixed-dim": "#eabbba",
+              "on-primary-fixed": "#062014",
+              "on-secondary": "#ffffff",
+              "inverse-surface": "#2f312f",
+              "secondary-fixed": "#78fc9c",
+              error: "#ba1a1a",
+              "surface-bright": "#faf9f6",
+              "surface-dim": "#dadad7",
+              "on-tertiary": "#ffffff",
+              "surface-tint": "#496455",
+              "on-primary": "#ffffff",
+              "on-tertiary-container": "#d0a3a3",
+              "primary-container": "#2d4739",
+              "secondary-container": "#75f999",
+              "inverse-on-surface": "#f1f1ee",
+              "primary-fixed": "#ccead6",
+              "inverse-primary": "#b0cdbb",
+              "on-surface-variant": "#424844",
+              "surface-variant": "#e3e2e0",
+              "primary-fixed-dim": "#b0cdbb",
+              "secondary-fixed-dim": "#5adf82",
+              "on-secondary-fixed": "#00210b",
+              background: "#faf9f6",
+              "on-secondary-container": "#007236",
+              "on-background": "#1a1c1b",
+              "surface-container-highest": "#e3e2e0",
+              surface: "#faf9f6",
+              "on-primary-container": "#98b5a3",
+              "on-error": "#ffffff",
+              "on-tertiary-fixed": "#2e1414",
+            },
+            borderRadius: {
+              DEFAULT: "0.25rem",
+              lg: "0.5rem",
+              xl: "0.75rem",
+              full: "9999px",
+            },
+            spacing: {
+              "margin-mobile": "20px",
+              "section-gap": "80px",
+              "container-max": "1200px",
+              gutter: "24px",
+              base: "8px",
+              "margin-desktop": "64px",
+            },
+            fontFamily: {
+              "title-md": ["Sarabun"],
+              "label-sm": ["Inter"],
+              "display-lg": ["Sarabun"],
+              "body-md": ["Sarabun"],
+              "headline-lg": ["Sarabun"],
+              "headline-lg-mobile": ["Sarabun"],
+              "body-lg": ["Sarabun"],
+            },
+            fontSize: {
+              "title-md": ["20px", { lineHeight: "28px", fontWeight: "500" }],
+              "label-sm": [
+                "14px",
+                {
+                  lineHeight: "20px",
+                  letterSpacing: "0.01em",
+                  fontWeight: "500",
+                },
+              ],
+              "display-lg": [
+                "48px",
+                {
+                  lineHeight: "60px",
+                  letterSpacing: "-0.02em",
+                  fontWeight: "700",
+                },
+              ],
+              "body-md": ["16px", { lineHeight: "26px", fontWeight: "400" }],
+              "headline-lg": [
+                "32px",
+                { lineHeight: "40px", fontWeight: "600" },
+              ],
+              "headline-lg-mobile": [
+                "28px",
+                { lineHeight: "36px", fontWeight: "600" },
+              ],
+              "body-lg": ["18px", { lineHeight: "30px", fontWeight: "400" }],
+            },
+          },
+        },
+      };
+    </script>
+    <style>
+      .material-symbols-outlined {
+        font-variation-settings:
+          "FILL" 0,
+          "wght" 400,
+          "GRAD" 0,
+          "opsz" 24;
+        display: inline-block;
+        vertical-align: middle;
+      }
+      .thai-pattern {
+        background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 0l5 15 15 5-15 5-5 15-5-15-15-5 15-5z' fill='%23173124' fill-opacity='0.05' fill-rule='evenodd'/%3E%3C/svg%3E");
+      }
+    </style>
+  </head>
+  <body
+    class="bg-background text-on-background font-body-md selection:bg-secondary-container selection:text-on-secondary-container"
+  >
+    <!-- TopAppBar -->
+    <header
+      class="bg-surface-bright dark:bg-surface-dim shadow-sm sticky top-0 z-50"
+    >
+      <div
+        class="flex justify-between items-center px-margin-desktop py-4 w-full max-w-container-max mx-auto"
+      >
+        <div
+          class="font-headline-lg text-headline-lg text-primary dark:text-primary-fixed"
+        >
+          เศรษฐกิจพอเพียง
+        </div>
+        <nav class="hidden md:flex gap-8 items-center">
+          <a
+            class="text-on-surface-variant dark:text-outline-variant hover:text-secondary transition-colors duration-200 font-title-md text-title-md"
+            href="#"
+            >หน้าแรก</a
+          >
+          <a
+            class="text-on-surface-variant dark:text-outline-variant hover:text-secondary transition-colors duration-200 font-title-md text-title-md"
+            href="#"
+            >เกี่ยวกับเรา</a
+          >
+          <a
+            class="text-on-surface-variant dark:text-outline-variant hover:text-secondary transition-colors duration-200 font-title-md text-title-md"
+            href="#"
+            >ศาสตร์พระราชา</a
+          >
+          <a
+            class="text-on-surface-variant dark:text-outline-variant hover:text-secondary transition-colors duration-200 font-title-md text-title-md"
+            href="#"
+            >โครงการ</a
+          >
+          <a
+            class="text-secondary font-bold border-b-2 border-secondary pb-1 font-title-md text-title-md"
+            href="#"
+            >ติดต่อเรา</a
+          >
+        </nav>
+        <button
+          class="bg-primary text-on-primary px-6 py-2 rounded-lg font-title-md text-title-md hover:bg-primary-container transition-all active:scale-95"
+        >
+          เข้าสู่ระบบ
+        </button>
+      </div>
+    </header>
+    <main class="min-h-screen">
+      <!-- Hero Section / Title -->
+      <section
+        class="py-16 px-margin-mobile md:px-margin-desktop max-w-container-max mx-auto text-center"
+      >
+        <h1 class="font-display-lg text-display-lg text-primary mb-4">
+          ติดต่อเรา
+        </h1>
+        <p
+          class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl mx-auto"
+        >
+          หากท่านมีข้อสงสัยหรือต้องการข้อมูลเพิ่มเติมเกี่ยวกับหลักปรัชญาเศรษฐกิจพอเพียงและศาสตร์พระราชา
+          สามารถติดต่อเราได้ผ่านช่องทางต่างๆ ด้านล่างนี้
+        </p>
+      </section>
+      <!-- Two Column Contact Layout -->
+      <section
+        class="px-margin-mobile md:px-margin-desktop max-w-container-max mx-auto pb-section-gap"
+      >
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-gutter items-start">
+          <!-- Left Column: Contact Info -->
+          <div
+            class="md:col-span-5 relative overflow-hidden rounded-xl p-8 md:p-12 bg-primary-container text-on-primary-container shadow-lg min-h-[500px] flex flex-col justify-between"
+          >
+            <!-- Subtle Organic Background Mask -->
+            <div
+              class="absolute inset-0 opacity-10 thai-pattern pointer-events-none"
+            ></div>
+            <div class="relative z-10">
+              <h2
+                class="font-headline-lg text-headline-lg text-primary-fixed mb-10"
+              >
+                ข้อมูลการติดต่อ
+              </h2>
+              <div class="space-y-8">
+                <div class="flex items-start gap-4">
+                  <div
+                    class="bg-secondary-fixed-dim/20 p-3 rounded-lg text-secondary-fixed"
+                  >
+                    <span
+                      class="material-symbols-outlined text-[28px]"
+                      data-icon="location_on"
+                      >location_on</span
+                    >
+                  </div>
+                  <div>
+                    <h3 class="font-title-md text-title-md text-white mb-1">
+                      ที่อยู่สถาบัน
+                    </h3>
+                    <p class="font-body-md text-body-md text-primary-fixed/80">
+                      99 หมู่ 1 ถนนพหลโยธิน แขวงลาดยาว เขตจตุจักร กรุงเทพมหานคร
+                      10900
+                    </p>
+                  </div>
+                </div>
+                <div class="flex items-start gap-4">
+                  <div
+                    class="bg-secondary-fixed-dim/20 p-3 rounded-lg text-secondary-fixed"
+                  >
+                    <span
+                      class="material-symbols-outlined text-[28px]"
+                      data-icon="call"
+                      >call</span
+                    >
+                  </div>
+                  <div>
+                    <h3 class="font-title-md text-title-md text-white mb-1">
+                      เบอร์โทรศัพท์
+                    </h3>
+                    <p class="font-body-md text-body-md text-primary-fixed/80">
+                      02-123-4567, 02-987-6543
+                    </p>
+                  </div>
+                </div>
+                <div class="flex items-start gap-4">
+                  <div
+                    class="bg-secondary-fixed-dim/20 p-3 rounded-lg text-secondary-fixed"
+                  >
+                    <span
+                      class="material-symbols-outlined text-[28px]"
+                      data-icon="mail"
+                      >mail</span
+                    >
+                  </div>
+                  <div>
+                    <h3 class="font-title-md text-title-md text-white mb-1">
+                      อีเมล
+                    </h3>
+                    <p class="font-body-md text-body-md text-primary-fixed/80">
+                      info@sufficiency.or.th
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="relative z-10">
+              <h3 class="font-title-md text-title-md text-white mb-4">
+                ติดตามเรา
+              </h3>
+              <div class="flex gap-4">
+                <a
+                  class="bg-white/10 hover:bg-white/20 transition-colors p-3 rounded-full flex items-center justify-center"
+                  href="#"
+                >
+                  <span
+                    class="material-symbols-outlined text-white"
+                    data-icon="public"
+                    >public</span
+                  >
+                </a>
+                <a
+                  class="bg-white/10 hover:bg-white/20 transition-colors p-3 rounded-full flex items-center justify-center"
+                  href="#"
+                >
+                  <span
+                    class="material-symbols-outlined text-white"
+                    data-icon="share"
+                    >share</span
+                  >
+                </a>
+              </div>
+            </div>
+          </div>
+          <!-- Right Column: Contact Form Card -->
+          <div class="md:col-span-7">
+            <div
+              class="bg-surface-container-lowest rounded-xl p-8 md:p-12 shadow-sm border border-outline-variant/30"
+            >
+              <div class="mb-8">
+                <h2 class="font-headline-lg text-headline-lg text-primary mb-2">
+                  ส่งข้อความถึงเรา
+                </h2>
+                <p class="text-on-surface-variant">
+                  กรอกข้อมูลด้านล่างเพื่อให้เจ้าหน้าที่ติดต่อกลับโดยเร็วที่สุด
+                </p>
+              </div>
+              <form class="space-y-6">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                  <div class="space-y-2">
+                    <label
+                      class="font-title-md text-title-md text-on-surface ml-1"
+                      >ชื่อ-นามสกุล</label
+                    >
+                    <input
+                      class="w-full bg-surface-container-low border border-outline-variant rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-secondary/50 focus:border-secondary transition-all"
+                      placeholder="ระบุชื่อจริงและนามสกุล"
+                      type="text"
+                    />
+                  </div>
+                  <div class="space-y-2">
+                    <label
+                      class="font-title-md text-title-md text-on-surface ml-1"
+                      >เบอร์โทรศัพท์</label
+                    >
+                    <input
+                      class="w-full bg-surface-container-low border border-outline-variant rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-secondary/50 focus:border-secondary transition-all"
+                      placeholder="08X-XXX-XXXX"
+                      type="tel"
+                    />
+                  </div>
+                </div>
+                <div class="space-y-2">
+                  <label
+                    class="font-title-md text-title-md text-on-surface ml-1"
+                    >อีเมล</label
+                  >
+                  <input
+                    class="w-full bg-surface-container-low border border-outline-variant rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-secondary/50 focus:border-secondary transition-all"
+                    placeholder="example@email.com"
+                    type="email"
+                  />
+                </div>
+                <div class="space-y-2">
+                  <label
+                    class="font-title-md text-title-md text-on-surface ml-1"
+                    >หัวข้อที่ต้องการติดต่อ</label
+                  >
+                  <select
+                    class="w-full bg-surface-container-low border border-outline-variant rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-secondary/50 focus:border-secondary transition-all appearance-none"
+                  >
+                    <option value="">เลือกหัวข้อการติดต่อ</option>
+                    <option value="1">สอบถามข้อมูลโครงการ</option>
+                    <option value="2">สมัครสมาชิก/ร่วมกิจกรรม</option>
+                    <option value="3">แจ้งปัญหาการใช้งานเว็บไซต์</option>
+                    <option value="4">อื่นๆ</option>
+                  </select>
+                </div>
+                <div class="space-y-2">
+                  <label
+                    class="font-title-md text-title-md text-on-surface ml-1"
+                    >รายละเอียดข้อความ</label
+                  >
+                  <textarea
+                    class="w-full bg-surface-container-low border border-outline-variant rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-secondary/50 focus:border-secondary transition-all resize-none"
+                    placeholder="พิมพ์ข้อความที่ท่านต้องการติดต่อเรา..."
+                    rows="4"
+                  ></textarea>
+                </div>
+                <button
+                  class="w-full bg-secondary text-white font-title-md text-title-md py-4 rounded-lg shadow-md hover:bg-primary transition-all hover:-translate-y-0.5 active:translate-y-0 flex items-center justify-center gap-2"
+                  type="submit"
+                >
+                  <span class="material-symbols-outlined" data-icon="send"
+                    >send</span
+                  >
+                  ส่งข้อความ
+                </button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </section>
+      <!-- Map Section -->
+      <section class="w-full h-[400px] relative">
+        <div
+          class="absolute inset-0 bg-surface-variant flex items-center justify-center"
+        >
+          <img
+            class="w-full h-full object-cover"
+            data-alt="A detailed, modern digital map visualization showing the urban layout of Bangkok, Thailand, emphasizing the green spaces and water bodies. The map uses a sophisticated color palette of deep forest greens and soft creams to match the corporate brand identity. Soft sunlight filters over the map, creating a professional and welcoming atmosphere for an institutional website location section."
+            data-location="Bangkok"
+            src="https://lh3.googleusercontent.com/aida-public/AB6AXuCgCZk7Yx9ARtcYwFQ-HJa499iziQ2G6Qyzy7K8sPr7rl3G1GC1C1iPoosYrUpl8aUJCrTIocAPg3dL26C5nlpDYuOVh08T3hHfF-R3yuu-0JvVfn9l4v5ESkyqlH1MYVVSfgghdBGm1myVhmgKPB3ETvzLqJ05XSwj19X953TbFacC4bSnPLCiVgGE5kqoEVdryzW7Wrn_TT_lntKw6r7plwd_DIhPLqPQInymu3PGvomPD9UDK7AngoR21z247LZqXLtjdRGoOGA7"
+          />
+          <div class="absolute inset-0 bg-primary/20"></div>
+          <div
+            class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white p-4 rounded-xl shadow-xl flex items-center gap-3"
+          >
+            <div class="bg-secondary p-2 rounded-full text-white">
+              <span
+                class="material-symbols-outlined"
+                data-icon="location_on"
+                style="font-variation-settings: &quot;FILL&quot; 1"
+                >location_on</span
+              >
+            </div>
+            <div>
+              <p class="font-bold text-primary">สถาบันศาสตร์พระราชา</p>
+              <p class="text-xs text-on-surface-variant">กรุงเทพมหานคร</p>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+    <!-- Footer -->
+    <footer
+      class="bg-primary dark:bg-surface-container-highest border-t-4 border-secondary text-on-primary dark:text-on-surface"
+    >
+      <div
+        class="flex flex-col md:flex-row justify-between items-center px-margin-desktop py-12 w-full max-w-container-max mx-auto gap-8"
+      >
+        <div class="flex flex-col items-center md:items-start gap-4">
+          <div class="font-title-md text-title-md text-secondary-fixed">
+            เศรษฐกิจพอเพียง
+          </div>
+          <p
+            class="font-body-md text-body-md opacity-80 text-center md:text-left max-w-md"
+          >
+            สถาบันมุ่งเน้นการเผยแพร่ความรู้ตามหลักปรัชญาเศรษฐกิจพอเพียง
+            เพื่อความยั่งยืนของสังคมไทยในทุกมิติ
+          </p>
+        </div>
+        <div class="flex flex-col items-center md:items-end gap-6">
+          <nav class="flex flex-wrap justify-center gap-6">
+            <a
+              class="font-body-md text-body-md text-on-primary dark:text-on-surface opacity-80 hover:opacity-100 hover:text-secondary-fixed transition-opacity duration-300"
+              href="#"
+              >นโยบายความเป็นส่วนตัว</a
+            >
+            <a
+              class="font-body-md text-body-md text-on-primary dark:text-on-surface opacity-80 hover:opacity-100 hover:text-secondary-fixed transition-opacity duration-300"
+              href="#"
+              >ข้อกำหนดการใช้งาน</a
+            >
+            <a
+              class="font-body-md text-body-md text-on-primary dark:text-on-surface opacity-80 hover:opacity-100 hover:text-secondary-fixed transition-opacity duration-300"
+              href="#"
+              >แผนผังเว็บไซต์</a
+            >
+          </nav>
+          <div class="font-body-md text-body-md opacity-60">
+            © 2024 สถาบันศาสตร์พระราชาและปรัชญาเศรษฐกิจพอเพียง
+          </div>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>
+
+<!-- Design System -->
+<!doctype html>
+
+<html class="light" lang="th">
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>ติดต่อเรา - สถาบันเศรษฐกิจพอเพียง</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Sarabun:wght@100;200;300;400;500;600;700;800&amp;family=Inter:wght@100..900&amp;display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+      rel="stylesheet"
+    />
+    <script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "surface-container-lowest": "#ffffff",
+              primary: "#173124",
+              outline: "#727973",
+              "on-primary-fixed-variant": "#324c3e",
+              secondary: "#006d33",
+              "tertiary-container": "#5a3939",
+              "surface-container": "#efeeeb",
+              "surface-container-low": "#f4f3f1",
+              "error-container": "#ffdad6",
+              "outline-variant": "#c2c8c2",
+              "on-tertiary-fixed-variant": "#603e3e",
+              tertiary: "#412424",
+              "tertiary-fixed": "#ffdad9",
+              "on-error-container": "#93000a",
+              "surface-container-high": "#e9e8e5",
+              "on-secondary-fixed-variant": "#005225",
+              "on-surface": "#1a1c1b",
+              "tertiary-fixed-dim": "#eabbba",
+              "on-primary-fixed": "#062014",
+              "on-secondary": "#ffffff",
+              "inverse-surface": "#2f312f",
+              "secondary-fixed": "#78fc9c",
+              error: "#ba1a1a",
+              "surface-bright": "#faf9f6",
+              "surface-dim": "#dadad7",
+              "on-tertiary": "#ffffff",
+              "surface-tint": "#496455",
+              "on-primary": "#ffffff",
+              "on-tertiary-container": "#d0a3a3",
+              "primary-container": "#2d4739",
+              "secondary-container": "#75f999",
+              "inverse-on-surface": "#f1f1ee",
+              "primary-fixed": "#ccead6",
+              "inverse-primary": "#b0cdbb",
+              "on-surface-variant": "#424844",
+              "surface-variant": "#e3e2e0",
+              "primary-fixed-dim": "#b0cdbb",
+              "secondary-fixed-dim": "#5adf82",
+              "on-secondary-fixed": "#00210b",
+              background: "#faf9f6",
+              "on-secondary-container": "#007236",
+              "on-background": "#1a1c1b",
+              "surface-container-highest": "#e3e2e0",
+              surface: "#faf9f6",
+              "on-primary-container": "#98b5a3",
+              "on-error": "#ffffff",
+              "on-tertiary-fixed": "#2e1414",
+            },
+            borderRadius: {
+              DEFAULT: "0.25rem",
+              lg: "0.5rem",
+              xl: "0.75rem",
+              full: "9999px",
+            },
+            spacing: {
+              "margin-mobile": "20px",
+              "section-gap": "80px",
+              "container-max": "1200px",
+              gutter: "24px",
+              base: "8px",
+              "margin-desktop": "64px",
+            },
+            fontFamily: {
+              "title-md": ["Sarabun"],
+              "label-sm": ["Inter"],
+              "display-lg": ["Sarabun"],
+              "body-md": ["Sarabun"],
+              "headline-lg": ["Sarabun"],
+              "headline-lg-mobile": ["Sarabun"],
+              "body-lg": ["Sarabun"],
+            },
+            fontSize: {
+              "title-md": ["20px", { lineHeight: "28px", fontWeight: "500" }],
+              "label-sm": [
+                "14px",
+                {
+                  lineHeight: "20px",
+                  letterSpacing: "0.01em",
+                  fontWeight: "500",
+                },
+              ],
+              "display-lg": [
+                "48px",
+                {
+                  lineHeight: "60px",
+                  letterSpacing: "-0.02em",
+                  fontWeight: "700",
+                },
+              ],
+              "body-md": ["16px", { lineHeight: "26px", fontWeight: "400" }],
+              "headline-lg": [
+                "32px",
+                { lineHeight: "40px", fontWeight: "600" },
+              ],
+              "headline-lg-mobile": [
+                "28px",
+                { lineHeight: "36px", fontWeight: "600" },
+              ],
+              "body-lg": ["18px", { lineHeight: "30px", fontWeight: "400" }],
+            },
+          },
+        },
+      };
+    </script>
+    <style>
+      .thai-pattern-bg {
+        background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 0l2.5 7.5L40 10l-7.5 2.5L30 20l-2.5-7.5L20 10l7.5-2.5L30 0z' fill='%23173124' fill-opacity='0.03'/%3E%3C/svg%3E");
+      }
+      .material-symbols-outlined {
+        font-variation-settings:
+          "FILL" 0,
+          "wght" 400,
+          "GRAD" 0,
+          "opsz" 24;
+      }
+    </style>
+  </head>
+  <body class="bg-background text-on-background thai-pattern-bg">
+    <!-- TopAppBar -->
+    <header
+      class="bg-surface-bright dark:bg-surface-dim shadow-sm sticky top-0 z-50"
+    >
+      <nav
+        class="flex justify-between items-center px-margin-desktop py-4 w-full max-w-container-max mx-auto"
+      >
+        <div
+          class="font-headline-lg text-headline-lg text-primary dark:text-primary-fixed font-bold tracking-tight"
+        >
+          เศรษฐกิจพอเพียง
+        </div>
+        <div class="hidden md:flex items-center gap-8">
+          <a
+            class="text-on-surface-variant dark:text-outline-variant hover:text-secondary transition-colors duration-200 font-title-md text-title-md"
+            href="#"
+            >หน้าแรก</a
+          >
+          <a
+            class="text-on-surface-variant dark:text-outline-variant hover:text-secondary transition-colors duration-200 font-title-md text-title-md"
+            href="#"
+            >เกี่ยวกับเรา</a
+          >
+          <a
+            class="text-on-surface-variant dark:text-outline-variant hover:text-secondary transition-colors duration-200 font-title-md text-title-md"
+            href="#"
+            >ศาสตร์พระราชา</a
+          >
+          <a
+            class="text-on-surface-variant dark:text-outline-variant hover:text-secondary transition-colors duration-200 font-title-md text-title-md"
+            href="#"
+            >โครงการ</a
+          >
+          <a
+            class="text-secondary font-bold border-b-2 border-secondary pb-1 font-title-md text-title-md"
+            href="#"
+            >ติดต่อเรา</a
+          >
+        </div>
+        <button
+          class="bg-primary text-on-primary px-6 py-2 rounded-lg font-title-md text-title-md hover:opacity-90 transition-all active:scale-95"
+        >
+          เข้าสู่ระบบ
+        </button>
+      </nav>
+    </header>
+    <main>
+      <!-- Immersive Hero Section -->
+      <section
+        class="relative h-[716px] w-full flex items-center justify-center overflow-hidden"
+      >
+        <div class="absolute inset-0 z-0">
+          <img
+            alt="สถาบันเศรษฐกิจพอเพียง"
+            class="w-full h-full object-cover brightness-50"
+            data-alt="A breathtaking panoramic view of a lush green rice terrace field in Thailand during the golden hour. The soft sunlight bathes the emerald green mountains and terraced valleys in a warm, ethereal glow. The atmosphere is serene and grounded, reflecting the principles of sustainable agriculture and royal projects. The visual style is high-end corporate photography with natural textures and vibrant green tones consistent with the Leaf Green brand identity."
+            src="https://lh3.googleusercontent.com/aida-public/AB6AXuCSYwPC8mwu0fQERDLo-eueijhe_JY7fxJ-4BpaZTVWX1EhcI-x4ZVcHmfkFmy01qwW-cBQYFJwe4QnHSPbz0sW3xwPMNlIcb7V27ZnqkI8b_k2d0pmvFA9QYddpLS_nmdcO-HEnvVTQ9QyhOFXwB2wfi6EuGDWUkMAMWndi_2TSdUj2Imt3R4TLIVPjmYrSFDLu13CiqVAKRAoB7IJGUcpQDGYuCfDDulg3UmGuP-Ir4EBYZ4C-eCuRBJQrdvBbfUiYvCwTq6IMHsd"
+          />
+        </div>
+        <div class="relative z-10 text-center px-margin-mobile max-w-4xl">
+          <h1 class="font-display-lg text-display-lg text-white mb-6">
+            ติดต่อสถาบันเศรษฐกิจพอเพียง
+          </h1>
+          <p class="font-body-lg text-body-lg text-white/90 max-w-2xl mx-auto">
+            ร่วมสืบสานศาสตร์พระราชาและปรัชญาเศรษฐกิจพอเพียง
+            เพื่อความยั่งยืนของสังคมไทย
+            หากท่านมีข้อสงสัยหรือความประสงค์ที่จะร่วมงานกับเรา
+            สามารถส่งรายละเอียดได้ที่นี่
+          </p>
+        </div>
+        <!-- Organic Pattern Overlay -->
+        <div
+          class="absolute bottom-0 left-0 w-full h-16 bg-gradient-to-t from-background to-transparent"
+        ></div>
+      </section>
+      <!-- Form Section -->
+      <section class="py-section-gap px-margin-mobile">
+        <div class="max-w-4xl mx-auto">
+          <div
+            class="bg-surface-container-lowest rounded-xl shadow-sm p-8 md:p-16 border border-outline-variant/30"
+          >
+            <div class="text-center mb-12">
+              <span
+                class="font-label-sm text-label-sm text-secondary uppercase tracking-widest mb-4 inline-block"
+                >Contact Form</span
+              >
+              <h2 class="font-headline-lg text-headline-lg text-primary mb-4">
+                ส่งข้อความถึงเรา
+              </h2>
+              <div class="w-16 h-1 bg-secondary mx-auto rounded-full"></div>
+            </div>
+            <form action="#" class="space-y-8">
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-gutter">
+                <div class="space-y-2">
+                  <label
+                    class="font-title-md text-title-md text-on-surface"
+                    for="fullname"
+                    >ชื่อ-นามสกุล</label
+                  >
+                  <input
+                    class="w-full bg-surface-container-low border-outline-variant focus:border-secondary focus:ring-0 rounded-lg py-3 px-4 font-body-md text-body-md transition-all"
+                    id="fullname"
+                    placeholder="ระบุชื่อจริงของท่าน"
+                    type="text"
+                  />
+                </div>
+                <div class="space-y-2">
+                  <label
+                    class="font-title-md text-title-md text-on-surface"
+                    for="email"
+                    >อีเมลติดต่อ</label
+                  >
+                  <input
+                    class="w-full bg-surface-container-low border-outline-variant focus:border-secondary focus:ring-0 rounded-lg py-3 px-4 font-body-md text-body-md transition-all"
+                    id="email"
+                    placeholder="example@mail.com"
+                    type="email"
+                  />
+                </div>
+              </div>
+              <div class="space-y-2">
+                <label
+                  class="font-title-md text-title-md text-on-surface"
+                  for="subject"
+                  >หัวเรื่อง</label
+                >
+                <select
+                  class="w-full bg-surface-container-low border-outline-variant focus:border-secondary focus:ring-0 rounded-lg py-3 px-4 font-body-md text-body-md transition-all"
+                  id="subject"
+                >
+                  <option value="general">สอบถามข้อมูลทั่วไป</option>
+                  <option value="project">ความร่วมมือด้านโครงการ</option>
+                  <option value="education">การศึกษาและดูงาน</option>
+                  <option value="other">อื่นๆ</option>
+                </select>
+              </div>
+              <div class="space-y-2">
+                <label
+                  class="font-title-md text-title-md text-on-surface"
+                  for="message"
+                  >รายละเอียด</label
+                >
+                <textarea
+                  class="w-full bg-surface-container-low border-outline-variant focus:border-secondary focus:ring-0 rounded-lg py-3 px-4 font-body-md text-body-md transition-all"
+                  id="message"
+                  placeholder="กรุณาระบุรายละเอียดข้อความของท่าน..."
+                  rows="6"
+                ></textarea>
+              </div>
+              <div class="pt-4">
+                <button
+                  class="w-full md:w-auto px-12 py-4 bg-primary text-on-primary rounded-lg font-title-md text-title-md shadow-sm hover:bg-primary-container transition-all flex items-center justify-center gap-3"
+                  type="submit"
+                >
+                  <span>ส่งข้อความ</span>
+                  <span class="material-symbols-outlined">send</span>
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </section>
+      <!-- Info Grid -->
+      <section class="pb-section-gap px-margin-mobile">
+        <div
+          class="max-w-container-max mx-auto grid grid-cols-1 md:grid-cols-3 gap-8"
+        >
+          <!-- Location Card -->
+          <div
+            class="bg-white p-8 rounded-xl shadow-sm border border-outline-variant/20 flex flex-col items-center text-center"
+          >
+            <div
+              class="w-12 h-12 bg-secondary/10 text-secondary rounded-full flex items-center justify-center mb-6"
+            >
+              <span
+                class="material-symbols-outlined"
+                style="font-variation-settings: &quot;FILL&quot; 1"
+                >location_on</span
+              >
+            </div>
+            <h3 class="font-title-md text-title-md text-primary mb-2">
+              ที่อยู่สถาบัน
+            </h3>
+            <p class="font-body-md text-body-md text-on-surface-variant">
+              123 ถนนราชดำเนินกลาง แขวงบวรนิเวศ เขตพระนคร กรุงเทพมหานคร 10200
+            </p>
+          </div>
+          <!-- Call Card -->
+          <div
+            class="bg-white p-8 rounded-xl shadow-sm border border-outline-variant/20 flex flex-col items-center text-center"
+          >
+            <div
+              class="w-12 h-12 bg-secondary/10 text-secondary rounded-full flex items-center justify-center mb-6"
+            >
+              <span
+                class="material-symbols-outlined"
+                style="font-variation-settings: &quot;FILL&quot; 1"
+                >call</span
+              >
+            </div>
+            <h3 class="font-title-md text-title-md text-primary mb-2">
+              เบอร์โทรศัพท์
+            </h3>
+            <p class="font-body-md text-body-md text-on-surface-variant">
+              โทร: 02-123-4567<br />แฟกซ์: 02-123-4568
+            </p>
+          </div>
+          <!-- Hours Card -->
+          <div
+            class="bg-white p-8 rounded-xl shadow-sm border border-outline-variant/20 flex flex-col items-center text-center"
+          >
+            <div
+              class="w-12 h-12 bg-secondary/10 text-secondary rounded-full flex items-center justify-center mb-6"
+            >
+              <span
+                class="material-symbols-outlined"
+                style="font-variation-settings: &quot;FILL&quot; 1"
+                >schedule</span
+              >
+            </div>
+            <h3 class="font-title-md text-title-md text-primary mb-2">
+              เวลาทำการ
+            </h3>
+            <p class="font-body-md text-body-md text-on-surface-variant">
+              วันจันทร์ - ศุกร์<br />08.30 น. - 16.30 น.
+            </p>
+          </div>
+        </div>
+      </section>
+      <!-- Map Placeholder -->
+      <section class="w-full h-[400px] bg-surface-container grayscale">
+        <div class="w-full h-full flex items-center justify-center relative">
+          <img
+            alt="Map Location"
+            class="absolute inset-0 w-full h-full object-cover opacity-30"
+            data-alt="A clean, minimalist topographical map illustration of a city district with soft green and cream accents. The aesthetic is modern corporate, avoiding visual noise. Soft ambient lighting illuminates the subtle elevation lines. The style is professional and informative, acting as a background for location information with a clear Leaf Green marker."
+            data-location="Bangkok, Thailand"
+            src="https://lh3.googleusercontent.com/aida-public/AB6AXuDdn6NcfzwSBNgYesu4o7KmvcG9uMEhD_ZGPv0iCxkAngqsduQlFdjYhbnpzpDHwtGUxcglGCI34jZiCz4bwpIcje5zbBUp9FIjrg1ZOEK6WEERqGBdW-A_YpIL9GtdlR5pKcmJ8hUN4eAIeR1MtbBU5Ko2nt_FVlImUhILPfKJQjSD9YMDt9iejv8Pu84dSTXHix8ybyhblhWLRUYXZZhMX6u83glaEYRN8ZgaoGhlWdKbcOPcrxZYzEVZWGahX5W7H2mP-b0467X3"
+          />
+          <div class="z-10 bg-white p-6 rounded-lg shadow-xl text-center">
+            <span
+              class="material-symbols-outlined text-secondary text-5xl mb-2"
+              style="font-variation-settings: &quot;FILL&quot; 1"
+              >location_on</span
+            >
+            <p class="font-title-md text-title-md text-primary font-bold">
+              ที่ตั้งสถาบันฯ
+            </p>
+          </div>
+        </div>
+      </section>
+    </main>
+    <!-- Footer -->
+    <footer
+      class="bg-primary dark:bg-surface-container-highest border-t-4 border-secondary"
+    >
+      <div
+        class="flex flex-col md:flex-row justify-between items-center px-margin-desktop py-12 w-full max-w-container-max mx-auto"
+      >
+        <div class="mb-8 md:mb-0">
+          <div
+            class="font-title-md text-title-md text-secondary-fixed font-bold mb-4"
+          >
+            เศรษฐกิจพอเพียง
+          </div>
+          <div class="flex flex-col gap-2">
+            <a
+              class="text-on-primary dark:text-on-surface opacity-80 hover:opacity-100 hover:text-secondary-fixed transition-opacity duration-300 font-body-md text-body-md"
+              href="#"
+              >นโยบายความเป็นส่วนตัว</a
+            >
+            <a
+              class="text-on-primary dark:text-on-surface opacity-80 hover:opacity-100 hover:text-secondary-fixed transition-opacity duration-300 font-body-md text-body-md"
+              href="#"
+              >ข้อกำหนดการใช้งาน</a
+            >
+            <a
+              class="text-on-primary dark:text-on-surface opacity-80 hover:opacity-100 hover:text-secondary-fixed transition-opacity duration-300 font-body-md text-body-md"
+              href="#"
+              >แผนผังเว็บไซต์</a
+            >
+          </div>
+        </div>
+        <div class="text-center md:text-right">
+          <p
+            class="text-on-primary dark:text-on-surface font-body-md text-body-md opacity-80 mb-6"
+          >
+            © 2024 สถาบันศาสตร์พระราชาและปรัชญาเศรษฐกิจพอเพียง
+          </p>
+          <div class="flex gap-4 justify-center md:justify-end">
+            <a
+              class="w-10 h-10 rounded-full border border-on-primary/20 flex items-center justify-center text-on-primary hover:bg-secondary-fixed hover:text-primary transition-all"
+              href="#"
+            >
+              <span class="material-symbols-outlined">Notebook</span>
+            </a>
+            <a
+              class="w-10 h-10 rounded-full border border-on-primary/20 flex items-center justify-center text-on-primary hover:bg-secondary-fixed hover:text-primary transition-all"
+              href="#"
+            >
+              <span class="material-symbols-outlined">share</span>
+            </a>
+          </div>
+        </div>
+      </div>
+      <!-- Decorative Thai Pattern Stripe -->
+      <div class="h-1 bg-secondary w-full opacity-30"></div>
+    </footer>
+  </body>
+</html>
