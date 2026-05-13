@@ -13,16 +13,16 @@ export default function LoginPage() {
     const handleRegister = () => console.log('Register:', registerForm)
 
     return (
-        <div className="min-h-screen bg-[linear-gradient(135deg,#e8ede5_0%,#d4dece_50%,#eaf0e6_100%)] flex items-center justify-center font-['Nunito'] p-4">
+        <div className="h-screen flex items-center justify-center font-['Nunito'] p-4">
             <div className="auth-card relative w-[820px] min-h-[520px] rounded-[30px] overflow-hidden bg-white shadow-[0_24px_64px_rgba(64,78,59,0.15)]">
-                
+
                 {/* Forms Container */}
                 <div className="absolute inset-0 flex">
-                    
+
                     {/* LEFT: Sign In */}
                     <div className="w-1/2 h-full flex flex-col items-center justify-center px-11 py-13 bg-white">
                         <h2 className="text-2xl font-bold text-forest-green mb-5 tracking-tight">Sign In</h2>
-                        
+
                         <div className="flex gap-2.5 mb-4">
                             <SocialButton title="Google" icon={<GoogleIcon />} />
                             <SocialButton title="Facebook" icon={<FacebookIcon />} className="bg-[#1877F2] border-[#1877F2]" />
@@ -31,15 +31,15 @@ export default function LoginPage() {
                         </div>
 
                         <p className="text-xs text-muted-text mb-4">or use your email password</p>
-                        
+
                         <div className="w-full space-y-3">
                             <InputField name="email" value={loginForm.email} onChange={handleLoginChange} placeholder="Email" />
                             <div className="relative">
-                                <InputField 
-                                    name="password" 
-                                    value={loginForm.password} 
-                                    onChange={handleLoginChange} 
-                                    placeholder="Password" 
+                                <InputField
+                                    name="password"
+                                    value={loginForm.password}
+                                    onChange={handleLoginChange}
+                                    placeholder="Password"
                                     type={showPassword ? 'text' : 'password'}
                                     className="pr-10"
                                 />
@@ -58,7 +58,7 @@ export default function LoginPage() {
                     {/* RIGHT: Sign Up */}
                     <div className="w-1/2 h-full flex flex-col items-center justify-center px-11 py-13 bg-white">
                         <h2 className="text-2xl font-bold text-forest-green mb-5 tracking-tight">Create Account</h2>
-                        
+
                         <div className="flex gap-2.5 mb-4">
                             <SocialButton title="Google" icon={<GoogleIcon />} />
                             <SocialButton title="Facebook" icon={<FacebookIcon />} className="bg-[#1877F2] border-[#1877F2]" />
@@ -67,7 +67,7 @@ export default function LoginPage() {
                         </div>
 
                         <p className="text-xs text-muted-text mb-4">or use your email for registration</p>
-                        
+
                         <div className="w-full space-y-3">
                             <InputField name="name" value={registerForm.name} onChange={handleRegisterChange} placeholder="Full Name" />
                             <InputField name="email" value={registerForm.email} onChange={handleRegisterChange} placeholder="Email" />
@@ -81,7 +81,7 @@ export default function LoginPage() {
                 </div>
 
                 {/* Sliding Overlay */}
-                <div 
+                <div
                     className={`absolute top-0 w-1/2 h-full z-10 bg-gradient-to-br from-forest-green to-[#2e3828] flex flex-col items-center justify-center px-10 text-center text-white transition-all duration-700 ease-in-out overflow-hidden
                         ${isRegister ? 'left-0 rounded-r-[30px] rounded-l-[30px] ' : 'left-1/2 rounded-l-[30px] rounded-r-[30px]'}`}
                 >
@@ -94,11 +94,11 @@ export default function LoginPage() {
                             {isRegister ? 'Hello, Friend!' : 'Welcome Back!'}
                         </h3>
                         <p className="text-sm leading-relaxed text-white/80 mb-8">
-                            {isRegister 
-                                ? 'Register with your personal details to use all of the site features.' 
+                            {isRegister
+                                ? 'Register with your personal details to use all of the site features.'
                                 : 'Already have an account? Sign in to continue where you left off.'}
                         </p>
-                        <button 
+                        <button
                             className="px-10 py-2.5 border-2 border-gold text-gold rounded-sm text-[0.82rem] font-bold tracking-widest hover:bg-gold hover:text-forest-green transition-colors"
                             onClick={() => setIsRegister(!isRegister)}
                         >
@@ -119,23 +119,23 @@ const SocialButton = ({ icon, title, className = "" }) => (
 )
 
 const InputField = ({ className = "", ...props }) => (
-    <input 
+    <input
         className={`w-full px-4 py-3 rounded-sm border-1.5 border-green-light bg-[#f7f9f6] text-sm text-forest-green outline-none focus:border-green focus:shadow-[0_0_0_3px_rgba(123,150,105,0.15)] focus:bg-white transition-all placeholder:text-muted-text ${className}`}
-        {...props} 
+        {...props}
     />
 )
 
 // Icons
 const GoogleIcon = () => (
     <svg width="18" height="18" viewBox="0 0 48 48">
-        <path fill="#EA4335" d="M24 9.5c3.1 0 5.9 1.1 8.1 2.9l6-6C34.5 3.1 29.5 1 24 1 14.9 1 7.2 6.4 3.8 14l7 5.4C12.5 13.3 17.8 9.5 24 9.5z"/>
-        <path fill="#4285F4" d="M46.1 24.5c0-1.6-.1-3.1-.4-4.5H24v8.5h12.4c-.5 2.8-2.1 5.2-4.5 6.8l7 5.4c4.1-3.8 6.5-9.4 6.5-16.2z"/>
-        <path fill="#FBBC05" d="M10.8 28.6A14.5 14.5 0 0 1 9.5 24c0-1.6.3-3.2.8-4.6l-7-5.4A23 23 0 0 0 1 24c0 3.7.9 7.2 2.5 10.3l7.3-5.7z"/>
-        <path fill="#34A853" d="M24 47c5.5 0 10.1-1.8 13.5-4.9l-7-5.4c-1.8 1.2-4.1 2-6.5 2-6.2 0-11.5-3.8-13.2-9.1l-7.3 5.7C7.2 41.6 14.9 47 24 47z"/>
+        <path fill="#EA4335" d="M24 9.5c3.1 0 5.9 1.1 8.1 2.9l6-6C34.5 3.1 29.5 1 24 1 14.9 1 7.2 6.4 3.8 14l7 5.4C12.5 13.3 17.8 9.5 24 9.5z" />
+        <path fill="#4285F4" d="M46.1 24.5c0-1.6-.1-3.1-.4-4.5H24v8.5h12.4c-.5 2.8-2.1 5.2-4.5 6.8l7 5.4c4.1-3.8 6.5-9.4 6.5-16.2z" />
+        <path fill="#FBBC05" d="M10.8 28.6A14.5 14.5 0 0 1 9.5 24c0-1.6.3-3.2.8-4.6l-7-5.4A23 23 0 0 0 1 24c0 3.7.9 7.2 2.5 10.3l7.3-5.7z" />
+        <path fill="#34A853" d="M24 47c5.5 0 10.1-1.8 13.5-4.9l-7-5.4c-1.8 1.2-4.1 2-6.5 2-6.2 0-11.5-3.8-13.2-9.1l-7.3 5.7C7.2 41.6 14.9 47 24 47z" />
     </svg>
 )
-const FacebookIcon = () => <svg width="18" height="18" viewBox="0 0 24 24" fill="white"><path d="M22 12a10 10 0 1 0-11.56 9.88v-6.99H7.9V12h2.54V9.8c0-2.5 1.49-3.89 3.78-3.89 1.09 0 2.24.2 2.24.2v2.46h-1.26c-1.24 0-1.63.77-1.63 1.56V12h2.77l-.44 2.89h-2.33v6.99A10 10 0 0 0 22 12z"/></svg>
-const GithubIcon = () => <svg width="18" height="18" viewBox="0 0 24 24" fill="#404e3b"><path d="M12 2C6.48 2 2 6.58 2 12.26c0 4.53 2.87 8.37 6.84 9.73.5.09.68-.22.68-.49v-1.71c-2.78.62-3.37-1.37-3.37-1.37-.45-1.17-1.1-1.48-1.1-1.48-.9-.63.07-.62.07-.62 1 .07 1.52 1.05 1.52 1.05.89 1.56 2.33 1.11 2.9.85.09-.66.35-1.11.63-1.37-2.22-.26-4.56-1.14-4.56-5.07 0-1.12.39-2.03 1.03-2.75-.1-.26-.45-1.3.1-2.71 0 0 .84-.28 2.75 1.05A9.3 9.3 0 0 1 12 7.43c.85 0 1.7.12 2.5.34 1.9-1.33 2.74-1.05 2.74-1.05.55 1.41.2 2.45.1 2.71.64.72 1.03 1.63 1.03 2.75 0 3.94-2.34 4.81-4.57 5.06.36.32.68.94.68 1.9v2.82c0 .27.18.59.69.49A10.27 10.27 0 0 0 22 12.26C22 6.58 17.52 2 12 2z"/></svg>
-const LinkedinIcon = () => <svg width="18" height="18" viewBox="0 0 24 24" fill="white"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.03-3.04-1.85-3.04-1.85 0-2.13 1.45-2.13 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.45v6.29zM5.34 7.43a2.07 2.07 0 1 1 0-4.14 2.07 2.07 0 0 1 0 4.14zM7.12 20.45H3.56V9h3.56v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.72v20.56C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.72V1.72C24 .77 23.2 0 22.22 0z"/></svg>
-const EyeIcon = () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
-const EyeOffIcon = () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+const FacebookIcon = () => <svg width="18" height="18" viewBox="0 0 24 24" fill="white"><path d="M22 12a10 10 0 1 0-11.56 9.88v-6.99H7.9V12h2.54V9.8c0-2.5 1.49-3.89 3.78-3.89 1.09 0 2.24.2 2.24.2v2.46h-1.26c-1.24 0-1.63.77-1.63 1.56V12h2.77l-.44 2.89h-2.33v6.99A10 10 0 0 0 22 12z" /></svg>
+const GithubIcon = () => <svg width="18" height="18" viewBox="0 0 24 24" fill="#404e3b"><path d="M12 2C6.48 2 2 6.58 2 12.26c0 4.53 2.87 8.37 6.84 9.73.5.09.68-.22.68-.49v-1.71c-2.78.62-3.37-1.37-3.37-1.37-.45-1.17-1.1-1.48-1.1-1.48-.9-.63.07-.62.07-.62 1 .07 1.52 1.05 1.52 1.05.89 1.56 2.33 1.11 2.9.85.09-.66.35-1.11.63-1.37-2.22-.26-4.56-1.14-4.56-5.07 0-1.12.39-2.03 1.03-2.75-.1-.26-.45-1.3.1-2.71 0 0 .84-.28 2.75 1.05A9.3 9.3 0 0 1 12 7.43c.85 0 1.7.12 2.5.34 1.9-1.33 2.74-1.05 2.74-1.05.55 1.41.2 2.45.1 2.71.64.72 1.03 1.63 1.03 2.75 0 3.94-2.34 4.81-4.57 5.06.36.32.68.94.68 1.9v2.82c0 .27.18.59.69.49A10.27 10.27 0 0 0 22 12.26C22 6.58 17.52 2 12 2z" /></svg>
+const LinkedinIcon = () => <svg width="18" height="18" viewBox="0 0 24 24" fill="white"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.03-3.04-1.85-3.04-1.85 0-2.13 1.45-2.13 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.45v6.29zM5.34 7.43a2.07 2.07 0 1 1 0-4.14 2.07 2.07 0 0 1 0 4.14zM7.12 20.45H3.56V9h3.56v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.72v20.56C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.72V1.72C24 .77 23.2 0 22.22 0z" /></svg>
+const EyeIcon = () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" /><circle cx="12" cy="12" r="3" /></svg>
+const EyeOffIcon = () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94" /><path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19" /><line x1="1" y1="1" x2="23" y2="23" /></svg>

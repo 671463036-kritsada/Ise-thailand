@@ -10,6 +10,9 @@ export default function ProjectsPage() {
   const [projects, setProjects] = useState([])
   const [typeProject, setTypeProject] = useState([])
 
+  // const IMG_BASE = '/images/' ;
+  const BASE_URL = 'http://localhost:2000/uploads/'
+
   useEffect(() => {
     const typeId = searchParams.get('typeId') || ''
     setSelectedTypeId(typeId || 'ทั้งหมด')
@@ -201,10 +204,12 @@ export default function ProjectsPage() {
               onMouseLeave={e => e.currentTarget.style.boxShadow = '0 1px 4px var(--color-shadow)'}
             >
               <img
+                // src={`${IMG_BASE}${project.img_banner}`}
                 src={project.img_banner}
                 alt={project.royal_name}
                 className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
               />
+
 
               {/* Gradient overlay */}
               <div
