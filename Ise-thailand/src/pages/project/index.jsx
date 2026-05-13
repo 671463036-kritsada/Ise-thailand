@@ -1,45 +1,27 @@
-import React, { useState, useMemo, useEffect, useRef } from 'react'
+import React, { useState, useMemo, useEffect } from 'react'
 import { useSearchParams, useNavigate } from 'react-router-dom'
 
 export default function ProjectsPage() {
   const [searchParams, setSearchParams] = useSearchParams()
   const [search, setSearch] = useState('')
   const [selectedTypeId, setSelectedTypeId] = useState('ทั้งหมด')
-  const [dropdownOpen, setDropdownOpen] = useState(false)
-  const dropdownRef = useRef(null)
   const navigate = useNavigate()
 
   const [projects, setProjects] = useState([])
-  const [typeProject, setTypeProject] = useState([]) // [{ type_id, type_name }, ...]
+  const [typeProject, setTypeProject] = useState([])
 
-  // ปิด dropdown เมื่อคลิกข้างนอก
-  useEffect(() => {
-    const handleClickOutside = (e) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
-        setDropdownOpen(false)
-      }
-    }
-    document.addEventListener('mousedown', handleClickOutside)
-    return () => document.removeEventListener('mousedown', handleClickOutside)
-  }, [])
-
-  // sync URL param → state
   useEffect(() => {
     const typeId = searchParams.get('typeId') || ''
     setSelectedTypeId(typeId || 'ทั้งหมด')
   }, [searchParams])
 
-  console.log('select Type id', selectedTypeId);
-
-  // fetch projects
   useEffect(() => {
     const fetchProjects = async () => {
       try {
-        const res = await fetch('http://localhost:2000/api/project/')
+        const res = await fetch('http://localhost:2000/api/royal/')
         if (!res.ok) throw new Error(`HTTP error: ${res.status}`)
         const data = await res.json()
         setProjects(data.data || [])
-        console.log('project data ', data.data)
       } catch (err) {
         console.error('API error:', err)
       }
@@ -47,7 +29,6 @@ export default function ProjectsPage() {
     fetchProjects()
   }, [])
 
-  // fetch types — เก็บ object ไว้เต็มๆ เพื่อใช้ทั้ง type_id และ type_name
   useEffect(() => {
     const fetchTypeProject = async () => {
       try {
@@ -62,18 +43,14 @@ export default function ProjectsPage() {
     fetchTypeProject()
   }, [])
 
-  // filter ด้วย type_id
   const filtered = useMemo(() => {
-    console.log('selectedTypeId:', JSON.stringify(selectedTypeId))
-    console.log('sample type_id:', JSON.stringify(projects[0]?.type_id))
     return projects.filter((p) => {
       const matchType = selectedTypeId === 'ทั้งหมด' || p.type_id === selectedTypeId
-      const matchSearch = (p.name_thai ?? '').toLowerCase().includes(search.toLowerCase())
+      const matchSearch = (p.royal_name ?? '').toLowerCase().includes(search.toLowerCase())
       return matchType && matchSearch
     })
   }, [selectedTypeId, search, projects])
 
-  // label ที่แสดงใน dropdown button
   const selectedLabel = selectedTypeId === 'ทั้งหมด'
     ? 'ทั้งหมด'
     : typeProject.find(t => t.type_id === selectedTypeId)?.type_name ?? 'ทั้งหมด'
@@ -82,7 +59,6 @@ export default function ProjectsPage() {
     setSelectedTypeId(typeId)
     setSearchParams(typeId !== 'ทั้งหมด' ? { typeId } : {})
     setSearch('')
-    setDropdownOpen(false)
   }
 
   return (
@@ -90,184 +66,187 @@ export default function ProjectsPage() {
 
       {/* Page Header */}
       <div className="mb-8">
-        <h1
-          className="font-bold"
-          style={{ color: 'var(--color-text)', fontSize: 'var(--font-size-3xl)', fontWeight: 'var(--font-weight-bold)' }}
-        >
+        <h1 style={{
+          color: 'var(--color-deep-text)',
+          fontSize: 'var(--font-size-3xl)',
+          fontWeight: 'var(--font-weight-bold)',
+        }}>
           โครงการทั้งหมด
         </h1>
+        <p style={{ color: 'var(--color-muted-text)', fontSize: 'var(--font-size-sm)', marginTop: 4 }}>
+          {projects.length} โครงการทั้งหมด
+        </p>
       </div>
 
-      {/* Search + Dropdown */}
-      <div className="flex gap-3 mb-8 items-center">
+      {/* Search */}
+      <div className="relative mb-5">
+        <svg
+          className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 pointer-events-none"
+          style={{ color: 'var(--color-placeholder)' }}
+          fill="none" stroke="currentColor" viewBox="0 0 24 24"
+        >
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+        </svg>
+        <input
+          type="text"
+          placeholder="ค้นหาโครงการ..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          className="w-full pl-11 pr-5 py-3 rounded-2xl focus:outline-none transition-colors"
+          style={{
+            backgroundColor: 'var(--color-surface-2)',
+            border: '1.5px solid var(--color-border)',
+            color: 'var(--color-deep-text)',
+            fontSize: 'var(--font-size-sm)',
+          }}
+          onFocus={e => e.currentTarget.style.borderColor = 'var(--color-border-focus)'}
+          onBlur={e => e.currentTarget.style.borderColor = 'var(--color-border)'}
+        />
+      </div>
 
-        {/* Search */}
-        <div className="relative flex-1">
-          <svg
-            className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 pointer-events-none"
-            style={{ color: 'var(--color-text-muted)' }}
-            fill="none" stroke="currentColor" viewBox="0 0 24 24"
-          >
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-          </svg>
-          <input
-            type="text"
-            placeholder="ค้นหาโครงการ..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="w-full pl-11 pr-5 py-3 rounded-2xl focus:outline-none"
-            style={{
-              backgroundColor: 'var(--color-surface)',
-              border: '1px solid var(--color-primary-light)',
-              color: 'var(--color-text)',
-              fontSize: 'var(--font-size-sm)',
-            }}
-          />
-        </div>
+      {/* Filter Pills */}
+      <div className="flex flex-wrap gap-2 mb-6">
+        {[{ type_id: 'ทั้งหมด', type_name: 'ทั้งหมด' }, ...typeProject].map((t) => {
+          const isSelected = selectedTypeId === t.type_id
+          const count = t.type_id === 'ทั้งหมด'
+            ? projects.length
+            : projects.filter(p => p.type_id === t.type_id).length
 
-        {/* Dropdown */}
-        <div className="relative flex-shrink-0" ref={dropdownRef}>
-          <button
-            onClick={() => setDropdownOpen(o => !o)}
-            className="flex items-center gap-2 px-4 py-3 rounded-2xl transition-colors duration-150"
-            style={{
-              backgroundColor: selectedTypeId !== 'ทั้งหมด' ? 'var(--color-primary-dark)' : 'var(--color-surface)',
-              border: '1px solid var(--color-primary-light)',
-              color: selectedTypeId !== 'ทั้งหมด' ? '#ffffff' : 'var(--color-text)',
-              fontSize: 'var(--font-size-sm)',
-              minWidth: 180,
-            }}
-          >
-            <svg className="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"
-              style={{ color: selectedTypeId !== 'ทั้งหมด' ? '#ffffff' : 'var(--color-text-muted)' }}>
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4h13M3 8h9m-9 4h6m4 0l4-4m0 0l4 4m-4-4v12" />
-            </svg>
-            <span className="flex-1 text-left truncate">{selectedLabel}</span>
-            <svg
-              className="w-4 h-4 flex-shrink-0 transition-transform duration-200"
+          return (
+            <button
+              key={t.type_id}
+              onClick={() => handleSelectType(t.type_id)}
+              className="flex items-center gap-2 px-4 py-2 rounded-full transition-all duration-200"
               style={{
-                transform: dropdownOpen ? 'rotate(180deg)' : 'rotate(0deg)',
-                color: selectedTypeId !== 'ทั้งหมด' ? '#ffffff' : 'var(--color-text-muted)',
+                backgroundColor: isSelected ? 'var(--color-forest-green)' : 'var(--color-surface-2)',
+                border: `1.5px solid ${isSelected ? 'var(--color-forest-green)' : 'var(--color-border)'}`,
+                color: isSelected ? '#ffffff' : 'var(--color-muted-text)',
+                fontSize: 'var(--font-size-sm)',
+                fontWeight: isSelected ? 'var(--font-weight-semibold)' : 'var(--font-weight-normal)',
+                boxShadow: isSelected ? '0 2px 8px var(--color-shadow-md)' : 'none',
               }}
-              fill="none" stroke="currentColor" viewBox="0 0 24 24"
-            >
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-            </svg>
-          </button>
-
-          {/* Dropdown menu */}
-          {dropdownOpen && (
-            <div
-              className="absolute right-0 mt-2 rounded-2xl shadow-lg overflow-hidden z-50"
-              style={{
-                backgroundColor: 'var(--color-surface)',
-                border: '1px solid var(--color-primary-light)',
-                minWidth: 220,
-                top: '100%',
+              onMouseEnter={e => {
+                if (!isSelected) {
+                  e.currentTarget.style.backgroundColor = 'var(--color-surface-3)'
+                  e.currentTarget.style.borderColor = 'var(--color-green-light)'
+                  e.currentTarget.style.color = 'var(--color-deep-text)'
+                }
+              }}
+              onMouseLeave={e => {
+                if (!isSelected) {
+                  e.currentTarget.style.backgroundColor = 'var(--color-surface-2)'
+                  e.currentTarget.style.borderColor = 'var(--color-border)'
+                  e.currentTarget.style.color = 'var(--color-muted-text)'
+                }
               }}
             >
-              {/* ตัวเลือก "ทั้งหมด" */}
-              {[{ type_id: 'ทั้งหมด', type_name: 'ทั้งหมด' }, ...typeProject].map((t, i, arr) => {
-                const isSelected = selectedTypeId === t.type_id
-                return (
-                  <button
-                    key={t.type_id}
-                    onClick={() => handleSelectType(t.type_id)}
-                    className="w-full flex items-center gap-3 px-4 py-3 text-left transition-colors duration-100"
-                    style={{
-                      backgroundColor: isSelected ? 'rgba(123,150,105,0.12)' : 'transparent',
-                      borderBottom: i < arr.length - 1 ? '1px solid rgba(186,200,177,0.3)' : 'none',
-                      color: isSelected ? 'var(--color-primary-dark)' : 'var(--color-text)',
-                      fontSize: 'var(--font-size-sm)',
-                    }}
-                    onMouseEnter={e => { if (!isSelected) e.currentTarget.style.backgroundColor = 'rgba(186,200,177,0.15)' }}
-                    onMouseLeave={e => { if (!isSelected) e.currentTarget.style.backgroundColor = 'transparent' }}
-                  >
-                    {isSelected
-                      ? <svg className="w-3.5 h-3.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" style={{ color: 'var(--color-primary-dark)' }}>
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
-                      </svg>
-                      : <span className="w-3.5 flex-shrink-0" />
-                    }
-                    <span>{t.type_name}</span>
-                  </button>
-                )
-              })}
-            </div>
-          )}
-        </div>
+              <span>{t.type_name}</span>
+              <span
+                className="text-xs px-1.5 py-0.5 rounded-full"
+                style={{
+                  backgroundColor: isSelected ? 'rgba(255,255,255,0.2)' : 'var(--color-surface-3)',
+                  color: isSelected ? '#ffffff' : 'var(--color-green)',
+                  fontSize: '0.65rem',
+                  fontWeight: 'var(--font-weight-semibold)',
+                }}
+              >
+                {count}
+              </span>
+            </button>
+          )
+        })}
       </div>
 
       {/* Result count */}
-      <p className="mb-5" style={{ color: 'var(--color-text-muted)', fontSize: 'var(--font-size-xs)' }}>
-        {filtered.length} โครงการ
+      <p className="mb-5" style={{ color: 'var(--color-muted-text)', fontSize: 'var(--font-size-xs)' }}>
+        แสดง {filtered.length} โครงการ
         {selectedTypeId !== 'ทั้งหมด' && (
-          <span className="ml-1" style={{ color: 'var(--color-primary)' }}>
-            ใน "{selectedLabel}"
-          </span>
-        )}
-        {selectedTypeId !== 'ทั้งหมด' && (
-          <button
-            onClick={() => handleSelectType('ทั้งหมด')}
-            className="ml-2 underline"
-            style={{ color: 'var(--color-text-muted)', fontSize: 'var(--font-size-xs)' }}
-            onMouseEnter={e => e.currentTarget.style.color = 'var(--color-primary-dark)'}
-            onMouseLeave={e => e.currentTarget.style.color = 'var(--color-text-muted)'}
-          >
-            ล้างตัวกรอง
-          </button>
+          <>
+            <span className="mx-1" style={{ color: 'var(--color-green)' }}>
+              ใน "{selectedLabel}"
+            </span>
+            <button
+              onClick={() => handleSelectType('ทั้งหมด')}
+              className="underline ml-1"
+              style={{ color: 'var(--color-muted-text)', fontSize: 'var(--font-size-xs)' }}
+              onMouseEnter={e => e.currentTarget.style.color = 'var(--color-forest-green)'}
+              onMouseLeave={e => e.currentTarget.style.color = 'var(--color-muted-text)'}
+            >
+              ล้างตัวกรอง
+            </button>
+          </>
         )}
       </p>
 
       {/* Cards Grid */}
       {filtered.length === 0 ? (
         <div className="flex flex-col items-center justify-center mt-24 gap-4">
-          <svg className="w-14 h-14" style={{ color: 'var(--color-primary-light)' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg className="w-14 h-14" style={{ color: 'var(--color-green-light)' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
           </svg>
-          <p style={{ color: 'var(--color-text-muted)', fontSize: 'var(--font-size-sm)' }}>ไม่พบโครงการที่ค้นหา</p>
+          <p style={{ color: 'var(--color-muted-text)', fontSize: 'var(--font-size-sm)' }}>ไม่พบโครงการที่ค้นหา</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
           {filtered.map((project) => (
             <div
-              key={project.project_id}
-              onClick={() => navigate(`/projects/${project.project_id}`)}
-              className="relative h-64 rounded-2xl overflow-hidden cursor-pointer group shadow-sm hover:shadow-xl transition-all duration-300"
+              key={project.royal_id}
+              onClick={() => navigate(`/projects/${project.royal_id}`)}
+              className="relative rounded-2xl overflow-hidden cursor-pointer group transition-all duration-300"
+              style={{
+                height: 256,
+                boxShadow: '0 1px 4px var(--color-shadow)',
+              }}
+              onMouseEnter={e => e.currentTarget.style.boxShadow = '0 8px 24px var(--color-shadow-lg)'}
+              onMouseLeave={e => e.currentTarget.style.boxShadow = '0 1px 4px var(--color-shadow)'}
             >
               <img
-                // src={project.image}
-                src='/public/images/imageProjecAll/imageProject1/project2/image1.jpg'
-                alt={project.name_thai}
+                src={project.img_banner}
+                alt={project.royal_name}
                 className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
               />
+
+              {/* Gradient overlay */}
               <div
                 className="absolute inset-0"
-                style={{ background: 'linear-gradient(to top, rgba(64,78,59,0.9) 0%, rgba(64,78,59,0.2) 50%, transparent 100%)' }}
+                style={{ background: 'linear-gradient(to top, rgba(40,56,36,0.92) 0%, rgba(40,56,36,0.25) 55%, transparent 100%)' }}
               />
+
+              {/* Type badge */}
               <div className="absolute top-3 left-3">
                 <span
                   className="px-2.5 py-1 rounded-full backdrop-blur-sm"
                   style={{
                     color: '#ffffff',
-                    backgroundColor: 'rgba(123,150,105,0.4)',
-                    border: '1px solid rgba(186,200,177,0.5)',
+                    backgroundColor: 'rgba(123,150,105,0.45)',
+                    border: '1px solid rgba(186,200,177,0.55)',
                     fontSize: 'var(--font-size-xs)',
                   }}
                 >
                   {project.type_name}
                 </span>
               </div>
+
+              {/* Gold accent line on hover */}
+              <div
+                className="absolute top-0 left-0 right-0 h-0.5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                style={{ backgroundColor: 'var(--color-gold)' }}
+              />
+
+              {/* Title */}
               <div className="absolute bottom-0 left-0 right-0 p-4 translate-y-1 group-hover:translate-y-0 transition-transform duration-300">
                 <h3
-                  className="text-white font-semibold leading-relaxed line-clamp-2 drop-shadow"
-                  style={{ fontSize: 'var(--font-size-sm)', fontWeight: 'var(--font-weight-semibold)' }}
+                  className="text-white leading-relaxed line-clamp-2 drop-shadow"
+                  style={{
+                    fontSize: 'var(--font-size-sm)',
+                    fontWeight: 'var(--font-weight-semibold)',
+                  }}
                 >
-                  {project.name_thai}
+                  {project.royal_name}
                 </h3>
                 <div className="flex items-center gap-1 mt-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                  <span style={{ color: 'var(--color-primary-light)', fontSize: 'var(--font-size-xs)' }}>ดูรายละเอียด</span>
-                  <svg className="w-3 h-3" style={{ color: 'var(--color-primary-light)' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <span style={{ color: 'var(--color-gold)', fontSize: 'var(--font-size-xs)' }}>ดูรายละเอียด</span>
+                  <svg className="w-3 h-3" style={{ color: 'var(--color-gold)' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                   </svg>
                 </div>

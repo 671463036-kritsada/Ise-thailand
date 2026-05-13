@@ -1,33 +1,46 @@
 @import "tailwindcss";
-
 @theme {
-  /* ===== Colors ===== */
-
-  /* Forest Green — ใช้กับ Navbar, Footer */
+  /* ===== Core Brand Colors (ไม่เปลี่ยน) ===== */
   --color-forest-green: #404e3b;
-  /* Green — ใช้กับ Button Primary, accent, icon */
   --color-green: #7b9669;
-
-  /* Light Green — ใช้กับ border, divider, badge bg */
   --color-green-light: #bac8b1;
-
-  /* Gold — ใช้กับ Button Secondary */
   --color-gold: #c9a84c;
   --color-gold-hover: #b8923e;
-
-  /* White — ใช้กับ Background, Card */
   --color-white: #ffffff;
 
-  /* Card Shadow — ใช้กับ shadow ของ card ทุกใบ */
-  --color-shadow: rgba(64, 78, 59, 0.08);
+  /* ===== เพิ่ม: Tonal Layers (จาก forest green เจือจาง) ===== */
+  --color-surface: #f5f7f4; /* bg หลัก — เขียวอ่อนมากๆ ไม่ขาวตาย */
+  --color-surface-2: #eaefe7; /* card bg, input bg — มีน้ำหนักขึ้นมาอีก step */
+  --color-surface-3: #dce4d8; /* hover state, divider bg */
 
-  /* Deep Text — ใช้กับ heading, body text หลัก */
-  --color-deep-text: #404e3b;
+  /* ===== เพิ่ม: Accent Gold ที่ใช้งานได้จริง ===== */
+  --color-gold-subtle: #fdf6e3; /* gold tint bg — ใช้ใน badge, highlight */
+  --color-gold-border: #e8d5a3; /* border สำหรับ gold element */
 
-  /* Muted Text — ใช้กับ subtext, label, placeholder */
-  --color-muted-text: #6c8480;
+  /* ===== เพิ่ม: Semantic Status ===== */
+  --color-success: #5a8a5a; /* success state */
+  --color-warning: #c9a84c; /* = gold */
+  --color-error: #b85c4a; /* error — warm red ไม่หลุด palette */
 
-  /* ===== Typography ===== */
+  /* ===== Text (ชัดขึ้นกว่าเดิม) ===== */
+  --color-deep-text: #2d3829; /* เข้มกว่า forest green เล็กน้อย */
+  --color-muted-text: #5a7065; /* ปรับให้เขียวน้อยลง อ่านง่ายขึ้น */
+  --color-placeholder: #94a89e; /* สำหรับ input placeholder โดยเฉพาะ */
+  --color-disabled: #b8c4b4; /* disabled state */
+
+  /* ===== Shadow (เพิ่ม levels) ===== */
+  --color-shadow: rgba(40, 56, 36, 0.07);
+  --color-shadow-md: rgba(40, 56, 36, 0.13);
+  --color-shadow-lg: rgba(40, 56, 36, 0.2);
+
+  /* ===== Border ===== */
+  --color-border: #cdd8c8; /* border ทั่วไป */
+  --color-border-focus: #7b9669; /* = green เมื่อ focus */
+
+  /* ===== ลบของเดิมที่ซ้ำซ้อน ===== */
+  /* --color-primary-light ถูกแทนด้วย --color-green-light */
+
+  /* ===== Typography (เหมือนเดิม) ===== */
   --font-size-xs: 0.75rem;
   --font-size-sm: 0.875rem;
   --font-size-base: 1rem;
@@ -35,17 +48,15 @@
   --font-size-xl: 1.25rem;
   --font-size-2xl: 1.5rem;
   --font-size-3xl: 1.875rem;
-
   --font-weight-normal: 400;
   --font-weight-medium: 500;
   --font-weight-semibold: 600;
   --font-weight-bold: 700;
-
   --line-height-tight: 1.25;
   --line-height-normal: 1.5;
   --line-height-relaxed: 1.75;
 
-  /* ===== Radius ===== */
+  /* ===== Radius (เหมือนเดิม) ===== */
   --radius-sm: 0.5rem;
   --radius-md: 1rem;
   --radius-lg: 1.5rem;
@@ -53,7 +64,7 @@
 }
 
 body {
-  background-color: var(--color-white);
+  background-color: var(--color-surface);
   color: var(--color-deep-text);
   font-size: var(--font-size-base);
   line-height: var(--line-height-normal);
