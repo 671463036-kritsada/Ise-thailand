@@ -1,6 +1,10 @@
 import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 
+
+import { useLang } from '../context/LanguageContext'
+
+
 const INSTITUTE_MENUS = [
     { label: 'โครงการ/งานวิจัย ภายใต้สถาบันเศรษฐกิจพอเพียง', path: '/research' },
     { label: 'EBOOK', path: '/ebook' },
@@ -42,8 +46,8 @@ function DropdownItem({ onClick, children, strong }) {
 }
 
 function Navbar() {
+    const { lang, setLang } = useLang()
     const [langOpen, setLangOpen] = useState(false)
-    const [selectedLang, setSelectedLang] = useState({ code: 'TH', label: 'ไทย' })
     const [scrolled, setScrolled] = useState(false)
     const navigate = useNavigate()
     const [typeProject, setTypeProject] = useState([])
@@ -135,7 +139,7 @@ function Navbar() {
                 {/* Language Switcher */}
                 <div className="relative">
                     <OutlineButton onClick={() => setLangOpen(!langOpen)}>
-                        <span>{selectedLang.code}</span>
+                        <span>{lang}</span>
                         <svg
                             className="w-3 h-3 transition-transform duration-200"
                             style={{ transform: langOpen ? 'rotate(180deg)' : 'rotate(0deg)' }}
@@ -155,16 +159,16 @@ function Navbar() {
                             }}
                         >
                             <GradientBar />
-                            {languages.map((lang) => {
-                                const isSelected = selectedLang.code === lang.code
+                            {languages.map((I) => {
+                                const isSelected = lang === I.code
                                 return (
                                     <DropdownItem
-                                        key={lang.code}
-                                        onClick={() => { setSelectedLang(lang); setLangOpen(false) }}
+                                        key={I.code}
+                                        onClick={() => { setLang(I.code); setLangOpen(false) }}
                                         strong={isSelected}
                                     >
                                         <span className="flex items-center gap-3">
-                                            <span>{lang.label}</span>
+                                            <span>{I.label}</span>
                                             {isSelected && (
                                                 <svg className="w-3 h-3 ml-auto" fill="currentColor" viewBox="0 0 20 20"
                                                     style={{ color: 'var(--color-green)' }}>

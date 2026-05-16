@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
+import api from '../../api/axios'  // เปลี่ยนมาใช้ axios
 
-const BASE_URL = 'http://localhost:2000/uploads/'
+import { UPLOADS_URL } from '../../constants/uploads_url'
 
 export default function ProjectDetailPage() {
     const { id } = useParams()
@@ -13,10 +14,8 @@ export default function ProjectDetailPage() {
     useEffect(() => {
         const fetchProject = async () => {
             try {
-                const res = await fetch(`http://localhost:2000/api/royal/type/${id}`)
-                if (!res.ok) throw new Error(`HTTP error: ${res.status}`)
-                const data = await res.json()
-                const item = Array.isArray(data.data) ? data.data[0] : data.data
+                const res = await api.get(`/royal/type/${id}`)
+                const item = Array.isArray(res.data.data) ? res.data.data[0] : res.data.data
                 setProject(item || null)
             } catch (err) {
                 console.error('API error:', err)
@@ -27,6 +26,7 @@ export default function ProjectDetailPage() {
         }
         fetchProject()
     }, [id])
+
 
     if (loading) return (
         <div className="flex items-center justify-center min-h-screen">
@@ -47,13 +47,13 @@ export default function ProjectDetailPage() {
 
     const images = [project.img_banner, project.img_1, project.img_2, project.img_3, project.img_4, project.img_5]
         .filter(Boolean)
-        .map(f => `${BASE_URL}${f}`)
+        .map(f => `${UPLOADS_URL}${f}`)
 
     const sections = [1, 2, 3, 4, 5]
         .map(n => ({
-            title:  project[`title_${n}`],
+            title: project[`title_${n}`],
             detail: project[`detail_${n}`],
-            image:  project[`img_${n}`] ? `${BASE_URL}${project[`img_${n}`]}` : null,
+            image: project[`img_${n}`] ? `${UPLOADS_URL}${project[`img_${n}`]}` : null,
         }))
         .filter(s => s.title || s.detail)
 
@@ -82,7 +82,7 @@ export default function ProjectDetailPage() {
             {/* Hero Slider */}
             {images.length > 0 && (
                 <div className="relative rounded-2xl overflow-hidden mb-3 group"
-                    style={{ height: 420, boxShadow: '0 4px 20px var(--color-shadow-lg)' }}>
+                    style={{ height: 720, boxShadow: '0 4px 20px var(--color-shadow-lg)' }}>
                     <img src={images[currentImg]} alt={project.royal_name}
                         className="w-full h-full object-cover transition-all duration-500" />
                     <div className="absolute inset-0"
@@ -211,13 +211,13 @@ export default function ProjectDetailPage() {
 
             {/* Infographic */}
             {project.infographic && (
-                <div className="mt-16">
-                    <div className="h-px w-full mb-8" style={{ backgroundColor: 'var(--color-border)' }} />
-                    <div className="flex flex-col items-center gap-4">
-                        <p className="text-sm font-semibold" style={{ color: 'var(--color-deep-text)' }}>อินโฟกราฟิก</p>
-                        <div className="rounded-2xl overflow-hidden w-full"
-                            style={{ boxShadow: '0 2px 12px var(--color-shadow-md)' }}>
-                            <img src={`${BASE_URL}${project.infographic}`} alt="infographic" className="w-full object-cover" />
+                <div className="mt-12">
+                    <div className="h-px w-full mb-6" style={{ backgroundColor: 'var(--color-border)' }} />
+                    <div className="flex flex-col items-center gap-3">
+                        <p className="text-xs font-semibold" style={{ color: 'var(--color-deep-text)' }}>อินโฟกราฟิก</p>
+                        <div className="rounded-xl overflow-hidden w-2/4"
+                            style={{ boxShadow: '0 2px 8px var(--color-shadow-md)' }}>
+                            <img src={`${UPLOADS_URL}${project.infographic}`} alt="infographic" className="w-full h-full object-cover" />
                         </div>
                     </div>
                 </div>

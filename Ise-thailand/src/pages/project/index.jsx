@@ -1,6 +1,10 @@
 import React, { useState, useMemo, useEffect } from 'react'
 import { useSearchParams, useNavigate } from 'react-router-dom'
 
+import api from '../../api/axios' 
+
+import { UPLOADS_URL } from '../../constants/uploads_url'
+
 export default function ProjectsPage() {
   const [searchParams, setSearchParams] = useSearchParams()
   const [search, setSearch] = useState('')
@@ -10,9 +14,6 @@ export default function ProjectsPage() {
   const [projects, setProjects] = useState([])
   const [typeProject, setTypeProject] = useState([])
 
-  // const IMG_BASE = '/images/' ;
-  const BASE_URL = 'http://localhost:2000/uploads/'
-
   useEffect(() => {
     const typeId = searchParams.get('typeId') || ''
     setSelectedTypeId(typeId || 'ทั้งหมด')
@@ -21,10 +22,8 @@ export default function ProjectsPage() {
   useEffect(() => {
     const fetchProjects = async () => {
       try {
-        const res = await fetch('http://localhost:2000/api/royal/')
-        if (!res.ok) throw new Error(`HTTP error: ${res.status}`)
-        const data = await res.json()
-        setProjects(data.data || [])
+        const res = await api.get('/royal/')
+        setProjects(res.data.data || [])
       } catch (err) {
         console.error('API error:', err)
       }
@@ -35,16 +34,15 @@ export default function ProjectsPage() {
   useEffect(() => {
     const fetchTypeProject = async () => {
       try {
-        const res = await fetch('http://localhost:2000/api/royal/types')
-        if (!res.ok) throw new Error(`HTTP error: ${res.status}`)
-        const data = await res.json()
-        setTypeProject(data.data || [])
+        const res = await api.get('/royal/types')
+        setTypeProject(res.data.data || [])
       } catch (err) {
         console.error('API error:', err)
       }
     }
     fetchTypeProject()
   }, [])
+
 
   const filtered = useMemo(() => {
     return projects.filter((p) => {
@@ -204,8 +202,7 @@ export default function ProjectsPage() {
               onMouseLeave={e => e.currentTarget.style.boxShadow = '0 1px 4px var(--color-shadow)'}
             >
               <img
-                // src={`${IMG_BASE}${project.img_banner}`}
-                src={project.img_banner}
+                src={`${UPLOADS_URL}${project.img_1}`}
                 alt={project.royal_name}
                 className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
               />

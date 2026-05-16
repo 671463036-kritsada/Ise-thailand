@@ -1,9 +1,8 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import { LanguageProvider } from './context/LanguageContext'
 import Navbar from './components/Navbar'
 import HomePage from './pages/home/index'
 import ProjectsPage from './pages/project/index'
-
-
 import ResearchPage from './pages/research'
 import EbookPage from './pages/ebook'
 import AcademicPage from './pages/academic'
@@ -12,31 +11,29 @@ import VideoPage from './pages/video'
 import InstitutePage from './pages/institute/index'
 import LoginPage from './pages/login/index'
 import ProjectDetailPage from './pages/projectDetail/index'
-
-
-
 import './App.css'
 
 function App() {
   return (
-    <BrowserRouter>
-      <Navbar />
-      <main className="container mx-auto mt-9 px-4 py-8">
-        <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/projects" element={<ProjectsPage />} />
-          <Route path="/research" element={<ResearchPage />} />
-          <Route path="/ebook" element={<EbookPage />} />
-          <Route path="/academic" element={<AcademicPage />} />
-          <Route path="/media" element={<MediaPage />} />
-          <Route path="/video" element={<VideoPage />} />
-          <Route path="/institute" element={<InstitutePage />} />
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/projects/:id" element={<ProjectDetailPage />} />
-        </Routes>
-      </main>
-    </BrowserRouter>
+    <LanguageProvider>
+      <BrowserRouter>
+        <Navbar />
+        <main className="container mx-auto mt-9 px-4 py-8">
+          <Routes>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/projects" element={<ProjectsPage />} />
+            <Route path="/research" element={<ResearchPage />} />
+            <Route path="/ebook" element={<EbookPage />} />
+            <Route path="/academic" element={<AcademicPage />} />
+            <Route path="/media" element={<MediaPage />} />
+            <Route path="/video" element={<VideoPage />} />
+            <Route path="/institute" element={<InstitutePage />} />
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/projects/:id" element={<ProjectDetailPage />} />
+          </Routes>
+        </main>
+      </BrowserRouter>
+    </LanguageProvider>
   )
 }
-
 export default App
