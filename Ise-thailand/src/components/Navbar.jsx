@@ -135,6 +135,7 @@ function Navbar() {
                 }} />
 
                 <OutlineButton onClick={() => navigate('/login')}>เข้าสู่ระบบ</OutlineButton>
+                <OutlineButton onClick={() => navigate('/admin')}>Admin </OutlineButton>
 
                 {/* Language Switcher */}
                 <div className="relative">
