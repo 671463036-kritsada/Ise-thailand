@@ -40,10 +40,12 @@ const InstitutePage = () => {
           animate={{ opacity: 1, y: 0 }}
           className="relative z-10 text-center px-4 max-w-4xl"
         >
-          <h1 className="text-3xl md:text-6xl font-extrabold text-white mb-4 tracking-tight leading-tight">
+          {/* ปรับขนาดหัวข้อ Hero ใหญ่ขึ้น */}
+          <h1 className="text-4xl md:text-7xl font-extrabold text-black/70 mb-4 tracking-tight leading-tight">
             ติดต่อสถาบัน
           </h1>
-          <p className="text-base md:text-xl text-white/90 max-w-2xl mx-auto font-medium">
+          {/* ปรับขนาดซับไตเติ้ลใหญ่ขึ้น */}
+          <p className="text-4xl md:text-4xl text-white/90 max-w-4xl mx-auto font-medium">
             ร่วมสืบสานศาสตร์พระราชาและปรัชญาเศรษฐกิจพอเพียง
           </p>
         </motion.div>
@@ -62,30 +64,32 @@ const InstitutePage = () => {
               className="bg-forest-green p-6 md:p-10 rounded-[2rem] md:rounded-[2.5rem] text-white shadow-xl relative overflow-hidden"
             >
               <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full -mr-16 -mt-16"></div>
-              <h2 className="text-xl md:text-2xl font-bold mb-8 relative z-10">ข้อมูลการติดต่อ</h2>
+              {/* ปรับขนาดหัวข้อข้อมูลการติดต่อ */}
+              <h2 className="text-2xl md:text-3xl font-bold mb-8 relative z-10">ข้อมูลการติดต่อ</h2>
               
               <div className="space-y-6 relative z-10">
-                <ContactInfoItem icon={<MapPin size={22} />} title="ที่อยู่สถาบัน" desc="99 หมู่ 1 ถ.พหลโยธิน แขวงลาดยาว เขตจตุจักร กรุงเทพฯ" />
-                <ContactInfoItem icon={<Phone size={22} />} title="เบอร์โทรศัพท์" desc="02-123-4567" />
-                <ContactInfoItem icon={<Mail size={22} />} title="อีเมล" desc="info@sufficiency.or.th" />
+                <ContactInfoItem icon={<MapPin size={26} />} title="ที่อยู่สถาบัน" desc="99 หมู่ 1 ถ.พหลโยธิน แขวงลาดยาว เขตจตุจักร กรุงเทพฯ" />
+                <ContactInfoItem icon={<Phone size={26} />} title="เบอร์โทรศัพท์" desc="02-123-4567" />
+                <ContactInfoItem icon={<Mail size={26} />} title="อีเมล" desc="info@sufficiency.or.th" />
               </div>
 
               <div className="mt-10 pt-6 border-t border-white/10 relative z-10">
                 <div className="flex gap-3">
-                  <SocialBtn icon={<FaFacebookF size={14} />} />
-                  <SocialBtn icon={<FaInstagram size={16} />} />
-                  <SocialBtn icon={<FaYoutube size={16} />} />
+                  <SocialBtn icon={<FaFacebookF size={18} />} />
+                  <SocialBtn icon={<FaInstagram size={20} />} />
+                  <SocialBtn icon={<FaYoutube size={20} />} />
                 </div>
               </div>
             </motion.div>
 
-            <div className="bg-white p-6 rounded-[2rem] border border-green-light/30 shadow-sm flex items-center gap-4">
-              <div className="w-12 h-12 rounded-xl bg-surface-2 flex items-center justify-center text-green shrink-0">
-                <Clock size={24} />
+            <div className="bg-white p-4 rounded-[2rem] border border-green-light/30 shadow-sm flex items-center gap-4">
+              <div className="w-14 h-14 rounded-xl bg-surface-2 flex items-center justify-center text-green shrink-0">
+                <Clock size={28} />
               </div>
-              <div className="text-sm">
-                <h3 className="font-bold text-deep-text">เวลาทำการ</h3>
-                <p className="text-muted-text">จันทร์ - ศุกร์ | 08.30 - 16.30 น.</p>
+              {/* ปรับขนาดเวลาทำการ */}
+              <div className="text-base">
+                <h3 className="font-bold text-deep-text text-xl">เวลาทำการ</h3>
+                <p className="text-lg">จันทร์ - ศุกร์ | 08.30 - 16.30 น.</p>
               </div>
             </div>
           </div>
@@ -98,16 +102,17 @@ const InstitutePage = () => {
                   key="success" initial={{ opacity: 0 }} animate={{ opacity: 1 }}
                   className="bg-white rounded-[2rem] md:rounded-[2.5rem] shadow-xl p-8 md:p-12 border border-green-light/20 text-center h-full flex flex-col justify-center items-center"
                 >
-                  <CheckCircle2 size={50} className="text-green mb-4" />
-                  <h2 className="text-xl font-bold text-forest-green mb-2">ส่งข้อมูลสำเร็จ</h2>
-                  <button onClick={() => setSubmitted(false)} className="mt-4 text-green font-bold hover:underline">ส่งอีกครั้ง</button>
+                  <CheckCircle2 size={60} className="text-green mb-4" />
+                  <h2 className="text-2xl font-bold text-forest-green mb-2">ส่งข้อมูลสำเร็จ</h2>
+                  <button onClick={() => setSubmitted(false)} className="mt-4 text-green font-bold text-lg hover:underline">ส่งอีกครั้ง</button>
                 </motion.div>
               ) : (
                 <motion.div 
                   key="form" initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
                   className="bg-white rounded-[2rem] md:rounded-[2.5rem] shadow-xl p-6 md:p-12 border border-green-light/20"
                 >
-                  <h2 className="text-2xl font-extrabold text-forest-green mb-8">ส่งข้อความถึงเรา</h2>
+                  {/* ปรับขนาดหัวข้อฟอร์ม */}
+                  <h2 className="text-3xl font-extrabold text-forest-green mb-8">ส่งข้อความถึงเรา</h2>
                   <form className="space-y-4 md:space-y-6" onSubmit={handleSubmit}>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
                       <InputField label="ชื่อ" name="firstName" value={form.firstName} onChange={handleChange} placeholder="ระบุชื่อ" required />
@@ -118,15 +123,15 @@ const InstitutePage = () => {
                       <InputField label="อีเมล" name="email" value={form.email} onChange={handleChange} placeholder="example@email.com" type="email" required />
                     </div>
                     <div className="space-y-2">
-                      <label className="text-xs font-bold text-deep-text ml-1 uppercase">รายละเอียด</label>
+                      <label className="text-xl md:text-xl font-bold text-deep-text ml-1 uppercase">รายละเอียด</label>
                       <textarea 
                         name="detail" value={form.detail} onChange={handleChange}
-                        className="w-full bg-surface-2 border border-green-light/30 rounded-xl px-4 py-3 focus:outline-none focus:border-green text-sm min-h-[120px]" 
+                        className="w-full bg-surface-2 border border-green-light/30 rounded-xl px-4 py-3 focus:outline-none focus:border-green text-lg min-h-[140px]" 
                         placeholder="พิมพ์ข้อความที่นี่..." required
                       />
                     </div>
-                    <button type="submit" className="w-full bg-green hover:bg-forest-green text-white font-bold py-4 rounded-xl shadow-lg transition-all flex items-center justify-center gap-2">
-                      ส่งข้อความ <Send size={16} />
+                    <button type="submit" className="w-full bg-green hover:bg-forest-green text-white font-bold text-2xl py-4 rounded-xl shadow-lg transition-all flex items-center justify-center gap-2">
+                      ส่งข้อความ <Send size={20} />
                     </button>
                   </form>
                 </motion.div>
@@ -140,39 +145,40 @@ const InstitutePage = () => {
       <section className={`${fullWidthClass} h-[350px] bg-surface-2 relative group`}>
         <div className="absolute inset-0 flex items-center justify-center cursor-pointer z-10">
           <div className="text-center p-6 bg-white/80 backdrop-blur-md rounded-2xl border border-green-light shadow-xl transition-transform group-hover:scale-105">
-             <MapPin size={32} className="mx-auto text-green mb-2 animate-bounce" />
-             <p className="font-bold text-forest-green">คลิกเพื่อดูแผนที่</p>
+             <MapPin size={40} className="mx-auto text-green mb-2 animate-bounce" />
+             {/* ปรับขนาดข้อความแผนที่ */}
+             <p className="font-bold text-xl text-forest-green">คลิกเพื่อดูแผนที่</p>
           </div>
         </div>
       </section>
 
       {/* Footer - Full Width */}
-      <footer className={`${fullWidthClass} bg-forest-green py-10 text-center border-t-4 border-gold text-white/60 text-xs md:text-sm`}>
+      <footer className={`${fullWidthClass} bg-forest-green py-10 text-center border-t-4 border-gold text-white/60 text-lg md:text-2xl`}>
         <p className="px-6 italic">© 2026 Institute of Sufficiency Economy. All rights reserved.</p>
       </footer>
     </div>
   );
 };
 
-// Components
+// Components (ปรับขนาดตัวอักษรและไอคอน)
 const ContactInfoItem = ({ icon, title, desc }) => (
   <div className="flex items-start gap-4">
-    <div className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center shrink-0">{icon}</div>
+    <div className="w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center shrink-0">{icon}</div>
     <div>
-      <h3 className="font-bold text-green-light text-[10px] uppercase tracking-wider">{title}</h3>
-      <p className="text-white/90 text-xs md:text-sm">{desc}</p>
+      <h3 className="font-bold text-green-light text-2xl md:text-2xl uppercase tracking-wider mb-1">{title}</h3>
+      <p className="text-white/90 text-xl md:text-xl">{desc}</p>
     </div>
   </div>
 );
 
 const SocialBtn = ({ icon }) => (
-  <button className="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center hover:bg-gold hover:text-forest-green transition-all">{icon}</button>
+  <button className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-gold hover:text-forest-green transition-all">{icon}</button>
 );
 
 const InputField = ({ label, ...props }) => (
   <div className="space-y-1">
-    <label className="text-xs font-bold text-deep-text ml-1 uppercase">{label}</label>
-    <input className="w-full bg-surface-2 border border-green-light/30 rounded-xl px-4 py-3 focus:outline-none focus:border-green text-sm" {...props} />
+    <label className="text-xl md:text-xl font-bold text-deep-text ml-1 uppercase">{label}</label>
+    <input className="w-full bg-surface-2 border border-green-light/30 rounded-xl px-4 py-3 focus:outline-none focus:border-green text-lg" {...props} />
   </div>
 );
 
