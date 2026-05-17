@@ -3,6 +3,7 @@ import { Outlet, Routes, Route, Navigate } from "react-router-dom";
 import Sidebar from "./sideber/Sidebar";
 import Topbar from "./topbar/Topbar";
 
+
 // ── Import หน้าทั้งหมดของ admin ที่นี่ ──────────────────────────────
 import RayalAll from "./page/rayal_all";
 import Dashboard  from "./page/dashbord";
@@ -16,7 +17,10 @@ import VdoTitleAll from "./page/vdotitle_all";
 import ReportInstitution from "./page/report_institution";
 import ReportRegion from "./page/report_regoin";
 import ReportProvince from "./page/report_province";
+import AssetPage from "./page/asset_page";
 
+// เพิ่มใน Route
+<Route path="asset/:typeId" element={<AssetPage />} />
 
 function AdminShell() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -61,9 +65,7 @@ export default function AdminLayout() {
         <Route path="report-overview" element={<ReportInstitution />} />
         <Route path="report-region" element={<ReportRegion />} />
         <Route path="report-province" element={<ReportProvince />} />
-
-
-
+        <Route path="asset/:typeId" element={<AssetPage />} />
       </Route>
     </Routes>
   );

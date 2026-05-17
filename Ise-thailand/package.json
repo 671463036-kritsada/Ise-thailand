@@ -11,9 +11,11 @@
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.2.4",
+    "@tinymce/tinymce-react": "^6.3.0",
     "axios": "^1.16.1",
     "framer-motion": "^12.38.0",
     "i18next": "^26.0.10",
+    "jwt-decode": "^4.0.0",
     "lucide-react": "^1.16.0",
     "react": "^19.2.5",
     "react-dom": "^19.2.5",
@@ -22,7 +24,9 @@
     "react-lucid": "^0.0.1",
     "react-router-dom": "^7.15.0",
     "recharts": "2",
-    "tailwindcss": "^4.2.4"
+    "sweetalert2": "^11.26.24",
+    "tailwindcss": "^4.2.4",
+    "xlsx": "^0.18.5"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",

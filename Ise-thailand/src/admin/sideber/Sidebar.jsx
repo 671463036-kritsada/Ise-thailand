@@ -1,54 +1,64 @@
 import { useState, useEffect } from "react";
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
-// นำเข้าไอคอนจาก lucide-react พร้อมเพิ่ม BookOpen รองรับสำหรับโมดูล E-Book ของระบบ
-import { LayoutDashboard, Boxes, Folder, BarChart3, LogOut, ChevronDown, BookOpen } from "lucide-react";
-
-// ดึงชุดข้อมูลเดิมกลับมาครบถ้วน 100% ตามที่คุณกำหนดไว้ไม่มีการเปลี่ยนเส้นทางหรือสลับตำแหน่ง
-const navItems = [
-  { icon: LayoutDashboard, label: "ภาพรวม", href: "/admin/dashboard" },
-  { 
-    icon: Boxes, 
-    label: "โครงการพระราชดำริ", 
-    children: [
-      { label: "โครงการ", href: "/admin/royal_all" },
-      { label: "ประเภทโครงการ", href: "/admin/type-project" },
-      { label: "พื้นที่", href: "/admin/sector" },
-    ]
-  },
-  { 
-    icon: Folder, 
-    label: "งานสถาบันเศรษฐกิจฯ", 
-    children: [
-      { label: "โครงการ/งานวิจัย", href: "/admin/project_all" },
-      { label: "E-BOOK", href: "/admin/asset-all" },
-      { label: "ผลงานวิชาการ", href: "/admin/academic" },
-      { label: "สื่อนวัตกรรมการเรียนรู้", href: "/admin/innovation" },
-      { label: "วีดีทัศน์", href: "/admin/videos" },
-      { label: "ข่าวประชาสัมพันธ์", href: "/admin/news" },
-      { label: "กิจกรรม", href: "/admin/activities" },
-      { label: "นักวิจัย", href: "/admin/researchers" },
-      { label: "แผน", href: "/admin/plans" },
-      { label: "แผนย่อย", href: "/admin/sub-plans" },
-      { label: "จัดการวีดีโอหน้าแรก", href: "/admin/video-landing" },
-    ]
-  },
-  {
-    icon: BarChart3,
-    label: "รายงาน",
-    children: [
-      { label: "เงื่อนไขตามประเภทโครงการ", href: "/admin/report-overview" },
-      // { label: "โครงการ", href: "/admin/report-stats" },
-      { label: "เงื่อนไขตามพื้นที่ภาค", href: "/admin/report-region" }, 
-      { label: "เงื่อนไขตามจังหวัด", href: "/admin/report-province" },
-    ]
-  }
-];
+import { LayoutDashboard, Boxes, Folder, BarChart3, LogOut, ChevronDown } from "lucide-react";
+import { useAuth } from '../../hook/useAuth'  // เพิ่ม s
+import api from '../../api/axios'
 
 export default function Sidebar({ open }) {
-  const location = useLocation();
-  const navigator = useNavigate();
-  
-  const [openDropdown, setOpenDropdown] = useState("");
+  const location = useLocation()
+  const navigator = useNavigate()
+  const { user } = useAuth()
+  const [assetTypes, setAssetTypes] = useState([])
+  const [openDropdown, setOpenDropdown] = useState("")
+
+  useEffect(() => {
+    api.get('/asset/count')
+      .then(res => setAssetTypes(res.data.data || []))
+      .catch(err => console.error(err))
+  }, [])
+
+  // navItems เปลี่ยนมาเป็น function เพื่อรับ assetTypes
+  const navItems = [
+    { icon: LayoutDashboard, label: "ภาพรวม", href: "/admin/dashboard" },
+    {
+      icon: Boxes,
+      label: "โครงการพระราชดำริ",
+      children: [
+        { label: "โครงการ", href: "/admin/royal_all" },
+        { label: "ประเภทโครงการ", href: "/admin/type-project" },
+        { label: "พื้นที่", href: "/admin/sector" },
+      ]
+    },
+    {
+      icon: Folder,
+      label: "งานสถาบันเศรษฐกิจฯ",
+      children: [
+        { label: "โครงการ/งานวิจัย", href: "/admin/project_all" },
+        // loop จาก API
+        ...assetTypes.map(type => ({
+          label: `${type.assettype_name} (${type.total})`,
+          href: `/admin/asset/${type.assettype_id}`
+        })),
+        { label: "ข่าวประชาสัมพันธ์", href: "/admin/news" },
+        { label: "กิจกรรม", href: "/admin/activities" },
+        { label: "นักวิจัย", href: "/admin/researchers" },
+        { label: "แผน", href: "/admin/plans" },
+        { label: "แผนย่อย", href: "/admin/sub-plans" },
+        { label: "จัดการวีดีโอหน้าแรก", href: "/admin/video-landing" },
+      ]
+    },
+    {
+      icon: BarChart3,
+      label: "รายงาน",
+      children: [
+        { label: "เงื่อนไขตามประเภทโครงการ", href: "/admin/report-overview" },
+        { label: "เงื่อนไขตามพื้นที่ภาค", href: "/admin/report-region" },
+        { label: "เงื่อนไขตามจังหวัด", href: "/admin/report-province" },
+      ]
+    }
+  ]
+
+  // ส่วนที่เหลือเหมือนเดิมทุกอย่าง
 
   useEffect(() => {
     navItems.forEach((item) => {
@@ -102,8 +112,8 @@ export default function Sidebar({ open }) {
                     <button
                       onClick={() => toggleDropdown(item.label)}
                       className={`flex items-center justify-between w-full px-3 py-2 rounded-xl text-sm font-bold transition-all duration-150 group cursor-pointer
-                        ${isChildActive 
-                          ? "bg-[var(--color-surface-2)] text-[var(--color-green)] shadow-sm" 
+                        ${isChildActive
+                          ? "bg-[var(--color-surface-2)] text-[var(--color-green)] shadow-sm"
                           : "text-[var(--color-muted-text)] hover:bg-[var(--color-surface)]/40 hover:text-[var(--color-deep-text)]"
                         }`}
                     >
@@ -125,8 +135,8 @@ export default function Sidebar({ open }) {
                               to={child.href}
                               className={({ isActive }) => `
                                 block flex items-center px-3 py-1.5 rounded-lg text-xs font-semibold transition-all duration-150
-                                ${isActive 
-                                  ? "text-[var(--color-green)] font-bold bg-[var(--color-surface-2)]" 
+                                ${isActive
+                                  ? "text-[var(--color-green)] font-bold bg-[var(--color-surface-2)]"
                                   : "text-[var(--color-muted-text)] hover:text-[var(--color-deep-text)] hover:bg-[var(--color-surface)]/30"
                                 }
                               `}
@@ -169,12 +179,31 @@ export default function Sidebar({ open }) {
       </div>
 
       {/* User Footer - ปรับความกว้างและไอคอนเป็น w-3.5 h-3.5 และฟอนต์เป็น text-xs ให้บาลานซ์กันอย่างเรียบร้อย */}
-      <div className="p-3 border-t border-[var(--color-surface-3)] bg-[var(--color-surface)]/10 flex justify-center">
+      <div className="p-3 border-t border-[var(--color-surface-3)] bg-[var(--color-surface)]/10">
+        {open && user && (
+          <div className="flex items-center gap-2 px-3 py-2 mb-2 rounded-xl bg-[var(--color-surface-2)]">
+            <div style={{
+              width: 28, height: 28,
+              borderRadius: '50%',
+              backgroundColor: 'var(--color-forest-green)',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              fontSize: '0.7rem', fontWeight: 700, color: 'white',
+            }}>
+              {user.name?.charAt(0).toUpperCase()}
+            </div>
+            <div>
+              <p className="text-xs font-bold text-[var(--color-deep-text)]">{user.name}</p>
+              <p className="text-[10px] text-[var(--color-muted-text)]">Administrator</p>
+            </div>
+          </div>
+        )}
         <button
-          onClick={() => { navigator("/"); }}
+          onClick={() => {
+            localStorage.removeItem('token')
+            navigator("/login")
+          }}
           className={`flex items-center justify-center rounded-xl bg-rose-50 text-rose-600 hover:bg-rose-100 transition-all duration-200 group font-bold text-xs cursor-pointer
-            ${open ? "w-full px-3 py-2 gap-2 shadow-sm shadow-rose-100" : "w-8 h-8"}`}
-          title="ออกจากระบบ"
+                ${open ? "w-full px-3 py-2 gap-2 shadow-sm shadow-rose-100" : "w-8 h-8"}`}
         >
           <LogOut className="w-3.5 h-3.5 shrink-0 group-hover:scale-105 transition-transform" />
           {open && <span>ออกจากระบบ</span>}

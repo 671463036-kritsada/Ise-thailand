@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 
+import { useAuth } from '../hook/useAuth'
 
 import { useLang } from '../context/LanguageContext'
 
@@ -56,6 +57,13 @@ function Navbar() {
         { code: 'TH', label: 'ไทย' },
         { code: 'EN', label: 'English' },
     ]
+
+    const { user } = useAuth()
+
+    const handleLogout = () => {
+        localStorage.removeItem('token')
+        navigate('/login')
+    }
 
     useEffect(() => {
         const fetchData = async () => {
@@ -134,8 +142,54 @@ function Navbar() {
                     background: 'linear-gradient(to bottom, transparent, rgba(186,200,177,0.5), transparent)',
                 }} />
 
-                <OutlineButton onClick={() => navigate('/login')}>เข้าสู่ระบบ</OutlineButton>
-                <OutlineButton onClick={() => navigate('/admin')}>Admin </OutlineButton>
+                {user ? (
+                    <>
+                        {user ? (
+                            <div className="flex items-center gap-3">
+                                {/* Avatar + ชื่อ */}
+                                <div className="flex items-center gap-2">
+                                    <div style={{
+                                        width: 28,
+                                        height: 28,
+                                        borderRadius: '50%',
+                                        backgroundColor: 'rgba(255,255,255,0.15)',
+                                        border: '1px solid rgba(255,255,255,0.3)',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        fontSize: '0.7rem',
+                                        fontWeight: 700,
+                                        color: 'white',
+                                    }}>
+                                        {user.name?.charAt(0).toUpperCase()}
+                                    </div>
+                                    <span style={{
+                                        fontSize: '0.75rem',
+                                        color: 'rgba(255,255,255,0.85)',
+                                        fontWeight: 500,
+                                    }}>
+                                        {user.name}
+                                    </span>
+                                </div>
+
+                                <OutlineButton onClick={handleLogout}>
+                                    <svg width="13" height="13" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                                    </svg>
+                                    ออกจากระบบ
+                                </OutlineButton>
+                            </div>
+                        ) : (
+                            <OutlineButton onClick={() => navigate('/login')}>เข้าสู่ระบบ</OutlineButton>
+                        )}
+                    </>
+                ) : (
+                    <OutlineButton onClick={() => navigate('/login')}>เข้าสู่ระบบ</OutlineButton>
+                )}
+
+                {user?.role === 1 && (
+                    <OutlineButton onClick={() => navigate('/admin')}>Admin</OutlineButton>
+                )}
 
                 {/* Language Switcher */}
                 <div className="relative">
