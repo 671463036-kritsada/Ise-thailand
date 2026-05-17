@@ -19,12 +19,13 @@ function CategoryBadge({ category }) {
     const isUnspecified = category === 'ไม่ระบุ'
     return (
         <span
-            className="inline-block px-2 py-0.5 rounded-full text-xs font-medium whitespace-nowrap"
+            className="inline-block px-2 py-0.5 rounded-full text-xs font-medium"
             style={{
                 backgroundColor: isUnspecified ? 'var(--color-surface-3)' : 'var(--color-gold-subtle)',
                 color: isUnspecified ? 'var(--color-muted-text)' : 'var(--color-forest-green)',
                 border: `1px solid ${isUnspecified ? 'var(--color-border)' : 'var(--color-gold-border)'}`,
                 fontSize: 'var(--font-size-xs)',
+                lineHeight: '1.6',
             }}
         >
             {category}
@@ -116,9 +117,8 @@ export default function ResearchPage() {
                 </div>
             </div>
 
-            {/* Table */}
-            <div
-                className="rounded-xl overflow-hidden"
+            {/* ── DESKTOP TABLE (md+) ── */}
+            <div className="hidden md:block rounded-xl overflow-hidden"
                 style={{
                     border: '1px solid var(--color-border)',
                     backgroundColor: 'var(--color-white)',
@@ -186,12 +186,33 @@ export default function ResearchPage() {
                 </table>
             </div>
 
+            {/* ── MOBILE CARDS (< md) ── */}
+            <div className="md:hidden flex flex-col gap-3">
+                {paginated.length === 0 ? (
+                    <div
+                        className="py-12 text-center rounded-xl"
+                        style={{
+                            color: 'var(--color-muted-text)',
+                            fontSize: 'var(--font-size-sm)',
+                            border: '1px solid var(--color-border)',
+                            backgroundColor: 'var(--color-white)',
+                        }}
+                    >
+                        ไม่พบข้อมูล
+                    </div>
+                ) : (
+                    paginated.map((item, index) => (
+                        <MobileCard key={item.id} item={item} index={index} />
+                    ))
+                )}
+            </div>
+
             {/* Pagination */}
             <div className="flex justify-between items-center mt-4 flex-wrap gap-2">
                 <span style={{ color: 'var(--color-muted-text)', fontSize: 'var(--font-size-xs)' }}>
                     แสดง {from}–{to} จาก {filtered.length} รายการ
                 </span>
-                <div className="flex gap-1">
+                <div className="flex flex-wrap gap-1">
                     <PageBtn onClick={() => goPage(currentPage - 1)} disabled={currentPage === 1}>←</PageBtn>
                     {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
                         <PageBtn key={p} onClick={() => goPage(p)} active={p === currentPage}>{p}</PageBtn>
@@ -203,6 +224,85 @@ export default function ResearchPage() {
     )
 }
 
+/* ── Mobile Card ── */
+function MobileCard({ item, index }) {
+    const [pressed, setPressed] = useState(false)
+    return (
+        <div
+            onMouseEnter={e => e.currentTarget.style.backgroundColor = 'var(--color-surface-3)'}
+            onMouseLeave={e => e.currentTarget.style.backgroundColor = index % 2 === 0 ? 'var(--color-white)' : 'var(--color-surface-2)'}
+            onTouchStart={() => setPressed(true)}
+            onTouchEnd={() => setPressed(false)}
+            style={{
+                backgroundColor: pressed
+                    ? 'var(--color-surface-3)'
+                    : index % 2 === 0 ? 'var(--color-white)' : 'var(--color-surface-2)',
+                border: '1px solid var(--color-border)',
+                borderRadius: '12px',
+                overflow: 'hidden',
+                boxShadow: '0 1px 4px var(--color-shadow)',
+                transition: 'background-color 0.15s',
+            }}
+        >
+            {/* Card top accent */}
+            <div style={{
+                height: '3px',
+                background: 'linear-gradient(to right, var(--color-forest-green), var(--color-gold, #c9a84c))',
+            }} />
+
+            <div style={{ padding: '14px 16px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
+
+                {/* Title */}
+                <p style={{
+                    color: 'var(--color-deep-text)',
+                    fontSize: 'var(--font-size-sm)',
+                    lineHeight: '1.6',
+                    fontWeight: 500,
+                    margin: 0,
+                }}>
+                    {item.title}
+                </p>
+
+                {/* Meta row */}
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                    {/* Category */}
+                    <div style={{ display: 'flex', alignItems: 'flex-start', gap: '8px' }}>
+                        <span style={{
+                            fontSize: 'var(--font-size-xs)',
+                            color: 'var(--color-muted-text)',
+                            whiteSpace: 'nowrap',
+                            paddingTop: '2px',
+                            minWidth: '72px',
+                        }}>
+                            ประเภท
+                        </span>
+                        <CategoryBadge category={item.category} />
+                    </div>
+
+                    {/* Researcher */}
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <span style={{
+                            fontSize: 'var(--font-size-xs)',
+                            color: 'var(--color-muted-text)',
+                            whiteSpace: 'nowrap',
+                            minWidth: '72px',
+                        }}>
+                            นักวิจัย
+                        </span>
+                        <span style={{
+                            fontSize: 'var(--font-size-xs)',
+                            color: 'var(--color-deep-text)',
+                        }}>
+                            {item.researcher}
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    )
+}
+
+/* ── PageBtn ── */
 function PageBtn({ onClick, disabled, active, children }) {
     const [hovered, setHovered] = useState(false)
     return (
