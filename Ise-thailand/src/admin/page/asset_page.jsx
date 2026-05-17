@@ -88,7 +88,7 @@ export default function AssetPage() {
       <div className="bg-white p-5 rounded-xl border border-[var(--color-border)] shadow-sm mb-6">
         <input
           type="text"
-          placeholder="🔍 ค้นหาด้วยชื่อหรือรหัส..."
+          placeholder="ค้นหาด้วยชื่อหรือรหัส..."
           value={searchTerm}
           onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(1) }}
           className="w-full px-4 py-2 border border-[var(--color-border)] rounded-xl text-base focus:outline-none focus:border-[var(--color-border-focus)] focus:ring-2 focus:ring-[var(--color-green-light)]/50 transition-all bg-[var(--color-surface)]/20 text-[var(--color-deep-text)] placeholder:text-[var(--color-placeholder)]"
