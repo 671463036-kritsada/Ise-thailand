@@ -2,6 +2,7 @@ import { jwtDecode } from 'jwt-decode'
 // สามารถ decode ข้อมูล user ผ่าน token ได้เลย ถ้าต้องการข้อม๔ล user ไปแสดง
 export function useAuth() {
     const token = localStorage.getItem('token')
+    // console.log(jwtDecode(token))
     
     if (!token) return { user: null, isAdmin: false }
     

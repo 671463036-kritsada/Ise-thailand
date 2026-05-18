@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useAuth } from "../../hook/useAuth";
 
 const notifications = [
   { title: "New order received", sub: "Order #12345 has been placed", time: "5 min ago", color: "from-green-400 to-emerald-500", icon: "🛒" },
@@ -11,6 +12,7 @@ const profileLinks = ["Home", "Inbox", "Chat", "Activity", "Account Settings"];
 export default function Topbar({ onToggleSidebar }) {
   const [showNotif, setShowNotif] = useState(false);
   const [showProfile, setShowProfile] = useState(false);
+  const { user } = useAuth();
 
   function closeAll() {
     setShowNotif(false);
@@ -19,7 +21,6 @@ export default function Topbar({ onToggleSidebar }) {
 
   return (
     <>
-      {/* Click-outside overlay */}
       {(showNotif || showProfile) && (
         <div className="fixed inset-0 z-40" onClick={closeAll} />
       )}
@@ -42,6 +43,7 @@ export default function Topbar({ onToggleSidebar }) {
 
         {/* Right */}
         <div className="flex items-center gap-2">
+
           {/* Notification Bell */}
           <div className="relative z-50">
             <button
@@ -78,7 +80,6 @@ export default function Topbar({ onToggleSidebar }) {
                   </div>
                 ))}
                 <div className="px-4 py-2.5 text-center bg-[var(--color-surface)] border-t border-[var(--color-surface-3)]">
-                  {/* เปลี่ยนเป็นสีทอง/เขียวของระบบ */}
                   <a href="#" className="text-xs text-[var(--color-green)] font-bold hover:underline">
                     View all notifications
                   </a>
@@ -93,18 +94,20 @@ export default function Topbar({ onToggleSidebar }) {
               onClick={() => { setShowProfile((v) => !v); setShowNotif(false); }}
               className="w-8 h-8 rounded-full bg-gradient-to-br from-[var(--color-green-light)] to-[var(--color-green)] text-white text-xs font-bold flex items-center justify-center hover:opacity-90 transition-opacity cursor-pointer"
             >
-              S
+              {user?.name?.charAt(0).toUpperCase() || '?'}
             </button>
 
             {showProfile && (
               <div className="absolute right-0 mt-2 w-48 bg-white border border-[var(--color-border)] rounded-xl shadow-xl z-50 overflow-hidden">
                 <div className="px-4 py-3 border-b border-[var(--color-surface-3)]">
-                  <p className="text-xs font-bold text-[var(--color-deep-text)]">Shrina Tesla</p>
-                  <p className="text-[10px] text-[var(--color-muted-text)]">@imshrina</p>
+                  <p className="text-xs font-bold text-[var(--color-deep-text)]">{user?.name || '-'}</p>
+                  <p className="text-[10px] text-[var(--color-muted-text)]">
+                    {user?.role === 1 ? 'Administrator' : 'User'}
+                  </p>
                 </div>
                 {profileLinks.map((l) => (
-                  <a
-                    key={l}
+
+                  <a key={l}
                     href="#"
                     className="block px-4 py-2 text-xs text-[var(--color-deep-text)] hover:bg-[var(--color-surface-2)] hover:text-[var(--color-forest-green)] transition-colors"
                   >
@@ -114,6 +117,7 @@ export default function Topbar({ onToggleSidebar }) {
               </div>
             )}
           </div>
+
         </div>
       </header>
     </>

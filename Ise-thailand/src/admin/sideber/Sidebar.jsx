@@ -9,6 +9,8 @@ export default function Sidebar({ open }) {
   const navigator = useNavigate()
   const { user } = useAuth()
   const [assetTypes, setAssetTypes] = useState([])
+  const [activityTypes, setActivityTypes] = useState([])
+
   const [openDropdown, setOpenDropdown] = useState("")
 
   useEffect(() => {
@@ -17,6 +19,11 @@ export default function Sidebar({ open }) {
       .catch(err => console.error(err))
   }, [])
 
+  useEffect(() => {
+    api.get('/activity/count')
+      .then(res => setActivityTypes(res.data.data || []))
+      .catch(err => console.error(err))
+  }, [])
   // navItems เปลี่ยนมาเป็น function เพื่อรับ assetTypes
   const navItems = [
     { icon: LayoutDashboard, label: "ภาพรวม", href: "/admin/dashboard" },
@@ -39,8 +46,10 @@ export default function Sidebar({ open }) {
           label: `${type.assettype_name} (${type.total})`,
           href: `/admin/asset/${type.assettype_id}`
         })),
-        { label: "ข่าวประชาสัมพันธ์", href: "/admin/news" },
-        { label: "กิจกรรม", href: "/admin/activities" },
+        ...activityTypes.map(type => ({
+          label: `${type.typeact_name} (${type.total})`,
+          href: `/admin/activity/${type.typeact_id}`
+        })),
         { label: "นักวิจัย", href: "/admin/researchers" },
         { label: "แผน", href: "/admin/plans" },
         { label: "แผนย่อย", href: "/admin/sub-plans" },
@@ -108,7 +117,6 @@ export default function Sidebar({ open }) {
               if (hasChildren) {
                 return (
                   <li key={item.label} className="flex flex-col">
-                    {/* ปุ่มเมนูหลักที่มีดร็อปดาวน์ย่อย - กระชับขนาดฟอนต์จาก text-xl เหลือ text-sm และปรับไอคอนเหลือ w-4 h-4 */}
                     <button
                       onClick={() => toggleDropdown(item.label)}
                       className={`flex items-center justify-between w-full px-3 py-2 rounded-xl text-sm font-bold transition-all duration-150 group cursor-pointer
@@ -151,7 +159,6 @@ export default function Sidebar({ open }) {
                 );
               }
 
-              // เมนูทั่วไปที่ไม่มีแถบย่อย (เช่น ภาพรวม) - ปรับขนาดเป็น text-sm นุ่มนวลพอดีแถว
               return (
                 <li key={item.label}>
                   <NavLink
@@ -178,25 +185,8 @@ export default function Sidebar({ open }) {
         </nav>
       </div>
 
-      {/* User Footer - ปรับความกว้างและไอคอนเป็น w-3.5 h-3.5 และฟอนต์เป็น text-xs ให้บาลานซ์กันอย่างเรียบร้อย */}
+
       <div className="p-3 border-t border-[var(--color-surface-3)] bg-[var(--color-surface)]/10">
-        {open && user && (
-          <div className="flex items-center gap-2 px-3 py-2 mb-2 rounded-xl bg-[var(--color-surface-2)]">
-            <div style={{
-              width: 28, height: 28,
-              borderRadius: '50%',
-              backgroundColor: 'var(--color-forest-green)',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              fontSize: '0.7rem', fontWeight: 700, color: 'white',
-            }}>
-              {user.name?.charAt(0).toUpperCase()}
-            </div>
-            <div>
-              <p className="text-xs font-bold text-[var(--color-deep-text)]">{user.name}</p>
-              <p className="text-[10px] text-[var(--color-muted-text)]">Administrator</p>
-            </div>
-          </div>
-        )}
         <button
           onClick={() => {
             localStorage.removeItem('token')

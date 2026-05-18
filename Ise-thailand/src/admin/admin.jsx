@@ -18,6 +18,7 @@ import ReportInstitution from "./page/report_institution";
 import ReportRegion from "./page/report_regoin";
 import ReportProvince from "./page/report_province";
 import AssetPage from "./page/asset_page";
+import ActivityPage from "./page/activity_page";
 
 // เพิ่มใน Route
 <Route path="asset/:typeId" element={<AssetPage />} />
@@ -66,6 +67,7 @@ export default function AdminLayout() {
         <Route path="report-region" element={<ReportRegion />} />
         <Route path="report-province" element={<ReportProvince />} />
         <Route path="asset/:typeId" element={<AssetPage />} />
+        <Route path="activity/:typeId" element={<ActivityPage />} />
       </Route>
     </Routes>
   );

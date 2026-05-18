@@ -1,58 +1,54 @@
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import { Pencil, Trash2, Plus, BookOpen } from "lucide-react";
+import { Pencil, Trash2, Plus, CalendarDays } from "lucide-react";
 import Swal from "sweetalert2";
 import api from "../../api/axios";
 
-import AssetModal from "../model/AssetModal";
+import ActivityModal from "../model/ActivityModal";
 
 const PER_PAGE = 10;
 
-export default function AssetPage() {
-    const { typeId } = useParams()
-    const [assets, setAssets] = useState([])
-    const [typeName, setTypeName] = useState("")
-    const [searchTerm, setSearchTerm] = useState("")
-    const [currentPage, setCurrentPage] = useState(1)
-    const [loading, setLoading] = useState(true)
+export default function ActivityPage() {
+    const { typeId } = useParams();
+    const [activities, setActivities] = useState([]);
+    const [typeName, setTypeName] = useState("");
+    const [searchTerm, setSearchTerm] = useState("");
+    const [currentPage, setCurrentPage] = useState(1);
+    const [loading, setLoading] = useState(true);
 
 
     const [modalOpen, setModalOpen] = useState(false);
     const [editData, setEditData] = useState(null);
 
-
-    const fetchAssets = () => {
-        setLoading(true)
-        api.get(`/asset/${typeId}`)
+    const fetchActivities = () => {
+        setLoading(true);
+        api.get(`/activity/${typeId}`)
             .then(res => {
-                const data = res.data.data || []
-                setAssets(data)
-                if (data.length > 0) setTypeName(data[0].assettype_name)
+                const data = res.data.data || [];
+                setActivities(data);
+                if (data.length > 0) setTypeName(data[0].typeact_name);
             })
             .catch(err => console.error(err))
-            .finally(() => setLoading(false))
-    }
+            .finally(() => setLoading(false));
+    };
 
     useEffect(() => {
-        fetchAssets()
-        setCurrentPage(1)
-    }, [typeId])
+        fetchActivities();
+        setCurrentPage(1);
+    }, [typeId]);
 
+    const filtered = activities.filter(a =>
+        (a.title ?? '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (a.docno ?? '').toString().includes(searchTerm.toLowerCase())
+    );
 
-    const filtered = assets.filter(a =>
-        (a.asset_name ?? '').toLowerCase().includes(searchTerm.toLowerCase()) ||
-        (a.asset_id ?? '').toLowerCase().includes(searchTerm.toLowerCase())
-    )
+    const totalPages = Math.ceil(filtered.length / PER_PAGE);
+    const currentItems = filtered.slice((currentPage - 1) * PER_PAGE, currentPage * PER_PAGE);
 
-    console.log("ข้อมูล asset", assets)
-
-    const totalPages = Math.ceil(filtered.length / PER_PAGE)
-    const currentItems = filtered.slice((currentPage - 1) * PER_PAGE, currentPage * PER_PAGE)
-
-    const handleDelete = (asset) => {
+    const handleDelete = (activity) => {
         Swal.fire({
             title: 'ยืนยันการลบ?',
-            text: asset.asset_name,
+            text: activity.title,
             icon: 'warning',
             showCancelButton: true,
             confirmButtonColor: 'var(--color-error)',
@@ -62,15 +58,15 @@ export default function AssetPage() {
         }).then(async (result) => {
             if (result.isConfirmed) {
                 try {
-                    await api.delete(`/asset/${asset.asset_id}`)
-                    Swal.fire({ title: 'ลบสำเร็จ!', icon: 'success', confirmButtonColor: 'var(--color-green)' })
-                    fetchAssets()
+                    await api.delete(`/activity/${activity.docno}`);
+                    Swal.fire({ title: 'ลบสำเร็จ!', icon: 'success', confirmButtonColor: 'var(--color-green)' });
+                    fetchActivities();
                 } catch (err) {
-                    Swal.fire({ title: 'เกิดข้อผิดพลาด', text: err.message, icon: 'error' })
+                    Swal.fire({ title: 'เกิดข้อผิดพลาด', text: err.message, icon: 'error' });
                 }
             }
-        })
-    }
+        });
+    };
 
     return (
         <div className="p-6 bg-[var(--color-surface)] min-h-screen font-sans antialiased text-[var(--color-deep-text)]">
@@ -79,7 +75,7 @@ export default function AssetPage() {
             <div className="flex justify-between items-center mb-6 gap-4">
                 <div>
                     <h1 className="text-3xl font-bold text-[var(--color-forest-green)] tracking-tight flex items-center gap-2">
-                        <BookOpen className="w-8 h-8 text-[var(--color-green)]" />
+                        <CalendarDays className="w-8 h-8 text-[var(--color-green)]" />
                         <span>{typeName || 'กำลังโหลด...'}</span>
                     </h1>
                     <p className="text-base text-[var(--color-muted-text)] mt-0.5 font-medium">
@@ -101,7 +97,7 @@ export default function AssetPage() {
                     type="text"
                     placeholder="ค้นหาด้วยชื่อหรือรหัส..."
                     value={searchTerm}
-                    onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(1) }}
+                    onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(1); }}
                     className="w-full px-4 py-2 border border-[var(--color-border)] rounded-xl text-base focus:outline-none focus:border-[var(--color-border-focus)] focus:ring-2 focus:ring-[var(--color-green-light)]/50 transition-all bg-[var(--color-surface)]/20 text-[var(--color-deep-text)] placeholder:text-[var(--color-placeholder)]"
                 />
             </div>
@@ -113,54 +109,48 @@ export default function AssetPage() {
                         <thead>
                             <tr className="bg-[var(--color-surface-2)] border-b border-[var(--color-surface-3)] text-[var(--color-forest-green)] text-base">
                                 <th className="px-5 py-3.5 font-bold w-36 text-center">รหัส</th>
-                                <th className="px-5 py-3.5 font-bold">ชื่อ</th>
-                                <th className="px-5 py-3.5 font-bold w-48">นักวิจัย</th>
+                                <th className="px-5 py-3.5 font-bold">ชื่อกิจกรรม</th>
+                                <th className="px-5 py-3.5 font-bold w-44">วันที่จัดกิจกรรม</th>
                                 <th className="px-5 py-3.5 font-bold w-36 text-center">ไฟล์ PDF</th>
-                                <th className="px-5 py-3.5 font-bold w-36 text-center">ลิงก์</th>
                                 <th className="px-5 py-3.5 font-bold w-28 text-center">จัดการ</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-[var(--color-surface-3)] text-base">
                             {loading ? (
                                 <tr>
-                                    <td colSpan="6" className="px-5 py-10 text-center text-[var(--color-muted-text)]">กำลังโหลด...</td>
+                                    <td colSpan="5" className="px-5 py-10 text-center text-[var(--color-muted-text)]">
+                                        กำลังโหลด...
+                                    </td>
                                 </tr>
                             ) : currentItems.length > 0 ? (
                                 currentItems.map((row, idx) => (
                                     <tr
-                                        key={row.asset_id}
+                                        key={row.docno}
                                         className={`hover:bg-[var(--color-surface-2)]/30 transition-colors ${idx % 2 === 0 ? "bg-white" : "bg-[var(--color-surface)]/20"}`}
                                     >
                                         <td className="px-5 py-3.5 font-bold text-[var(--color-green)] text-center font-mono">
-                                            {row.asset_id}
+                                            {row.docno}
                                         </td>
                                         <td className="px-5 py-3.5 font-semibold text-[var(--color-deep-text)] min-w-[280px]">
-                                            <div className="line-clamp-2">{row.asset_name}</div>
-                                            {row.asset_name_eng && (
-                                                <div className="text-xs text-[var(--color-muted-text)] line-clamp-1 mt-0.5">{row.asset_name_eng}</div>
+                                            <div className="line-clamp-2">{row.title}</div>
+                                            {row.title_eng && (
+                                                <div className="text-xs text-[var(--color-muted-text)] line-clamp-1 mt-0.5">
+                                                    {row.title_eng}
+                                                </div>
                                             )}
                                         </td>
                                         <td className="px-5 py-3.5 text-sm text-[var(--color-muted-text)]">
-                                            {row.researcher_fullname || '-'}
+                                            {row.activity_date
+                                                ? new Date(row.activity_date).toLocaleDateString('th-TH', {
+                                                    year: 'numeric', month: 'short', day: 'numeric'
+                                                })
+                                                : '-'}
                                         </td>
                                         <td className="px-5 py-3.5 text-center">
-                                            {row.pdf_file ? (
+                                            {row.pdf_file && row.pdf_file !== "" ? (
                                                 <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold bg-red-50 text-red-600 border border-red-100">
                                                     PDF
                                                 </span>
-                                            ) : (
-                                                <span className="text-[var(--color-disabled)] text-sm">-</span>
-                                            )}
-                                        </td>
-                                        <td className="px-5 py-3.5 text-center">
-                                            {row.url_ebook ? (
-                                                <a href={row.url_ebook}
-                                                    target="_blank"
-                                                    rel="noreferrer"
-                                                    className="text-xs font-bold text-[var(--color-green)] hover:underline"
-                                                >
-                                                    เปิดลิงก์
-                                                </a>
                                             ) : (
                                                 <span className="text-[var(--color-disabled)] text-sm">-</span>
                                             )}
@@ -187,7 +177,7 @@ export default function AssetPage() {
                                 ))
                             ) : (
                                 <tr>
-                                    <td colSpan="6" className="px-5 py-10 text-center font-medium text-[var(--color-disabled)]">
+                                    <td colSpan="5" className="px-5 py-10 text-center font-medium text-[var(--color-disabled)]">
                                         ❌ ไม่พบข้อมูล
                                     </td>
                                 </tr>
@@ -213,7 +203,10 @@ export default function AssetPage() {
                             <button
                                 key={p}
                                 onClick={() => setCurrentPage(p)}
-                                className={`w-8 h-8 font-bold rounded-lg transition-colors cursor-pointer ${currentPage === p ? "bg-[var(--color-green)] text-white shadow-sm" : "border border-[var(--color-border)] bg-white text-[var(--color-muted-text)] hover:bg-[var(--color-surface-2)]"}`}
+                                className={`w-8 h-8 font-bold rounded-lg transition-colors cursor-pointer ${currentPage === p
+                                    ? "bg-[var(--color-green)] text-white shadow-sm"
+                                    : "border border-[var(--color-border)] bg-white text-[var(--color-muted-text)] hover:bg-[var(--color-surface-2)]"
+                                    }`}
                             >
                                 {p}
                             </button>
@@ -232,13 +225,12 @@ export default function AssetPage() {
             <p className="text-center text-sm text-[var(--color-disabled)] mt-6 font-medium">
                 Copyright © 2026 สถาบันเศรษฐกิจพอเพียง
             </p>
-
-            <AssetModal
+            <ActivityModal
                 open={modalOpen}
                 onClose={() => setModalOpen(false)}
-                onSuccess={fetchAssets}
+                onSuccess={fetchActivities}
                 editData={editData}
             />
         </div>
-    )
+    );
 }
