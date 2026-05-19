@@ -1,9 +1,11 @@
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import { Pencil, Trash2, Plus, CalendarDays } from "lucide-react";
+import { Pencil, Trash2, Plus, CalendarDays, Images } from "lucide-react";
 import Swal from "sweetalert2";
 import api from "../../api/axios";
 
+
+import ActivityGalleryModal from "../model/ActivityGalleryModal";
 import ActivityModal from "../model/ActivityModal";
 
 const PER_PAGE = 10;
@@ -15,6 +17,9 @@ export default function ActivityPage() {
     const [searchTerm, setSearchTerm] = useState("");
     const [currentPage, setCurrentPage] = useState(1);
     const [loading, setLoading] = useState(true);
+
+    const [galleryModalOpen, setGalleryModalOpen] = useState(false);
+    const [galleryDocno, setGalleryDocno] = useState(null);
 
 
     const [modalOpen, setModalOpen] = useState(false);
@@ -44,6 +49,22 @@ export default function ActivityPage() {
 
     const totalPages = Math.ceil(filtered.length / PER_PAGE);
     const currentItems = filtered.slice((currentPage - 1) * PER_PAGE, currentPage * PER_PAGE);
+
+
+    const handleCreateSuccess = () => {
+        Swal.fire({ title: "เพิ่มสำเร็จ!", icon: "success", confirmButtonColor: "var(--color-green)" });
+        fetchActivities();
+    };
+
+    const handleUpdateSuccess = () => {
+        Swal.fire({ title: "แก้ไขสำเร็จ!", icon: "success", confirmButtonColor: "var(--color-green)" });
+        fetchActivities();
+    };
+
+    const handleError = (message) => {
+        Swal.fire({ title: "เกิดข้อผิดพลาด", text: message, icon: "error", confirmButtonColor: "var(--color-error)" });
+    };
+
 
     const handleDelete = (activity) => {
         Swal.fire({
@@ -164,6 +185,15 @@ export default function ActivityPage() {
                                                 >
                                                     <Pencil className="w-4 h-4" />
                                                 </button>
+
+                                                <button
+                                                    onClick={() => { setGalleryDocno(row.docno); setGalleryModalOpen(true); }}
+                                                    className="p-1.5 rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-600 hover:text-white transition-all cursor-pointer"
+                                                    title="จัดการรูป Gallery"
+                                                >
+                                                    <Images className="w-4 h-4" />
+                                                </button>
+
                                                 <button
                                                     onClick={() => handleDelete(row)}
                                                     className="p-1.5 rounded-lg bg-[var(--color-error)]/10 text-[var(--color-error)] hover:bg-[var(--color-error)] hover:text-white transition-all duration-150 cursor-pointer"
@@ -228,8 +258,17 @@ export default function ActivityPage() {
             <ActivityModal
                 open={modalOpen}
                 onClose={() => setModalOpen(false)}
-                onSuccess={fetchActivities}
+                onCreateSuccess={handleCreateSuccess}
+                onUpdateSuccess={handleUpdateSuccess}
+                onError={handleError}
                 editData={editData}
+                typeId={typeId}
+            />
+
+            <ActivityGalleryModal
+                open={galleryModalOpen}
+                onClose={() => setGalleryModalOpen(false)}
+                docno={galleryDocno}
             />
         </div>
     );

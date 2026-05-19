@@ -1,326 +1,330 @@
 import { useState, useEffect } from "react";
 import { X } from "lucide-react";
 import Swal from "sweetalert2";
+import api from "../../api/axios";
 
-export default function ResearcherAllModel({ isOpen, onClose, researcherData, mode, onSave }) {
-  // 1. กำหนดสถานะเริ่มต้นของฟอร์ม (ถอดฟิลด์ข้อมูลตามโครงร่างภาพหน้าจอแบบ 100%)
-  const initialFormState = {
-    id: "",
-    prefix: "",               // คำนำหน้าชื่อ *
-    firstName: "",            // ชื่อ *
-    lastName: "",             // นามสกุล *
-    sector_id: "",            // หน่วยงานสังกัด *
-    idCard: "",               // หมายเลขบัตรประชาชน *
-    address: "",              // ที่อยู่ เลขที่/อาคาร/หมู่
-    province: "",             // จังหวัด *
-    amphoe: "",               // อำเภอ *
-    tambon: "",               // ตำบล *
-    zipcode: "",              // รหัสไปรษณีย์ *
-    email: "",                // Email Address *
-    phone: "",                // เบอร์โทรศัพท์ *
-    username: "",             // USERNAME *
-    password: "",             // PASSWORD *
-    status: "ปฏิบัติงานปกติ"     // สถานะภายในระบบ
-  };
+const INITIAL_FORM = {
+  researcher_name: "",
+  researcher_surname: "",
+  researcher_name_eng: "",
+  researcher_surname_eng: "",
+  t_code: "",
+  institute_id: "",
+  district_id: "",
+  addno: "",
+  telno: "",
+  email: "",
+  zip_code: "",
+  id_card: "",
+  password: "",
+  status: 1,
+  username: "",
+};
 
-  const [formValues, setFormValues] = useState(initialFormState);
-  const isDeleteMode = mode === "delete";
+export default function ResearcherModal({ open, onClose, editData, onSuccess }) {
+  const isEdit = !!editData;
+  const [form, setForm] = useState(INITIAL_FORM);
+  const [loading, setLoading] = useState(false);
 
-  // พรีโหลดข้อมูลกรณีเปิดโหมดแก้ไขหรือลบ
+  const [tCodes, setTCodes] = useState([]);
+  const [institutes, setInstitutes] = useState([]);
+  const [provinces, setProvinces] = useState([]);
+  const [amphures, setAmphures] = useState([]);
+  const [districts, setDistricts] = useState([]);
+  const [selectedProvince, setSelectedProvince] = useState("");
+  const [selectedAmphure, setSelectedAmphure] = useState("");
+
+  // ดึงข้อมูล dropdown ตอนโหลด
   useEffect(() => {
-    if (isOpen) {
-      if (researcherData) {
-        setFormValues({ ...researcherData });
-      } else {
-        setFormValues(initialFormState);
-      }
+    api.get("/location/titles").then(res => setTCodes(res.data.data || [])).catch(console.error);
+    api.get("/location/institutes").then(res => setInstitutes(res.data.data || [])).catch(console.error);
+    api.get("/location/provinces").then(res => setProvinces(res.data.data || [])).catch(console.error);
+  }, []);
+
+  // set form เมื่อเปิด modal
+  useEffect(() => {
+    if (!open) return;
+    if (isEdit) {
+      setForm({ ...INITIAL_FORM, ...editData, password: "" });
+      // ถ้า editData มี district_id ให้ดึง amphure และ province ที่เกี่ยวข้องด้วย
+      // (optional: ถ้าอยากให้ dropdown แสดงค่าเดิมตอน edit)
+    } else {
+      setForm(INITIAL_FORM);
+      setSelectedProvince("");
+      setSelectedAmphure("");
+      setAmphures([]);
+      setDistricts([]);
     }
-  }, [isOpen, researcherData]);
+  }, [open, editData]);
 
-  if (!isOpen) return null;
-
-  // ฟังก์ชันตรวจจับการเปลี่ยนค่าภายในอินพุตฟอร์ม
-  const handleInputChange = (e) => {
+  const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormValues((prev) => ({ ...prev, [name]: value }));
+    setForm(f => ({ ...f, [name]: value }));
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  const handleProvinceChange = (e) => {
+    const pid = e.target.value;
+    setSelectedProvince(pid);
+    setSelectedAmphure("");
+    setAmphures([]);
+    setDistricts([]);
+    setForm(f => ({ ...f, district_id: "" }));
+    if (pid) {
+      api.get(`/location/amphures/${pid}`)
+        .then(res => setAmphures(res.data.data || []))
+        .catch(console.error);
+    }
+  };
 
-    if (!isDeleteMode) {
-      // ดักตรวจสอบ Validation ข้อมูลจำเป็นพื้นฐานตามที่ระบบดอกจันไว้
-      if (!formValues.prefix || !formValues.firstName.trim() || !formValues.lastName.trim()) {
-        Swal.fire({
-          title: "กรุณากรอกข้อมูลให้ครบถ้วน",
-          text: "โปรดกรอกคำนำหน้าชื่อ ชื่อ และนามสกุลของนักวิจัย",
-          icon: "warning",
-          confirmButtonColor: "var(--color-green)"
-        });
-        return;
-      }
+  const handleAmphureChange = (e) => {
+    const aid = e.target.value;
+    setSelectedAmphure(aid);
+    setDistricts([]);
+    setForm(f => ({ ...f, district_id: "" }));
+    if (aid) {
+      api.get(`/location/districts/${aid}`)
+        .then(res => setDistricts(res.data.data || []))
+        .catch(console.error);
+    }
+  };
+
+  const handleDistrictChange = (e) => {
+    const did = e.target.value;
+    const selected = districts.find(d => d.district_id === did);
+    setForm(f => ({
+      ...f,
+      district_id: did,
+      zip_code: selected?.zip_code || f.zip_code,
+    }));
+  };
+
+  const handleSubmit = async () => {
+    if (!form.researcher_name.trim() || !form.researcher_surname.trim()) {
+      Swal.fire({ title: "กรุณากรอกชื่อและนามสกุล", icon: "warning", confirmButtonColor: "var(--color-green)" });
+      return;
+    }
+    if (!isEdit && !form.password.trim()) {
+      Swal.fire({ title: "กรุณากรอกรหัสผ่าน", icon: "warning", confirmButtonColor: "var(--color-green)" });
+      return;
     }
 
-    onSave(formValues);
+    setLoading(true);
+    try {
+      if (isEdit) {
+        await api.put(`/researcher/${editData.researcher_id}`, form);
+        Swal.fire({ title: "แก้ไขสำเร็จ!", icon: "success", confirmButtonColor: "var(--color-green)" });
+      } else {
+        await api.post("/researcher", form);
+        Swal.fire({ title: "เพิ่มสำเร็จ!", icon: "success", confirmButtonColor: "var(--color-green)" });
+      }
+      onSuccess();
+    } catch (err) {
+      Swal.fire({ title: "เกิดข้อผิดพลาด", text: err.response?.data?.message || err.message, icon: "error" });
+    } finally {
+      setLoading(false);
+    }
   };
+
+  if (!open) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40  font-sans antialiased animate-fade-in text-[var(--color-deep-text)]">
-      {/* ── MODAL CONTAINER (ปรับสัดส่วนกล่องฟอร์มแผ่กว้างสไตล์พรีเมียมรองรับฟิลด์จำนวนมาก) ── */}
-      <div className={`bg-white w-full max-w-5xl rounded-2xl shadow-2xl border flex flex-col max-h-[92vh] overflow-hidden transform transition-all animate-in zoom-in-95 duration-200
-        ${isDeleteMode ? "border-[var(--color-error)]/30" : "border-[var(--color-border)]"}`}
-      >
-        
-        {/* ── HEADER MODAL ── */}
-        <header className="px-6 py-4 border-b border-[var(--color-surface-3)] flex justify-between items-center bg-[var(--color-surface)]/30 shrink-0">
-          <div>
-            <h2 className={`text-2xl font-bold ${isDeleteMode ? "text-[var(--color-error)]" : "text-[var(--color-forest-green)]"}`}>
-              {isDeleteMode ? "🗑️ ยืนยันการลบข้อมูลบุคลากรนักวิจัย" : researcherData ? "แก้ไขข้อมูลนักวิจัย" : "เพิ่มนักวิจัย"}
-            </h2>
-          </div>
-          <button onClick={onClose} className="p-1.5 rounded-lg text-[var(--color-disabled)] hover:bg-slate-100 hover:text-[var(--color-deep-text)] transition-colors cursor-pointer">
-            <X className="w-6 h-6" />
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
+      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+
+        {/* HEADER */}
+        <div className="flex items-center justify-between px-6 py-4 border-b border-[var(--color-surface-3)]">
+          <h2 className="text-lg font-extrabold text-[var(--color-forest-green)]">
+            {isEdit ? "แก้ไขข้อมูลนักวิจัย" : "เพิ่มนักวิจัยใหม่"}
+          </h2>
+          <button onClick={onClose} className="p-1.5 rounded-lg hover:bg-[var(--color-surface-2)] text-[var(--color-muted-text)] cursor-pointer">
+            <X className="w-5 h-5" />
           </button>
-        </header>
+        </div>
 
-        {/* ── FORM CONTENT AREA (ถอดบล็อก Grid เรียงแถวตามรูปแบบหน้าจอเดิมเป๊ะๆ) ── */}
-        <form onSubmit={handleSubmit} className="p-6 overflow-y-auto space-y-5 flex-1 text-base">
-          
-          {isDeleteMode && (
-            <div className="p-4 bg-rose-50 text-rose-800 border border-rose-100 rounded-xl font-medium">
-              ⚠️ ระบบกำลังดำเนินการลบประวัตินักวิจัย โปรดตรวจสอบข้อมูลด้านล่างก่อนกดยืนยันทำรายการลบถาวร
-            </div>
-          )}
+        {/* BODY */}
+        <div className="px-6 py-5 space-y-4">
 
-          {/* แถวที่ 1: คำนำหน้าชื่อ | ชื่อ | นามสกุล */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {/* ชื่อ-นามสกุล ไทย */}
+          <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-semibold text-slate-700 mb-1">คำนำหน้าชื่อ *</label>
-              <select
-                name="prefix"
-                value={formValues.prefix}
-                onChange={handleInputChange}
-                disabled={isDeleteMode}
-                className="w-full px-3 py-2 border border-[var(--color-border)] rounded-xl text-base bg-white focus:outline-none focus:border-[var(--color-border-focus)] transition-all disabled:bg-[var(--color-surface-2)] cursor-pointer"
-              >
+              <label className="block text-sm font-bold text-[var(--color-deep-text)] mb-1">
+                ชื่อ (ไทย) <span className="text-red-500">*</span>
+              </label>
+              <input name="researcher_name" value={form.researcher_name} onChange={handleChange}
+                className="w-full px-4 py-2 border border-[var(--color-border)] rounded-xl text-sm focus:outline-none focus:border-[var(--color-border-focus)] text-[var(--color-deep-text)]"
+                placeholder="ชื่อภาษาไทย" />
+            </div>
+            <div>
+              <label className="block text-sm font-bold text-[var(--color-deep-text)] mb-1">
+                นามสกุล (ไทย) <span className="text-red-500">*</span>
+              </label>
+              <input name="researcher_surname" value={form.researcher_surname} onChange={handleChange}
+                className="w-full px-4 py-2 border border-[var(--color-border)] rounded-xl text-sm focus:outline-none focus:border-[var(--color-border-focus)] text-[var(--color-deep-text)]"
+                placeholder="นามสกุลภาษาไทย" />
+            </div>
+          </div>
+
+          {/* ชื่อ-นามสกุล อังกฤษ */}
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-bold text-[var(--color-deep-text)] mb-1">ชื่อ (English)</label>
+              <input name="researcher_name_eng" value={form.researcher_name_eng} onChange={handleChange}
+                className="w-full px-4 py-2 border border-[var(--color-border)] rounded-xl text-sm focus:outline-none focus:border-[var(--color-border-focus)] text-[var(--color-deep-text)]"
+                placeholder="First name" />
+            </div>
+            <div>
+              <label className="block text-sm font-bold text-[var(--color-deep-text)] mb-1">นามสกุล (English)</label>
+              <input name="researcher_surname_eng" value={form.researcher_surname_eng} onChange={handleChange}
+                className="w-full px-4 py-2 border border-[var(--color-border)] rounded-xl text-sm focus:outline-none focus:border-[var(--color-border-focus)] text-[var(--color-deep-text)]"
+                placeholder="Last name" />
+            </div>
+          </div>
+
+          {/* คำนำหน้า + สถาบัน */}
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-bold text-[var(--color-deep-text)] mb-1">คำนำหน้า</label>
+              <select name="t_code" value={form.t_code} onChange={handleChange}
+                className="w-full px-4 py-2 border border-[var(--color-border)] rounded-xl text-sm bg-white focus:outline-none focus:border-[var(--color-border-focus)] text-[var(--color-deep-text)] cursor-pointer">
                 <option value="">-- เลือกคำนำหน้า --</option>
-                <option value="นาย">นาย</option>
-                <option value="นาง">นาง</option>
-                <option value="นางสาว">นางสาว</option>
-                <option value="ดร.">ดร.</option>
-                <option value="ผศ.ดร.">ผศ.ดร.</option>
-                <option value="รศ.ดร.">รศ.ดร.</option>
+                {tCodes.map(t => (
+                  <option key={t.t_code} value={t.t_code}>{t.t_name}</option>
+                ))}
               </select>
             </div>
             <div>
-              <label className="block text-sm font-semibold text-slate-700 mb-1">ชื่อ *</label>
-              <input
-                type="text"
-                name="firstName"
-                placeholder="กรอกชื่อจริง"
-                value={formValues.firstName}
-                onChange={handleInputChange}
-                disabled={isDeleteMode}
-                className="w-full px-3 py-2 border border-[var(--color-border)] rounded-xl text-base focus:outline-none focus:border-[var(--color-border-focus)] bg-white disabled:bg-[var(--color-surface-2)]"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-semibold text-slate-700 mb-1">นามสกุล *</label>
-              <input
-                type="text"
-                name="lastName"
-                placeholder="กรอกนามสกุล"
-                value={formValues.lastName}
-                onChange={handleInputChange}
-                disabled={isDeleteMode}
-                className="w-full px-3 py-2 border border-[var(--color-border)] rounded-xl text-base focus:outline-none focus:border-[var(--color-border-focus)] bg-white disabled:bg-[var(--color-surface-2)]"
-              />
+              <label className="block text-sm font-bold text-[var(--color-deep-text)] mb-1">สถาบัน</label>
+              <select name="institute_id" value={form.institute_id} onChange={handleChange}
+                className="w-full px-4 py-2 border border-[var(--color-border)] rounded-xl text-sm bg-white focus:outline-none focus:border-[var(--color-border-focus)] text-[var(--color-deep-text)] cursor-pointer">
+                <option value="">-- เลือกสถาบัน --</option>
+                {institutes.map(i => (
+                  <option key={i.institute_id} value={i.institute_id}>{i.institute_name}</option>
+                ))}
+              </select>
             </div>
           </div>
 
-          {/* แถวที่ 2: หน่วยงานสังกัด | หมายเลขบัตรประชาชน | ที่อยู่ */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {/* จังหวัด / อำเภอ / ตำบล */}
+          <div className="grid grid-cols-3 gap-4">
             <div>
-              <label className="block text-sm font-semibold text-slate-700 mb-1">หน่วยงานสังกัด *</label>
-              <select
-                name="sector_id"
-                value={formValues.sector_id}
-                onChange={handleInputChange}
-                disabled={isDeleteMode}
-                className="w-full px-3 py-2 border border-[var(--color-border)] rounded-xl text-base bg-white focus:outline-none focus:border-[var(--color-border-focus)] transition-all disabled:bg-[var(--color-surface-2)] cursor-pointer"
-              >
-                <option value="ไม่ระบุ">ไม่ระบุ</option>
-                <option value="SEC-001">มหาวิทยาลัยราชภัฏพระนครศรีอยุธยา</option>
-                <option value="SEC-002">สถาบันบัณฑิตพัฒนบริหารศาสตร์</option>
-                <option value="SEC-003">มหาวิทยาลัยราชภัฏเชียงราย</option>
-                <option value="SEC-004">มหาวิทยาลัยราชภัฏยะลา</option>
+              <label className="block text-sm font-bold text-[var(--color-deep-text)] mb-1">จังหวัด</label>
+              <select value={selectedProvince} onChange={handleProvinceChange}
+                className="w-full px-4 py-2 border border-[var(--color-border)] rounded-xl text-sm bg-white focus:outline-none focus:border-[var(--color-border-focus)] text-[var(--color-deep-text)] cursor-pointer">
+                <option value="">-- เลือกจังหวัด --</option>
+                {provinces.map(p => (
+                  <option key={p.province_id} value={p.province_id}>{p.name_th}</option>
+                ))}
               </select>
             </div>
             <div>
-              <label className="block text-sm font-semibold text-slate-700 mb-1">หมายเลขบัตรประชาชน *</label>
-              <input
-                type="text"
-                name="idCard"
-                maxLength={13}
-                placeholder="-"
-                value={formValues.idCard}
-                onChange={handleInputChange}
-                disabled={isDeleteMode}
-                className="w-full px-3 py-2 border border-[var(--color-border)] rounded-xl text-base font-mono focus:outline-none focus:border-[var(--color-border-focus)] bg-white disabled:bg-[var(--color-surface-2)]"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-semibold text-slate-700 mb-1">ที่อยู่ เลขที่/อาคาร/หมู่ :</label>
-              <input
-                type="text"
-                name="address"
-                placeholder="-"
-                value={formValues.address}
-                onChange={handleInputChange}
-                disabled={isDeleteMode}
-                className="w-full px-3 py-2 border border-[var(--color-border)] rounded-xl text-base focus:outline-none focus:border-[var(--color-border-focus)] bg-white disabled:bg-[var(--color-surface-2)]"
-              />
-            </div>
-          </div>
-
-          {/* แถวที่ 3: จังหวัด | อำเภอ | ตำบล | รหัสไปรษณีย์ (จัด 4 คอลัมน์ย่อยเรียงระเบียบเรียบร้อย) */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
-            <div>
-              <label className="block text-sm font-semibold text-slate-700 mb-1">จังหวัด *</label>
-              <select
-                name="province"
-                value={formValues.province}
-                onChange={handleInputChange}
-                disabled={isDeleteMode}
-                className="w-full px-3 py-2 border border-[var(--color-border)] rounded-xl text-base bg-white focus:outline-none cursor-pointer disabled:bg-[var(--color-surface-2)]"
-              >
-                <option value="">-กรุณาเลือกจังหวัด-</option>
-                <option value="เชียงใหม่">เชียงใหม่</option>
-                <option value="ลำพูน">ลำพูน</option>
-                <option value="พระนครศรีอยุธยา">พระนครศรีอยุธยา</option>
+              <label className="block text-sm font-bold text-[var(--color-deep-text)] mb-1">อำเภอ/เขต</label>
+              <select value={selectedAmphure} onChange={handleAmphureChange}
+                disabled={!selectedProvince}
+                className="w-full px-4 py-2 border border-[var(--color-border)] rounded-xl text-sm bg-white focus:outline-none focus:border-[var(--color-border-focus)] text-[var(--color-deep-text)] cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed">
+                <option value="">-- เลือกอำเภอ --</option>
+                {amphures.map(a => (
+                  <option key={a.amphure_id} value={a.amphure_id}>{a.name_th}</option>
+                ))}
               </select>
             </div>
             <div>
-              <label className="block text-sm font-semibold text-slate-700 mb-1">อำเภอ *</label>
-              <select
-                name="amphoe"
-                value={formValues.amphoe}
-                onChange={handleInputChange}
-                disabled={isDeleteMode}
-                className="w-full px-3 py-2 border border-[var(--color-border)] rounded-xl text-base bg-white focus:outline-none cursor-pointer disabled:bg-[var(--color-surface-2)]"
-              >
-                <option value="">-โปรดเลือกอำเภอ-</option>
-                <option value="เมือง">เมือง</option>
-                <option value="ป่าซาง">ป่าซาง</option>
+              <label className="block text-sm font-bold text-[var(--color-deep-text)] mb-1">ตำบล/แขวง</label>
+              <select value={form.district_id} onChange={handleDistrictChange}
+                disabled={!selectedAmphure}
+                className="w-full px-4 py-2 border border-[var(--color-border)] rounded-xl text-sm bg-white focus:outline-none focus:border-[var(--color-border-focus)] text-[var(--color-deep-text)] cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed">
+                <option value="">-- เลือกตำบล --</option>
+                {districts.map(d => (
+                  <option key={d.district_id} value={d.district_id}>{d.name_th}</option>
+                ))}
               </select>
             </div>
+          </div>
+
+          {/* Email + โทรศัพท์ */}
+          <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-semibold text-slate-700 mb-1">ตำบล *</label>
-              <select
-                name="tambon"
-                value={formValues.tambon}
-                onChange={handleInputChange}
-                disabled={isDeleteMode}
-                className="w-full px-3 py-2 border border-[var(--color-border)] rounded-xl text-base bg-white focus:outline-none cursor-pointer disabled:bg-[var(--color-surface-2)]"
-              >
-                <option value="">-โปรดเลือกตำบล-</option>
-                <option value="สุเทพ">สุเทพ</option>
-                <option value="แม่แรง">แม่แรง</option>
-              </select>
+              <label className="block text-sm font-bold text-[var(--color-deep-text)] mb-1">Email</label>
+              <input type="email" name="email" value={form.email} onChange={handleChange}
+                className="w-full px-4 py-2 border border-[var(--color-border)] rounded-xl text-sm focus:outline-none focus:border-[var(--color-border-focus)] text-[var(--color-deep-text)]"
+                placeholder="example@email.com" />
             </div>
             <div>
-              <label className="block text-sm font-semibold text-slate-700 mb-1">รหัสไปรษณีย์ *</label>
-              <input
-                type="text"
-                name="zipcode"
-                placeholder="-"
-                value={formValues.zipcode}
-                onChange={handleInputChange}
-                disabled={isDeleteMode}
-                className="w-full px-3 py-2 border border-[var(--color-border)] rounded-xl text-base font-mono focus:outline-none focus:border-[var(--color-border-focus)] bg-white disabled:bg-[var(--color-surface-2)]"
-              />
+              <label className="block text-sm font-bold text-[var(--color-deep-text)] mb-1">โทรศัพท์</label>
+              <input name="telno" value={form.telno} onChange={handleChange}
+                className="w-full px-4 py-2 border border-[var(--color-border)] rounded-xl text-sm focus:outline-none focus:border-[var(--color-border-focus)] text-[var(--color-deep-text)]"
+                placeholder="08X-XXX-XXXX" />
             </div>
           </div>
 
-          {/* แถวที่ 4: Email Address | เบอร์โทรศัพท์ */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {/* เลขบัตร + รหัสไปรษณีย์ (zip_code set อัตโนมัติจากตำบล) */}
+          <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-semibold text-slate-700 mb-1">Email Address *</label>
-              <input
-                type="email"
-                name="email"
-                placeholder="-"
-                value={formValues.email}
-                onChange={handleInputChange}
-                disabled={isDeleteMode}
-                className="w-full px-3 py-2 border border-[var(--color-border)] rounded-xl text-base focus:outline-none focus:border-[var(--color-border-focus)] bg-white disabled:bg-[var(--color-surface-2)]"
-              />
+              <label className="block text-sm font-bold text-[var(--color-deep-text)] mb-1">เลขบัตรประชาชน</label>
+              <input name="id_card" value={form.id_card} onChange={handleChange} maxLength={13}
+                className="w-full px-4 py-2 border border-[var(--color-border)] rounded-xl text-sm font-mono focus:outline-none focus:border-[var(--color-border-focus)] text-[var(--color-deep-text)]"
+                placeholder="1234567890123" />
             </div>
             <div>
-              <label className="block text-sm font-semibold text-slate-700 mb-1">เบอร์โทรศัพท์ *</label>
-              <input
-                type="text"
-                name="phone"
-                placeholder="-"
-                value={formValues.phone}
-                onChange={handleInputChange}
-                disabled={isDeleteMode}
-                className="w-full px-3 py-2 border border-[var(--color-border)] rounded-xl text-base font-mono focus:outline-none focus:border-[var(--color-border-focus)] bg-white disabled:bg-[var(--color-surface-2)]"
-              />
+              <label className="block text-sm font-bold text-[var(--color-deep-text)] mb-1">
+                รหัสไปรษณีย์ <span className="text-xs font-normal text-[var(--color-muted-text)]">(กรอกอัตโนมัติจากตำบล)</span>
+              </label>
+              <input name="zip_code" value={form.zip_code} onChange={handleChange}
+                className="w-full px-4 py-2 border border-[var(--color-border)] rounded-xl text-sm font-mono focus:outline-none focus:border-[var(--color-border-focus)] text-[var(--color-deep-text)]"
+                placeholder="50000" />
             </div>
           </div>
 
-          {/* แถวที่ 5: USERNAME * | PASSWORD * */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {/* ที่อยู่ */}
+          <div>
+            <label className="block text-sm font-bold text-[var(--color-deep-text)] mb-1">ที่อยู่</label>
+            <input name="addno" value={form.addno} onChange={handleChange}
+              className="w-full px-4 py-2 border border-[var(--color-border)] rounded-xl text-sm focus:outline-none focus:border-[var(--color-border-focus)] text-[var(--color-deep-text)]"
+              placeholder="เลขที่/อาคาร/หมู่" />
+          </div>
+
+          {/* สถานะ */}
+          <div>
+            <label className="block text-sm font-bold text-[var(--color-deep-text)] mb-1">สถานะ</label>
+            <select name="status" value={form.status} onChange={handleChange}
+              className="w-full px-4 py-2 border border-[var(--color-border)] rounded-xl text-sm bg-white focus:outline-none focus:border-[var(--color-border-focus)] text-[var(--color-deep-text)] cursor-pointer">
+              <option value={1}>ปฏิบัติงานปกติ</option>
+              <option value={0}>ระงับการทำงาน</option>
+            </select>
+          </div>
+
+          {/* Username + Password */}
+          <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-semibold text-slate-700 mb-1">USERNAME *</label>
-              <input
-                type="text"
-                name="username"
-                placeholder="-"
-                value={formValues.username}
-                onChange={handleInputChange}
-                disabled={isDeleteMode}
-                className="w-full px-3 py-2 border border-[var(--color-border)] rounded-xl text-base focus:outline-none focus:border-[var(--color-border-focus)] bg-white disabled:bg-[var(--color-surface-2)]"
-              />
+              <label className="block text-sm font-bold text-[var(--color-deep-text)] mb-1">
+                Username <span className="text-red-500">*</span>
+              </label>
+              <input name="username" value={form.username} onChange={handleChange}
+                className="w-full px-4 py-2 border border-[var(--color-border)] rounded-xl text-sm focus:outline-none focus:border-[var(--color-border-focus)] text-[var(--color-deep-text)]"
+                placeholder="username" />
             </div>
             <div>
-              <label className="block text-sm font-semibold text-slate-700 mb-1">PASSWORD *</label>
-              <input
-                type="password"
-                name="password"
-                placeholder="."
-                value={formValues.password}
-                onChange={handleInputChange}
-                disabled={isDeleteMode}
-                className="w-full px-3 py-2 border border-[var(--color-border)] rounded-xl text-base focus:outline-none focus:border-[var(--color-border-focus)] bg-white disabled:bg-[var(--color-surface-2)]"
-              />
+              <label className="block text-sm font-bold text-[var(--color-deep-text)] mb-1">
+                Password {!isEdit && <span className="text-red-500">*</span>}
+              </label>
+              <input type="password" name="password" value={form.password} onChange={handleChange}
+                className="w-full px-4 py-2 border border-[var(--color-border)] rounded-xl text-sm focus:outline-none focus:border-[var(--color-border-focus)] text-[var(--color-deep-text)]"
+                placeholder={isEdit ? "เว้นว่างถ้าไม่ต้องการเปลี่ยน" : "รหัสผ่าน"} />
             </div>
           </div>
 
-        </form>
+        </div>
 
-        {/* ── FOOTER ACTIONS BUTTONS ── */}
-        <footer className="px-6 py-4 border-t border-[var(--color-surface-3)] bg-[var(--color-surface)]/40 flex items-center justify-end gap-3 shrink-0">
-          <button
-            type="button"
-            onClick={onClose}
-            className="px-5 py-2 text-base font-semibold text-[var(--color-muted-text)] bg-white border border-[var(--color-border)] rounded-xl shadow-sm hover:bg-slate-50 transition-all cursor-pointer"
-          >
+        {/* FOOTER */}
+        <div className="px-6 py-4 border-t border-[var(--color-surface-3)] flex justify-end gap-2">
+          <button onClick={onClose}
+            className="px-5 py-2 rounded-xl border border-[var(--color-border)] text-sm font-bold text-[var(--color-muted-text)] hover:bg-[var(--color-surface-2)] cursor-pointer">
             ยกเลิก
           </button>
-          <button
-            type="submit"
-            onClick={handleSubmit}
-            className={`px-6 py-2 text-base font-bold text-white rounded-xl transition-all shadow-md active:scale-95 cursor-pointer
-              ${isDeleteMode
-                ? "bg-[var(--color-error)] hover:bg-[var(--color-error)]/90"
-                : "bg-[var(--color-green)] hover:bg-[var(--color-forest-green)]"
-              }`}
-          >
-            {isDeleteMode ? "ยืนยันการลบข้อมูล" : "บันทึกข้อมูล"}
+          <button onClick={handleSubmit} disabled={loading}
+            className="px-5 py-2 rounded-xl bg-[var(--color-green)] text-white text-sm font-bold hover:bg-[var(--color-forest-green)] cursor-pointer disabled:opacity-50">
+            {loading ? "กำลังบันทึก..." : isEdit ? "บันทึกการแก้ไข" : "เพิ่มนักวิจัย"}
           </button>
-        </footer>
+        </div>
 
       </div>
     </div>

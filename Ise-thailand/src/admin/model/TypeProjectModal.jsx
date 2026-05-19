@@ -1,113 +1,127 @@
-import { useState, useEffect } from "react";
-import { X } from "lucide-react";
-import Swal from "sweetalert2";
+import { useState, useEffect, useRef } from "react"
+import { X, Image } from "lucide-react"
+
+import {UPLOADS_URL} from "../../constants/uploads_url.js"
 
 export default function TypeProjectModal({ isOpen, onClose, onSave, editData }) {
-  const [formValues, setFormValues] = useState({ id: "", name: "" });
+  const [form, setForm] = useState({ type_name: '', type_name_eng: '' })
+  const [imageFile, setImageFile] = useState(null)
+  const [imagePreview, setImagePreview] = useState(null)
+  const fileInputRef = useRef(null)
 
-  // อัปเดตข้อมูลในฟอร์มเมื่อมีการส่ง editData เข้ามา (กรณีแก้ไข)
   useEffect(() => {
     if (editData) {
-      setFormValues(editData);
+      setForm({
+        type_id: editData.type_id,
+        type_name: editData.type_name || '',
+        type_name_eng: editData.type_name_eng || '',
+        type_image: editData.type_image || '',
+      })
+      setImagePreview(editData.type_image ? `${UPLOADS_URL}${editData.type_image}` : null)
     } else {
-      setFormValues({ id: "", name: "" });
+      setForm({ type_name: '', type_name_eng: '' })
+      setImagePreview(null)
     }
-  }, [editData, isOpen]);
+    setImageFile(null)
+  }, [editData, isOpen])
 
-  if (!isOpen) return null;
+  if (!isOpen) return null
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value })
 
-    // ดักตรวจสอบค่าว่าง
-    if (!formValues.name.trim()) {
-      Swal.fire({
-        title: "กรุณากรอกข้อมูล",
-        text: "โปรดใส่ชื่อประเภทโครงการก่อนบันทึก",
-        icon: "warning",
-        confirmButtonColor: "var(--color-green)",
-      });
-      return;
+  const handleFileChange = (e) => {
+    const file = e.target.files[0]
+    if (!file) return
+    setImageFile(file)
+    setImagePreview(URL.createObjectURL(file))
+  }
+
+  const handleSave = () => {
+    const formData = new FormData()
+    formData.append('type_name', form.type_name)
+    formData.append('type_name_eng', form.type_name_eng || '')
+    if (imageFile) {
+      formData.append('type_image', imageFile)
+    } else {
+      formData.append('type_image', form.type_image || '')
     }
-
-    // ส่งข้อมูลกลับไปให้หน้าหลักจัดการต่อ
-    onSave(formValues);
-    onClose(); // ปิด Modal
-  };
+    if (form.type_id) formData.append('type_id', form.type_id)
+    onSave(formData)
+  }
 
   return (
-    // ปรับแต่งโทนสีเบื้องหลังตามสไตล์สากลของระบบธีมธรรมชาติ (var จาก index.css)
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40  font-sans antialiased text-[var(--color-deep-text)] animate-in fade-in duration-200">
-      
-      {/* ── MODAL CONTAINER (ปรับความกว้างสูงสุดเป็น max-w-lg กำลังดี) ── */}
-      <div className="relative bg-white w-full max-w-lg rounded-2xl shadow-xl border border-[var(--color-border)] overflow-hidden transform transition-all animate-in zoom-in-95 duration-200 flex flex-col">
-        
-        {/* ── HEADER (ปรับขนาดฟอนต์หัวข้อขึ้นเป็น text-2xl เด่นชัด) ── */}
-        <header className="flex items-center justify-between px-6 py-4 bg-white border-b border-[var(--color-surface-3)]">
-          <h2 className="text-2xl font-bold text-[var(--color-forest-green)]">
-            {editData ? "📝 แก้ไขประเภทโครงการ" : "✨ เพิ่มประเภทโครงการใหม่"}
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
+      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md mx-4 overflow-hidden">
+
+        {/* Header */}
+        <div className="flex items-center justify-between px-6 py-4 border-b border-[var(--color-border)] bg-[var(--color-surface-2)]">
+          <h2 className="text-lg font-bold text-[var(--color-forest-green)]">
+            {editData ? 'แก้ไขประเภทโครงการ' : 'เพิ่มประเภทโครงการ'}
           </h2>
-          <button 
-            onClick={onClose}
-            className="p-1.5 rounded-lg text-[var(--color-muted-text)] hover:bg-[var(--color-surface-2)] hover:text-[var(--color-deep-text)] transition-colors cursor-pointer"
-          >
-            <X className="w-6 h-6" />
+          <button onClick={onClose} className="p-1.5 rounded-lg hover:bg-[var(--color-surface-3)] transition-colors cursor-pointer">
+            <X className="w-5 h-5 text-[var(--color-muted-text)]" />
           </button>
-        </header>
+        </div>
 
-        {/* ── FORM CONTENT (ขยายขนาด Label เป็น text-base และช่องกรอกข้อความมีมิติเป็น text-lg) ── */}
-        <form onSubmit={handleSubmit}>
-          <div className="p-6 space-y-4 bg-white">
-            
-            {/* แสดงกล่องรหัสประเภทโครงการ ด้านบนสุด (จะขึ้นเฉพาะเมื่อมี id เช่น โหมดแก้ไข) */}
-            {formValues.id && (
-              <div className="flex flex-col gap-1.5">
-                <label className="block text-base font-semibold text-[var(--color-deep-text)]">
-                  รหัสประเภทโครงการ
-                </label>
-                <input
-                  type="text"
-                  disabled
-                  value={formValues.id}
-                  className="w-full px-4 py-2.5 border border-[var(--color-border)] rounded-xl text-lg bg-[var(--color-surface-2)] text-[var(--color-muted-text)] font-mono font-bold cursor-not-allowed"
-                />
-              </div>
-            )}
-
-            <div className="flex flex-col gap-1.5">
-              <label className="block text-base font-semibold text-[var(--color-deep-text)]">
-                ชื่อประเภทโครงการ <span className="text-[var(--color-error)]">*</span>
-              </label>
-              <input
-                type="text"
-                placeholder="ตัวอย่างเช่น โครงการพัฒนาด้านแหล่งน้ำ"
-                value={formValues.name}
-                onChange={(e) => setFormValues({ ...formValues, name: e.target.value })}
-                className="w-full px-4 py-2.5 border border-[var(--color-border)] rounded-xl text-lg focus:outline-none focus:border-[var(--color-border-focus)] focus:ring-2 focus:ring-[var(--color-green-light)]/50 transition-all placeholder:text-[var(--color-placeholder)] bg-white text-[var(--color-deep-text)] font-medium"
-              />
-            </div>
-
+        {/* Body */}
+        <div className="px-6 py-5 space-y-4">
+          <div>
+            <label className="text-sm font-semibold text-[var(--color-deep-text)] mb-1.5 block">
+              ชื่อประเภท (ไทย) <span className="text-red-500">*</span>
+            </label>
+            <input name="type_name" value={form.type_name} onChange={handleChange}
+              placeholder="เช่น โครงการพัฒนาด้านแหล่งน้ำ"
+              className="w-full px-4 py-2.5 border border-[var(--color-border)] rounded-xl text-sm focus:outline-none focus:border-[var(--color-border-focus)] transition-all bg-[var(--color-surface)]/20" />
+          </div>
+          <div>
+            <label className="text-sm font-semibold text-[var(--color-deep-text)] mb-1.5 block">
+              ชื่อประเภท (อังกฤษ)
+            </label>
+            <input name="type_name_eng" value={form.type_name_eng} onChange={handleChange}
+              placeholder="เช่น Water resource development project"
+              className="w-full px-4 py-2.5 border border-[var(--color-border)] rounded-xl text-sm focus:outline-none focus:border-[var(--color-border-focus)] transition-all bg-[var(--color-surface)]/20" />
           </div>
 
-          {/* ── FOOTER ACTIONS (ปรับปุ่มกดให้มีมิติขนาดใหญ่ขึ้นในระดับ text-base) ── */}
-          <footer className="px-6 py-4 border-t border-[var(--color-surface-3)] bg-[var(--color-surface)]/20 flex items-center justify-end gap-3">
-            <button
-              type="button"
-              onClick={onClose}
-              className="px-5 py-2 text-base font-semibold text-[var(--color-muted-text)] border border-[var(--color-border)] hover:bg-white bg-[var(--color-surface)]/40 rounded-xl transition-colors cursor-pointer"
-            >
-              ยกเลิก
-            </button>
-            <button
-              type="submit"
-              className="px-5 py-2 text-base font-bold text-white bg-[var(--color-green)] hover:bg-[var(--color-forest-green)] rounded-xl transition-all shadow-sm active:scale-95 cursor-pointer"
-            >
-              {editData ? "บันทึกการแก้ไข" : "ยืนยันเพิ่มข้อมูล"}
-            </button>
-          </footer>
-        </form>
+          {/* Image Upload */}
+          <div>
+            <label className="text-sm font-semibold text-[var(--color-deep-text)] mb-1.5 block">
+              รูปภาพ
+            </label>
+            {imagePreview ? (
+              <div className="relative mb-2 rounded-xl overflow-hidden border border-[var(--color-border)] bg-[var(--color-surface-2)]" style={{ height: 140 }}>
+                <img src={imagePreview} alt="preview" className="w-full h-full object-contain p-2" />
+                <button
+                  onClick={() => { setImagePreview(null); setImageFile(null); setForm(f => ({ ...f, type_image: '' })) }}
+                  className="absolute top-2 right-2 w-6 h-6 rounded-full bg-red-500 text-white flex items-center justify-center text-xs hover:bg-red-600 cursor-pointer">
+                  ✕
+                </button>
+              </div>
+            ) : (
+              <div
+                onClick={() => fileInputRef.current?.click()}
+                className="flex flex-col items-center justify-center gap-2 h-[140px] rounded-xl border-2 border-dashed border-[var(--color-green-light)] bg-[var(--color-surface-2)] cursor-pointer hover:border-[var(--color-green)] hover:bg-[var(--color-surface-3)] transition-all">
+                <Image className="w-8 h-8 text-[var(--color-green-light)]" />
+                <p className="text-sm font-semibold text-[var(--color-muted-text)]">คลิกเพื่อเลือกรูปภาพ</p>
+                <p className="text-xs text-[var(--color-disabled)]">JPG, PNG, WEBP ขนาดไม่เกิน 5MB</p>
+              </div>
+            )}
+            <input ref={fileInputRef} type="file" accept=".jpg,.jpeg,.png,.webp"
+              onChange={handleFileChange} className="hidden" />
+          </div>
+        </div>
 
+        {/* Footer */}
+        <div className="flex gap-3 px-6 py-4 border-t border-[var(--color-border)] bg-[var(--color-surface)]/10">
+          <button onClick={onClose}
+            className="flex-1 py-2.5 border border-[var(--color-border)] rounded-xl text-sm font-semibold text-[var(--color-muted-text)] hover:bg-[var(--color-surface-2)] transition-all cursor-pointer">
+            ยกเลิก
+          </button>
+          <button onClick={handleSave} disabled={!form.type_name}
+            className="flex-1 py-2.5 bg-[var(--color-green)] text-white rounded-xl text-sm font-bold hover:bg-[var(--color-forest-green)] transition-all disabled:opacity-50 cursor-pointer">
+            {editData ? 'บันทึกการแก้ไข' : 'เพิ่มประเภทโครงการ'}
+          </button>
+        </div>
       </div>
     </div>
-  );
+  )
 }

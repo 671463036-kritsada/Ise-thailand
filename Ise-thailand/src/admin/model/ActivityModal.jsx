@@ -3,7 +3,10 @@ import { useState, useEffect } from "react";
 import { X, Upload } from "lucide-react";
 import api from "../../api/axios";
 
-export default function ActivityModal({ open, onClose, onSuccess, editData = null }) {
+import { useAuth } from "../../hook/useAuth";
+
+export default function ActivityModal({ open, onClose, onCreateSuccess, onUpdateSuccess, onError, editData = null, typeId = null }) {
+  const { user } = useAuth();
   const isEdit = !!editData;
 
   const [activityTypes, setActivityTypes] = useState([]);
@@ -40,6 +43,8 @@ export default function ActivityModal({ open, onClose, onSuccess, editData = nul
         typeact_id: editData.typeact_id || "",
         img_file: null,
         pdf_file: null,
+        old_img_file: editData.img_file || "",
+        old_pdf_file: editData.pdf_file || "",
       });
     } else {
       setForm({
@@ -48,12 +53,14 @@ export default function ActivityModal({ open, onClose, onSuccess, editData = nul
         detail: "",
         detail_eng: "",
         activity_date: "",
-        typeact_id: "",
+        typeact_id: typeId || "",  // กำหนด typeId อัตโนมัติ
         img_file: null,
         pdf_file: null,
+        old_img_file: "",
+        old_pdf_file: "",
       });
     }
-  }, [editData, open]);
+  }, [editData, open, typeId]);
 
   const handleChange = (e) => {
     const { name, value, files } = e.target;
@@ -66,30 +73,49 @@ export default function ActivityModal({ open, onClose, onSuccess, editData = nul
 
   const handleSubmit = async () => {
     if (!form.title || !form.activity_date || !form.typeact_id) {
-      alert("กรุณากรอกข้อมูลที่จำเป็น: ชื่อ, วันที่, ประเภท");
+      onError("กรุณากรอกข้อมูลที่จำเป็น: ชื่อ, วันที่, ประเภท");
       return;
     }
 
     setLoading(true);
     const formData = new FormData();
-    Object.entries(form).forEach(([key, val]) => {
-      if (val !== null && val !== undefined) formData.append(key, val);
+
+    const fields = ["typeact_id", "title", "title_eng", "detail", "detail_eng", "activity_date"];
+    fields.forEach(key => {
+      if (form[key] !== null && form[key] !== undefined && form[key] !== "") {
+        formData.append(key, form[key]);
+      }
     });
+
+    if (form.img_file) {
+      formData.append("img_file", form.img_file);
+    } else if (form.old_img_file) {
+      formData.append("img_file", form.old_img_file);
+    }
+
+    if (form.pdf_file) {
+      formData.append("pdf_file", form.pdf_file);
+    } else if (form.old_pdf_file) {
+      formData.append("pdf_file", form.old_pdf_file);
+    }
+
+    if (user?.id) formData.append("u_id", user.id);
 
     try {
       if (isEdit) {
         await api.put(`/activity/${editData.docno}`, formData, {
           headers: { "Content-Type": "multipart/form-data" }
         });
+        onUpdateSuccess();
       } else {
         await api.post("/activity", formData, {
           headers: { "Content-Type": "multipart/form-data" }
         });
+        onCreateSuccess();
       }
-      onSuccess();
       onClose();
     } catch (err) {
-      alert("เกิดข้อผิดพลาด: " + err.message);
+      onError(err.message);
     } finally {
       setLoading(false);
     }
@@ -118,24 +144,26 @@ export default function ActivityModal({ open, onClose, onSuccess, editData = nul
         <div className="px-6 py-5 space-y-4">
 
           {/* ประเภทกิจกรรม */}
-          <div>
-            <label className="block text-sm font-bold text-[var(--color-deep-text)] mb-1">
-              ประเภทกิจกรรม <span className="text-red-500">*</span>
-            </label>
-            <select
-              name="typeact_id"
-              value={form.typeact_id}
-              onChange={handleChange}
-              className="w-full px-4 py-2 border border-[var(--color-border)] rounded-xl text-sm focus:outline-none focus:border-[var(--color-border-focus)] focus:ring-2 focus:ring-[var(--color-green-light)]/50 transition-all bg-white text-[var(--color-deep-text)]"
-            >
-              <option value="">-- เลือกประเภท --</option>
-              {activityTypes.map(type => (
-                <option key={type.typeact_id} value={type.typeact_id}>
-                  {type.typeact_name}
-                </option>
-              ))}
-            </select>
-          </div>
+          {(isEdit || !typeId) && (
+            <div>
+              <label className="block text-sm font-bold text-[var(--color-deep-text)] mb-1">
+                ประเภทกิจกรรม <span className="text-red-500">*</span>
+              </label>
+              <select
+                name="typeact_id"
+                value={form.typeact_id}
+                onChange={handleChange}
+                className="w-full px-4 py-2 border border-[var(--color-border)] rounded-xl text-sm focus:outline-none focus:border-[var(--color-border-focus)] focus:ring-2 focus:ring-[var(--color-green-light)]/50 transition-all bg-white text-[var(--color-deep-text)]"
+              >
+                <option value="">-- เลือกประเภท --</option>
+                {activityTypes.map(type => (
+                  <option key={type.typeact_id} value={type.typeact_id}>
+                    {type.typeact_name}
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
 
           {/* ชื่อกิจกรรม (ไทย) */}
           <div>

@@ -53,6 +53,8 @@ function Navbar() {
     const navigate = useNavigate()
     const [typeProject, setTypeProject] = useState([])
 
+    const [assetTypes, setAssetTypes] = useState([])
+
     const languages = [
         { code: 'TH', label: 'ไทย' },
         { code: 'EN', label: 'English' },
@@ -64,6 +66,19 @@ function Navbar() {
         localStorage.removeItem('token')
         navigate('/login')
     }
+
+    useEffect(() => {
+        const fetchAssetTypes = async () => {
+            try {
+                const res = await fetch('http://localhost:2000/api/asset/count')
+                const data = await res.json()
+                setAssetTypes(data.data || [])
+            } catch (err) {
+                console.error('API error:', err)
+            }
+        }
+        fetchAssetTypes()
+    }, [])
 
     useEffect(() => {
         const fetchData = async () => {
@@ -126,9 +141,15 @@ function Navbar() {
                 {/* งานภายใต้สถาบัน */}
                 <DropdownMenu label="งานภายใต้สถาบันเศรษฐกิจพอเพียง">
                     <GradientBar />
-                    {INSTITUTE_MENUS.map((menu) => (
-                        <DropdownItem key={menu.path} onClick={() => navigate(menu.path)}>
-                            {menu.label}
+                    <DropdownItem onClick={() => navigate('/research')} strong>
+                        โครงการ/งานวิจัย
+                    </DropdownItem>
+                    {assetTypes.map((type) => (
+                        <DropdownItem
+                            key={type.assettype_id}
+                            onClick={() => navigate(`/ebook?typeId=${type.assettype_id}`)}
+                        >
+                            {type.assettype_name}
                         </DropdownItem>
                     ))}
                 </DropdownMenu>

@@ -3,7 +3,6 @@ import { useParams } from "react-router-dom";
 import { Pencil, Trash2, Plus, BookOpen } from "lucide-react";
 import Swal from "sweetalert2";
 import api from "../../api/axios";
-
 import AssetModal from "../model/AssetModal";
 
 const PER_PAGE = 10;
@@ -15,11 +14,8 @@ export default function AssetPage() {
     const [searchTerm, setSearchTerm] = useState("")
     const [currentPage, setCurrentPage] = useState(1)
     const [loading, setLoading] = useState(true)
-
-
-    const [modalOpen, setModalOpen] = useState(false);
-    const [editData, setEditData] = useState(null);
-
+    const [modalOpen, setModalOpen] = useState(false)
+    const [editData, setEditData] = useState(null)
 
     const fetchAssets = () => {
         setLoading(true)
@@ -38,26 +34,37 @@ export default function AssetPage() {
         setCurrentPage(1)
     }, [typeId])
 
-
     const filtered = assets.filter(a =>
         (a.asset_name ?? '').toLowerCase().includes(searchTerm.toLowerCase()) ||
         (a.asset_id ?? '').toLowerCase().includes(searchTerm.toLowerCase())
     )
 
-    console.log("ข้อมูล asset", assets)
-
     const totalPages = Math.ceil(filtered.length / PER_PAGE)
     const currentItems = filtered.slice((currentPage - 1) * PER_PAGE, currentPage * PER_PAGE)
+
+    const handleCreateSuccess = () => {
+        Swal.fire({ title: "เพิ่มสำเร็จ!", icon: "success", confirmButtonColor: "var(--color-green)" })
+        fetchAssets()
+    }
+
+    const handleUpdateSuccess = () => {
+        Swal.fire({ title: "แก้ไขสำเร็จ!", icon: "success", confirmButtonColor: "var(--color-green)" })
+        fetchAssets()
+    }
+
+    const handleError = (message) => {
+        Swal.fire({ title: "เกิดข้อผิดพลาด", text: message, icon: "error", confirmButtonColor: "var(--color-error)" })
+    }
 
     const handleDelete = (asset) => {
         Swal.fire({
             title: 'ยืนยันการลบ?',
-            text: asset.asset_name,
+            html: `ต้องการลบ <b>${asset.asset_name}</b>?`,
             icon: 'warning',
             showCancelButton: true,
             confirmButtonColor: 'var(--color-error)',
-            cancelButtonColor: 'var(--color-green)',
-            confirmButtonText: 'ลบ',
+            cancelButtonColor: 'var(--color-muted-text)',
+            confirmButtonText: 'ใช่, ลบเลย!',
             cancelButtonText: 'ยกเลิก',
         }).then(async (result) => {
             if (result.isConfirmed) {
@@ -102,7 +109,7 @@ export default function AssetPage() {
                     placeholder="ค้นหาด้วยชื่อหรือรหัส..."
                     value={searchTerm}
                     onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(1) }}
-                    className="w-full px-4 py-2 border border-[var(--color-border)] rounded-xl text-base focus:outline-none focus:border-[var(--color-border-focus)] focus:ring-2 focus:ring-[var(--color-green-light)]/50 transition-all bg-[var(--color-surface)]/20 text-[var(--color-deep-text)] placeholder:text-[var(--color-placeholder)]"
+                    className="w-full px-4 py-2 border border-[var(--color-border)] rounded-xl text-base focus:outline-none focus:border-[var(--color-border-focus)] transition-all bg-[var(--color-surface)]/20 placeholder:text-[var(--color-placeholder)]"
                 />
             </div>
 
@@ -154,11 +161,8 @@ export default function AssetPage() {
                                         </td>
                                         <td className="px-5 py-3.5 text-center">
                                             {row.url_ebook ? (
-                                                <a href={row.url_ebook}
-                                                    target="_blank"
-                                                    rel="noreferrer"
-                                                    className="text-xs font-bold text-[var(--color-green)] hover:underline"
-                                                >
+                                                <a href={row.url_ebook} target="_blank" rel="noreferrer"
+                                                    className="text-xs font-bold text-[var(--color-green)] hover:underline">
                                                     เปิดลิงก์
                                                 </a>
                                             ) : (
@@ -169,15 +173,13 @@ export default function AssetPage() {
                                             <div className="flex justify-center gap-1.5">
                                                 <button
                                                     onClick={() => { setEditData(row); setModalOpen(true); }}
-                                                    className="p-1.5 rounded-lg bg-[var(--color-surface-2)] text-[var(--color-green)] hover:bg-[var(--color-green)] hover:text-white transition-all duration-150 cursor-pointer"
-                                                    title="แก้ไข"
+                                                    className="p-1.5 rounded-lg bg-[var(--color-surface-2)] text-[var(--color-green)] hover:bg-[var(--color-green)] hover:text-white transition-all cursor-pointer"
                                                 >
                                                     <Pencil className="w-4 h-4" />
                                                 </button>
                                                 <button
                                                     onClick={() => handleDelete(row)}
-                                                    className="p-1.5 rounded-lg bg-[var(--color-error)]/10 text-[var(--color-error)] hover:bg-[var(--color-error)] hover:text-white transition-all duration-150 cursor-pointer"
-                                                    title="ลบ"
+                                                    className="p-1.5 rounded-lg bg-[var(--color-error)]/10 text-[var(--color-error)] hover:bg-[var(--color-error)] hover:text-white transition-all cursor-pointer"
                                                 >
                                                     <Trash2 className="w-4 h-4" />
                                                 </button>
@@ -188,7 +190,7 @@ export default function AssetPage() {
                             ) : (
                                 <tr>
                                     <td colSpan="6" className="px-5 py-10 text-center font-medium text-[var(--color-disabled)]">
-                                        ❌ ไม่พบข้อมูล
+                                        ไม่พบข้อมูล
                                     </td>
                                 </tr>
                             )}
@@ -197,31 +199,26 @@ export default function AssetPage() {
                 </div>
 
                 {/* PAGINATION */}
-                <div className="px-5 py-3 border-t border-[var(--color-surface-3)] flex flex-col sm:flex-row justify-between items-center gap-3 bg-[var(--color-surface)]/10 text-xs">
-                    <p className="font-medium text-[var(--color-muted-text)]">
-                        แสดง {currentItems.length} จาก {filtered.length} รายการ
-                    </p>
+                <div className="px-5 py-3 border-t border-[var(--color-surface-3)] flex justify-between items-center bg-[var(--color-surface)]/10 text-xs">
+                    <p className="font-medium text-[var(--color-muted-text)]">ทั้งหมด {filtered.length} รายการ</p>
                     <div className="flex items-center gap-1.5">
                         <button
                             onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
                             disabled={currentPage === 1}
-                            className="px-3 py-1.5 font-semibold rounded-lg border border-[var(--color-border)] bg-white text-[var(--color-muted-text)] hover:bg-[var(--color-surface-2)] disabled:opacity-40 disabled:cursor-not-allowed transition-colors cursor-pointer shadow-sm"
+                            className="px-3 py-1.5 font-semibold rounded-lg border border-[var(--color-border)] bg-white text-[var(--color-muted-text)] hover:bg-[var(--color-surface-2)] disabled:opacity-40 cursor-pointer"
                         >
                             ย้อนกลับ
                         </button>
                         {Array.from({ length: totalPages }, (_, i) => i + 1).map(p => (
-                            <button
-                                key={p}
-                                onClick={() => setCurrentPage(p)}
-                                className={`w-8 h-8 font-bold rounded-lg transition-colors cursor-pointer ${currentPage === p ? "bg-[var(--color-green)] text-white shadow-sm" : "border border-[var(--color-border)] bg-white text-[var(--color-muted-text)] hover:bg-[var(--color-surface-2)]"}`}
-                            >
+                            <button key={p} onClick={() => setCurrentPage(p)}
+                                className={`w-8 h-8 font-bold rounded-lg cursor-pointer ${currentPage === p ? "bg-[var(--color-green)] text-white" : "border border-[var(--color-border)] bg-white text-[var(--color-muted-text)] hover:bg-[var(--color-surface-2)]"}`}>
                                 {p}
                             </button>
                         ))}
                         <button
                             onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
                             disabled={currentPage === totalPages || totalPages === 0}
-                            className="px-3 py-1.5 font-semibold rounded-lg border border-[var(--color-border)] bg-white text-[var(--color-muted-text)] hover:bg-[var(--color-surface-2)] disabled:opacity-40 disabled:cursor-not-allowed transition-colors shadow-sm cursor-pointer"
+                            className="px-3 py-1.5 font-semibold rounded-lg border border-[var(--color-border)] bg-white text-[var(--color-muted-text)] hover:bg-[var(--color-surface-2)] disabled:opacity-40 cursor-pointer"
                         >
                             ถัดไป
                         </button>
@@ -229,15 +226,14 @@ export default function AssetPage() {
                 </div>
             </div>
 
-            <p className="text-center text-sm text-[var(--color-disabled)] mt-6 font-medium">
-                Copyright © 2026 สถาบันเศรษฐกิจพอเพียง
-            </p>
-
             <AssetModal
                 open={modalOpen}
                 onClose={() => setModalOpen(false)}
-                onSuccess={fetchAssets}
+                onCreateSuccess={handleCreateSuccess}
+                onUpdateSuccess={handleUpdateSuccess}
+                onError={handleError}
                 editData={editData}
+                typeId={typeId}
             />
         </div>
     )
