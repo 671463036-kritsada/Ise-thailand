@@ -240,7 +240,6 @@ export default function RoyalAll() {
                     </td>
                     <td className="px-4 py-3 text-[var(--color-muted-text)] font-medium">
                       อ.{row.amphure_id} จ.{row.province_id}
-                      {console.log("data ", row)}
                     </td>
                     <td className="px-4 py-3 text-center whitespace-nowrap">
                       <div className="flex justify-center gap-1.5">
