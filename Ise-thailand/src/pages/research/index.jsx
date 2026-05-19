@@ -11,7 +11,7 @@ export default function ResearchPage() {
     const [pageSize, setPageSize] = useState(10)
     const [currentPage, setCurrentPage] = useState(1)
 
-    const {lang} = useLang()
+    const { lang } = useLang()
     const { t } = useTranslation()
 
     useEffect(() => {
@@ -27,8 +27,11 @@ export default function ResearchPage() {
 
         return data.filter(item =>
             (item.name_thai ?? '').toLowerCase().includes(q) ||
+            (item.name_eng ?? '').toLowerCase().includes(q) ||
             (item.type_name ?? '').toLowerCase().includes(q) ||
-            (item.researcher_fullname ?? '').toLowerCase().includes(q)
+            (item.type_name_eng ?? '').toLowerCase().includes(q) ||
+            (item.researcher_fullname ?? '').toLowerCase().includes(q) ||
+            (item.researcher_fullname_eng ?? '').toLowerCase().includes(q)
         )
     }, [search, data])
 
@@ -271,12 +274,12 @@ export default function ResearchPage() {
                                                 'var(--line-height-relaxed)',
                                         }}
                                     >
-                                        {item.name_thai}
+                                        {lang === 'TH' ? item.name_thai : item.name_eng}
                                     </td>
 
                                     <td className="px-5 py-3">
                                         <CategoryBadge
-                                            category={item.type_name}
+                                            category={lang === 'TH' ? item.type_name : item.type_name_eng}
                                         />
                                     </td>
 
@@ -287,7 +290,7 @@ export default function ResearchPage() {
                                                 'var(--color-muted-text)',
                                         }}
                                     >
-                                        {item.researcher_fullname}
+                                        {lang === 'TH' ? item.researcher_fullname : item.researcher_fullname_eng}
                                     </td>
                                 </tr>
                             ))
@@ -365,8 +368,8 @@ function PageBtn({ onClick, disabled, active, children }) {
             className="px-3 py-1.5 rounded-lg transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
             style={{
                 border: `1px solid ${active
-                        ? 'var(--color-forest-green)'
-                        : 'var(--color-border)'
+                    ? 'var(--color-forest-green)'
+                    : 'var(--color-border)'
                     }`,
                 backgroundColor: active
                     ? 'var(--color-forest-green)'

@@ -226,8 +226,6 @@ export default function ProjectsPage() {
                 className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
               />
 
-              {console.log("project data" , project)}
-
 
               {/* Gradient overlay */}
               <div

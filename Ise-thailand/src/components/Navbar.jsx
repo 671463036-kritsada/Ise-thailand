@@ -1,97 +1,41 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
-
 import { useAuth } from '../hook/useAuth'
-
 import { useLang } from '../context/LanguageContext'
+import api from '../api/axios'
 
 
-const INSTITUTE_MENUS = [
-    { label: 'โครงการ/งานวิจัย ภายใต้สถาบันเศรษฐกิจพอเพียง', path: '/research' },
-    { label: 'EBOOK', path: '/ebook' },
-    { label: 'ผลงานวิชาการ', path: '/academic' },
-    { label: 'สื่อนวัตกรรมการเรียนรู้', path: '/media' },
-    { label: 'วีดีทัศน์', path: '/video' },
-]
+import { useTranslation } from 'react-i18next'
 
-const dropdownItemBase = {
-    display: 'block',
-    width: '100%',
-    textAlign: 'left',
-    padding: '10px 20px',
-    fontSize: '0.75rem',
-    background: 'none',
-    border: 'none',
-    cursor: 'pointer',
-    transition: 'background-color 0.15s, color 0.15s',
-}
 
-function DropdownItem({ onClick, children, strong }) {
-    const [hovered, setHovered] = useState(false)
-    return (
-        <button
-            onClick={onClick}
-            style={{
-                ...dropdownItemBase,
-                color: hovered || strong ? 'var(--color-deep-text)' : 'var(--color-muted-text)',
-                fontWeight: strong ? 600 : 400,
-                backgroundColor: hovered ? 'var(--color-surface-3)' : 'transparent',
-                borderBottom: strong ? '1px solid var(--color-border)' : 'none',
-            }}
-            onMouseEnter={() => setHovered(true)}
-            onMouseLeave={() => setHovered(false)}
-        >
-            {children}
-        </button>
-    )
-}
 
 function Navbar() {
     const { lang, setLang } = useLang()
     const [langOpen, setLangOpen] = useState(false)
     const [scrolled, setScrolled] = useState(false)
+    const [mobileOpen, setMobileOpen] = useState(false)
+    const [mobileDropdown, setMobileDropdown] = useState('')
     const navigate = useNavigate()
     const [typeProject, setTypeProject] = useState([])
-
     const [assetTypes, setAssetTypes] = useState([])
+    const { user } = useAuth()
+    const mobileRef = useRef(null)
+    const { t } = useTranslation()
 
     const languages = [
         { code: 'TH', label: 'ไทย' },
         { code: 'EN', label: 'English' },
     ]
 
-    const { user } = useAuth()
-
     const handleLogout = () => {
         localStorage.removeItem('token')
         navigate('/login')
+        setMobileOpen(false)
     }
 
     useEffect(() => {
-        const fetchAssetTypes = async () => {
-            try {
-                const res = await fetch('http://localhost:2000/api/asset/count')
-                const data = await res.json()
-                setAssetTypes(data.data || [])
-            } catch (err) {
-                console.error('API error:', err)
-            }
-        }
-        fetchAssetTypes()
-    }, [])
-
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const res = await fetch('http://localhost:2000/api/project/types')
-                if (!res.ok) throw new Error(`HTTP error: ${res.status}`)
-                const data = await res.json()
-                setTypeProject(data.data || [])
-            } catch (err) {
-                console.error('API error:', err)
-            }
-        }
-        fetchData()
+        api.get('/asset/count').then(res => setAssetTypes(res.data.data || []))
+        api.get('/project/types').then(res => setTypeProject(res.data.data || []))
     }, [])
 
     useEffect(() => {
@@ -100,189 +44,313 @@ function Navbar() {
         return () => window.removeEventListener('scroll', handleScroll)
     }, [])
 
+    // ปิด mobile menu เมื่อคลิกนอก
+    useEffect(() => {
+        const handleClickOutside = (e) => {
+            if (mobileRef.current && !mobileRef.current.contains(e.target)) {
+                setMobileOpen(false)
+            }
+        }
+        document.addEventListener('mousedown', handleClickOutside)
+        return () => document.removeEventListener('mousedown', handleClickOutside)
+    }, [])
+
     const handleSentTypeIdProject = (type_id) => {
         navigate(`/projects?typeId=${type_id}`)
+        setMobileOpen(false)
+    }
+
+    const navStyle = {
+        backgroundColor: scrolled ? 'rgba(64,78,59,0.97)' : 'rgba(64,78,59,0.92)',
+        borderBottom: '1px solid rgba(186,200,177,0.25)',
+        boxShadow: scrolled ? '0 2px 20px rgba(40,56,36,0.25)' : 'none',
+        backdropFilter: 'blur(12px)',
+        WebkitBackdropFilter: 'blur(12px)',
     }
 
     return (
-        <nav
-            className="w-full fixed top-0 left-0 z-50 transition-all duration-500"
-            style={{
-                backgroundColor: scrolled ? 'rgba(64,78,59,0.97)' : 'rgba(64,78,59,0.92)',
-                borderBottom: '1px solid rgba(186,200,177,0.25)',
-                boxShadow: scrolled ? '0 2px 20px rgba(40,56,36,0.25)' : 'none',
-                backdropFilter: 'blur(12px)',
-                WebkitBackdropFilter: 'blur(12px)',
-            }}
-        >
+        <nav className="w-full fixed top-0 left-0 z-50 transition-all duration-500" style={navStyle} ref={mobileRef}>
             {/* Gold top accent line */}
-            <div style={{
-                height: '2px',
-                background: 'linear-gradient(to right, transparent, var(--color-gold), var(--color-gold-border), transparent)',
-            }} />
+            <div style={{ height: '2px', background: 'linear-gradient(to right, transparent, var(--color-gold), var(--color-gold-border), transparent)' }} />
 
-            <div className="max-w-7xl mx-auto px-8 h-14 flex items-center justify-center gap-8">
+            <div className="max-w-7xl mx-auto px-6 h-14 flex items-center justify-between">
 
-                <NavLink href="/">หน้าหลัก</NavLink>
-                <Dot />
+                {/* Logo / Brand */}
+                <button onClick={() => navigate('/')} className="text-white font-bold text-sm tracking-wider whitespace-nowrap">
+                    ISE Thailand
+                </button>
 
-                {/* ศาสตร์ของพระราชา */}
-                <DropdownMenu label="ศาสตร์ของพระราชา">
-                    <GradientBar />
-                    <DropdownItem onClick={() => navigate('/projects')} strong>ดูทั้งหมด</DropdownItem>
-                    {typeProject.map((data) => (
-                        <DropdownItem key={data.type_id} onClick={() => handleSentTypeIdProject(data.type_id)}>
-                            {data.type_name}
-                        </DropdownItem>
-                    ))}
-                </DropdownMenu>
-                <Dot />
+                {/* Desktop Menu */}
+                <div className="hidden lg:flex items-center gap-6">
+                    <NavLink href="/">{t('nav_home')}</NavLink>
+                    <Dot />
 
-                {/* งานภายใต้สถาบัน */}
-                <DropdownMenu label="งานภายใต้สถาบันเศรษฐกิจพอเพียง">
-                    <GradientBar />
-                    <DropdownItem onClick={() => navigate('/research')} strong>
-                        โครงการ/งานวิจัย
-                    </DropdownItem>
-                    {assetTypes.map((type) => (
-                        <DropdownItem
-                            key={type.assettype_id}
-                            onClick={() => navigate(`/ebook?typeId=${type.assettype_id}`)}
-                        >
-                            {type.assettype_name}
-                        </DropdownItem>
-                    ))}
-                </DropdownMenu>
-                <Dot />
+                    <DropdownMenu label={t('nav_royal')}>
+                        <GradientBar />
+                        <DropdownItem onClick={() => navigate('/projects')} strong>{t('nav_royal_all')}</DropdownItem>
+                        {typeProject.map(data => (
+                            <DropdownItem key={data.type_id} onClick={() => handleSentTypeIdProject(data.type_id)}>
+                                { lang === 'TH' ? data.type_name : data.type_name_eng}
+                            </DropdownItem>
+                        ))}
+                    </DropdownMenu>
+                    <Dot />
 
-                <NavLink as="button" onClick={() => navigate('/institute')}>สถาบันเศรษฐกิจพอเพียง</NavLink>
+                    <DropdownMenu label={t('nav_institute')}>
+                        <GradientBar />
+                        <DropdownItem onClick={() => navigate('/research')} strong>{t('nav_institute_research')}</DropdownItem>
+                        {assetTypes.map(type => (
+                            <DropdownItem key={type.assettype_id} onClick={() => { navigate(`/ebook?typeId=${type.assettype_id}`) }}>
+                                { lang === 'TH' ? type.assettype_name : type.assettype_name_eng}
+                            </DropdownItem>
+                        ))}
+                    </DropdownMenu>
+                    <Dot />
 
-                {/* Separator */}
-                <span style={{
-                    width: '1px', height: '16px',
-                    background: 'linear-gradient(to bottom, transparent, rgba(186,200,177,0.5), transparent)',
-                }} />
+                    <NavLink as="button" onClick={() => navigate('/institute')}>{t('nav_about')}</NavLink>
 
-                {user ? (
-                    <>
-                        {user ? (
-                            <div className="flex items-center gap-3">
-                                {/* Avatar + ชื่อ */}
-                                <div className="flex items-center gap-2">
-                                    <div style={{
-                                        width: 28,
-                                        height: 28,
-                                        borderRadius: '50%',
-                                        backgroundColor: 'rgba(255,255,255,0.15)',
-                                        border: '1px solid rgba(255,255,255,0.3)',
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        justifyContent: 'center',
-                                        fontSize: '0.7rem',
-                                        fontWeight: 700,
-                                        color: 'white',
-                                    }}>
-                                        {user.name?.charAt(0).toUpperCase()}
-                                    </div>
-                                    <span style={{
-                                        fontSize: '0.75rem',
-                                        color: 'rgba(255,255,255,0.85)',
-                                        fontWeight: 500,
-                                    }}>
-                                        {user.name}
-                                    </span>
+                    <span style={{ width: '1px', height: '16px', background: 'linear-gradient(to bottom, transparent, rgba(186,200,177,0.5), transparent)' }} />
+
+                    {user ? (
+                        <div className="flex items-center gap-3">
+                            <div className="flex items-center gap-2">
+                                <div style={{
+                                    width: 28, height: 28, borderRadius: '50%',
+                                    backgroundColor: 'rgba(255,255,255,0.15)',
+                                    border: '1px solid rgba(255,255,255,0.3)',
+                                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                    fontSize: '0.7rem', fontWeight: 700, color: 'white',
+                                }}>
+                                    {user.name?.charAt(0).toUpperCase()}
                                 </div>
-
-                                <OutlineButton onClick={handleLogout}>
-                                    <svg width="13" height="13" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-                                    </svg>
-                                    ออกจากระบบ
-                                </OutlineButton>
+                                <span style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.85)', fontWeight: 500 }}>
+                                    {user.name}
+                                </span>
                             </div>
-                        ) : (
-                            <OutlineButton onClick={() => navigate('/login')}>เข้าสู่ระบบ</OutlineButton>
+                            <OutlineButton onClick={handleLogout}>{t('nav_logout')}</OutlineButton>
+                        </div>
+                    ) : (
+                        <OutlineButton onClick={() => navigate('/login')}>{t('nav_login')}</OutlineButton>
+                    )}
+
+                    {user?.role === 1 && (
+                        <OutlineButton onClick={() => navigate('/admin')}>{t('nav_admin')}</OutlineButton>
+                    )}
+
+                    {/* Language */}
+                    <div className="relative">
+                        <OutlineButton onClick={() => setLangOpen(!langOpen)}>
+                            <span>{lang}</span>
+                            <svg className="w-3 h-3 transition-transform duration-200"
+                                style={{ transform: langOpen ? 'rotate(180deg)' : 'rotate(0deg)' }}
+                                fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 9l-7 7-7-7" />
+                            </svg>
+                        </OutlineButton>
+                        {langOpen && (
+                            <div className="absolute top-full right-0 mt-3 w-36 rounded-xl shadow-xl z-50 overflow-hidden"
+                                style={{ backgroundColor: 'var(--color-white)', border: '1px solid var(--color-border)', boxShadow: '0 8px 24px var(--color-shadow-lg)' }}>
+                                <GradientBar />
+                                {languages.map(I => {
+                                    const isSelected = lang === I.code
+                                    return (
+                                        <DropdownItem key={I.code} onClick={() => { setLang(I.code); setLangOpen(false) }} strong={isSelected}>
+                                            <span className="flex items-center gap-3">
+                                                <span>{I.label}</span>
+                                                {isSelected && (
+                                                    <svg className="w-3 h-3 ml-auto" fill="currentColor" viewBox="0 0 20 20" style={{ color: 'var(--color-green)' }}>
+                                                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414L8.414 15l-4.121-4.121a1 1 0 011.414-1.414L8.414 12.172l7.879-7.879a1 1 0 011.414 0z" clipRule="evenodd" />
+                                                    </svg>
+                                                )}
+                                            </span>
+                                        </DropdownItem>
+                                    )
+                                })}
+                            </div>
                         )}
-                    </>
-                ) : (
-                    <OutlineButton onClick={() => navigate('/login')}>เข้าสู่ระบบ</OutlineButton>
-                )}
+                    </div>
+                </div>
 
-                {user?.role === 1 && (
-                    <OutlineButton onClick={() => navigate('/admin')}>Admin</OutlineButton>
-                )}
+                {/* Mobile: Hamburger */}
+                <button
+                    className="lg:hidden flex flex-col justify-center items-center w-8 h-8 gap-1.5 cursor-pointer"
+                    onClick={() => setMobileOpen(!mobileOpen)}
+                >
+                    <span className={`block w-5 h-0.5 bg-white transition-all duration-300 ${mobileOpen ? 'rotate-45 translate-y-2' : ''}`} />
+                    <span className={`block w-5 h-0.5 bg-white transition-all duration-300 ${mobileOpen ? 'opacity-0' : ''}`} />
+                    <span className={`block w-5 h-0.5 bg-white transition-all duration-300 ${mobileOpen ? '-rotate-45 -translate-y-2' : ''}`} />
+                </button>
+            </div>
 
-                {/* Language Switcher */}
-                <div className="relative">
-                    <OutlineButton onClick={() => setLangOpen(!langOpen)}>
-                        <span>{lang}</span>
-                        <svg
-                            className="w-3 h-3 transition-transform duration-200"
-                            style={{ transform: langOpen ? 'rotate(180deg)' : 'rotate(0deg)' }}
-                            fill="none" stroke="currentColor" viewBox="0 0 24 24"
-                        >
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 9l-7 7-7-7" />
-                        </svg>
-                    </OutlineButton>
+            {/* Mobile Menu */}
+            {mobileOpen && (
+                <div className="lg:hidden border-t border-white/10 bg-[rgba(40,56,36,0.98)] overflow-y-auto max-h-[80vh]">
 
-                    {langOpen && (
-                        <div
-                            className="absolute top-full right-0 mt-3 w-36 rounded-xl shadow-xl z-50 overflow-hidden"
-                            style={{
-                                backgroundColor: 'var(--color-white)',
-                                border: '1px solid var(--color-border)',
-                                boxShadow: '0 8px 24px var(--color-shadow-lg)',
-                            }}
-                        >
-                            <GradientBar />
-                            {languages.map((I) => {
-                                const isSelected = lang === I.code
-                                return (
-                                    <DropdownItem
-                                        key={I.code}
-                                        onClick={() => { setLang(I.code); setLangOpen(false) }}
-                                        strong={isSelected}
-                                    >
-                                        <span className="flex items-center gap-3">
-                                            <span>{I.label}</span>
-                                            {isSelected && (
-                                                <svg className="w-3 h-3 ml-auto" fill="currentColor" viewBox="0 0 20 20"
-                                                    style={{ color: 'var(--color-green)' }}>
-                                                    <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414L8.414 15l-4.121-4.121a1 1 0 011.414-1.414L8.414 12.172l7.879-7.879a1 1 0 011.414 0z" clipRule="evenodd" />
-                                                </svg>
-                                            )}
-                                        </span>
-                                    </DropdownItem>
-                                )
-                            })}
+                    {/* User Info */}
+                    {user && (
+                        <div className="flex items-center gap-3 px-6 py-4 border-b border-white/10">
+                            <div style={{
+                                width: 32, height: 32, borderRadius: '50%',
+                                backgroundColor: 'rgba(255,255,255,0.15)',
+                                border: '1px solid rgba(255,255,255,0.3)',
+                                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                fontSize: '0.8rem', fontWeight: 700, color: 'white',
+                            }}>
+                                {user.name?.charAt(0).toUpperCase()}
+                            </div>
+                            <div>
+                                <p className="text-white text-sm font-semibold">{user.name}</p>
+                                <p className="text-white/50 text-xs">{user.role === 1 ? `${t('nav_administrator')}` : `${t('nav_user')}`}</p>
+                            </div>
                         </div>
                     )}
+
+                    <div className="py-2">
+                        {/* หน้าหลัก */}
+                        <MobileNavItem onClick={() => { navigate('/'); setMobileOpen(false) }}>
+                            หน้าหลัก
+                        </MobileNavItem>
+
+                        {/* ศาสตร์ของพระราชา */}
+                        <MobileDropdown
+                            label="ศาสตร์ของพระราชา"
+                            isOpen={mobileDropdown === 'royal'}
+                            onToggle={() => setMobileDropdown(mobileDropdown === 'royal' ? '' : 'royal')}
+                        >
+                            <MobileSubItem onClick={() => { navigate('/projects'); setMobileOpen(false) }}>ดูทั้งหมด</MobileSubItem>
+                            {typeProject.map(data => (
+                                <MobileSubItem key={data.type_id} onClick={() => handleSentTypeIdProject(data.type_id)}>
+                                    {data.type_name}
+                                </MobileSubItem>
+                            ))}
+                        </MobileDropdown>
+
+                        {/* งานภายใต้สถาบัน */}
+                        <MobileDropdown
+                            label="งานภายใต้สถาบันเศรษฐกิจพอเพียง"
+                            isOpen={mobileDropdown === 'institute'}
+                            onToggle={() => setMobileDropdown(mobileDropdown === 'institute' ? '' : 'institute')}
+                        >
+                            <MobileSubItem onClick={() => { navigate('/research'); setMobileOpen(false) }}>โครงการ/งานวิจัย</MobileSubItem>
+                            {assetTypes.map(type => (
+                                <MobileSubItem key={type.assettype_id} onClick={() => { navigate(`/ebook?typeId=${type.assettype_id}`); setMobileOpen(false) }}>
+                                    {type.assettype_name}
+                                </MobileSubItem>
+                            ))}
+                        </MobileDropdown>
+
+                        <MobileNavItem onClick={() => { navigate('/institute'); setMobileOpen(false) }}>
+                            สถาบันเศรษฐกิจพอเพียง
+                        </MobileNavItem>
+
+                        {user?.role === 1 && (
+                            <MobileNavItem onClick={() => { navigate('/admin'); setMobileOpen(false) }}>
+                                Admin Dashboard
+                            </MobileNavItem>
+                        )}
+
+                        {/* Language */}
+                        <div className="px-6 py-3 border-t border-white/10 flex gap-3 mt-1">
+                            {languages.map(I => (
+                                <button key={I.code}
+                                    onClick={() => { setLang(I.code); setMobileOpen(false) }}
+                                    className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all ${lang === I.code ? 'bg-white text-forest-green' : 'border border-white/30 text-white/70'}`}>
+                                    {I.label}
+                                </button>
+                            ))}
+                        </div>
+
+                        {/* Login/Logout */}
+                        <div className="px-6 py-3 border-t border-white/10">
+                            {user ? (
+                                <button onClick={handleLogout}
+                                    className="w-full py-2.5 rounded-xl bg-red-500/20 text-red-300 text-sm font-bold border border-red-500/30 hover:bg-red-500/30 transition-all cursor-pointer">
+                                    ออกจากระบบ
+                                </button>
+                            ) : (
+                                <button onClick={() => { navigate('/login'); setMobileOpen(false) }}
+                                    className="w-full py-2.5 rounded-xl bg-white/10 text-white text-sm font-bold border border-white/20 hover:bg-white/20 transition-all cursor-pointer">
+                                    เข้าสู่ระบบ
+                                </button>
+                            )}
+                        </div>
+                    </div>
                 </div>
-            </div>
+            )}
         </nav>
     )
 }
 
-// ── Sub-components ──────────────────────────────
-
-function GradientBar() {
+// Mobile Sub-components
+function MobileNavItem({ onClick, children }) {
     return (
-        <div style={{
-            height: '2px',
-            background: 'linear-gradient(to right, var(--color-green), var(--color-forest-green))',
-        }} />
+        <button onClick={onClick}
+            className="w-full text-left px-6 py-3 text-sm text-white/85 hover:text-white hover:bg-white/5 transition-all cursor-pointer">
+            {children}
+        </button>
     )
 }
 
-function Dot() {
+function MobileDropdown({ label, isOpen, onToggle, children }) {
     return (
-        <span style={{
-            width: '4px', height: '4px',
-            borderRadius: 'var(--radius-full)',
-            backgroundColor: 'var(--color-green-light)',
-            opacity: 0.5,
-            flexShrink: 0,
-        }} />
+        <div>
+            <button onClick={onToggle}
+                className="w-full flex items-center justify-between px-6 py-3 text-sm text-white/85 hover:text-white hover:bg-white/5 transition-all cursor-pointer">
+                <span>{label}</span>
+                <svg className={`w-4 h-4 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`}
+                    fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                </svg>
+            </button>
+            {isOpen && (
+                <div className="bg-black/20 border-l-2 border-white/10 ml-6">
+                    {children}
+                </div>
+            )}
+        </div>
+    )
+}
+
+function MobileSubItem({ onClick, children }) {
+    return (
+        <button onClick={onClick}
+            className="w-full text-left px-6 py-2.5 text-xs text-white/70 hover:text-white hover:bg-white/5 transition-all cursor-pointer">
+            {children}
+        </button>
+    )
+}
+
+// Desktop Sub-components (เหมือนเดิม)
+function GradientBar() {
+    return <div style={{ height: '2px', background: 'linear-gradient(to right, var(--color-green), var(--color-forest-green))' }} />
+}
+
+function Dot() {
+    return <span style={{ width: '4px', height: '4px', borderRadius: 'var(--radius-full)', backgroundColor: 'var(--color-green-light)', opacity: 0.5, flexShrink: 0 }} />
+}
+
+const dropdownItemBase = {
+    display: 'block', width: '100%', textAlign: 'left',
+    padding: '10px 20px', fontSize: '0.75rem',
+    background: 'none', border: 'none', cursor: 'pointer',
+    transition: 'background-color 0.15s, color 0.15s',
+}
+
+function DropdownItem({ onClick, children, strong }) {
+    const [hovered, setHovered] = useState(false)
+    return (
+        <button onClick={onClick}
+            style={{
+                ...dropdownItemBase,
+                color: hovered || strong ? 'var(--color-deep-text)' : 'var(--color-muted-text)',
+                fontWeight: strong ? 600 : 400,
+                backgroundColor: hovered ? 'var(--color-surface-3)' : 'transparent',
+                borderBottom: strong ? '1px solid var(--color-border)' : 'none',
+            }}
+            onMouseEnter={() => setHovered(true)}
+            onMouseLeave={() => setHovered(false)}>
+            {children}
+        </button>
     )
 }
 
@@ -290,25 +358,16 @@ function NavLink({ href, onClick, children }) {
     const [hovered, setHovered] = useState(false)
     const Tag = href ? 'a' : 'button'
     return (
-        <Tag
-            href={href}
-            onClick={onClick}
+        <Tag href={href} onClick={onClick}
             style={{
-                fontSize: '0.75rem',
-                fontWeight: 500,
+                fontSize: '0.75rem', fontWeight: 500,
                 color: hovered ? 'var(--color-white)' : 'rgba(255,255,255,0.85)',
-                letterSpacing: '0.1em',
-                whiteSpace: 'nowrap',
-                background: 'none',
-                border: 'none',
-                cursor: 'pointer',
-                padding: 0,
-                transition: 'color 0.2s',
-                textDecoration: 'none',
+                letterSpacing: '0.1em', whiteSpace: 'nowrap',
+                background: 'none', border: 'none', cursor: 'pointer',
+                padding: 0, transition: 'color 0.2s', textDecoration: 'none',
             }}
             onMouseEnter={() => setHovered(true)}
-            onMouseLeave={() => setHovered(false)}
-        >
+            onMouseLeave={() => setHovered(false)}>
             {children}
         </Tag>
     )
@@ -318,38 +377,24 @@ function DropdownMenu({ label, children }) {
     const [open, setOpen] = useState(false)
     const [hovered, setHovered] = useState(false)
     return (
-        <div className="relative"
-            onMouseEnter={() => setOpen(true)}
-            onMouseLeave={() => setOpen(false)}
-        >
-            <button
-                className="flex items-center gap-1"
+        <div className="relative" onMouseEnter={() => setOpen(true)} onMouseLeave={() => setOpen(false)}>
+            <button className="flex items-center gap-1"
                 style={{
-                    fontSize: '0.75rem',
-                    fontWeight: 500,
+                    fontSize: '0.75rem', fontWeight: 500,
                     color: hovered ? 'var(--color-white)' : 'rgba(255,255,255,0.85)',
-                    letterSpacing: '0.1em',
-                    whiteSpace: 'nowrap',
-                    background: 'none',
-                    border: 'none',
-                    cursor: 'pointer',
-                    transition: 'color 0.2s',
+                    letterSpacing: '0.1em', whiteSpace: 'nowrap',
+                    background: 'none', border: 'none', cursor: 'pointer', transition: 'color 0.2s',
                 }}
                 onMouseEnter={() => setHovered(true)}
-                onMouseLeave={() => setHovered(false)}
-            >
+                onMouseLeave={() => setHovered(false)}>
                 {label}
-                <svg
-                    className="w-3 h-3 mt-0.5 transition-transform duration-200"
+                <svg className="w-3 h-3 mt-0.5 transition-transform duration-200"
                     style={{ transform: open ? 'rotate(180deg)' : 'rotate(0deg)' }}
-                    fill="none" stroke="currentColor" viewBox="0 0 24 24"
-                >
+                    fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 9l-7 7-7-7" />
                 </svg>
             </button>
-
-            <div
-                className="absolute top-full left-0 mt-3 w-64 rounded-xl z-50 overflow-hidden transition-all duration-200"
+            <div className="absolute top-full left-0 mt-3 w-64 rounded-xl z-50 overflow-hidden transition-all duration-200"
                 style={{
                     backgroundColor: 'var(--color-white)',
                     border: '1px solid var(--color-border)',
@@ -357,8 +402,7 @@ function DropdownMenu({ label, children }) {
                     opacity: open ? 1 : 0,
                     visibility: open ? 'visible' : 'hidden',
                     transform: open ? 'translateY(0)' : 'translateY(6px)',
-                }}
-            >
+                }}>
                 {children}
             </div>
         </div>
@@ -368,25 +412,18 @@ function DropdownMenu({ label, children }) {
 function OutlineButton({ onClick, children }) {
     const [hovered, setHovered] = useState(false)
     return (
-        <button
-            onClick={onClick}
-            className="flex items-center gap-2"
+        <button onClick={onClick} className="flex items-center gap-2"
             style={{
-                fontSize: '0.75rem',
-                fontWeight: 500,
+                fontSize: '0.75rem', fontWeight: 500,
                 color: hovered ? 'var(--color-white)' : 'rgba(255,255,255,0.85)',
-                letterSpacing: '0.1em',
-                whiteSpace: 'nowrap',
-                padding: '6px 16px',
-                borderRadius: 'var(--radius-sm)',
+                letterSpacing: '0.1em', whiteSpace: 'nowrap',
+                padding: '6px 16px', borderRadius: 'var(--radius-sm)',
                 border: hovered ? '1px solid rgba(255,255,255,0.55)' : '1px solid rgba(255,255,255,0.25)',
                 backgroundColor: hovered ? 'rgba(255,255,255,0.12)' : 'transparent',
-                cursor: 'pointer',
-                transition: 'all 0.2s',
+                cursor: 'pointer', transition: 'all 0.2s',
             }}
             onMouseEnter={() => setHovered(true)}
-            onMouseLeave={() => setHovered(false)}
-        >
+            onMouseLeave={() => setHovered(false)}>
             {children}
         </button>
     )

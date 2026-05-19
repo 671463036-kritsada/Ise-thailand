@@ -415,10 +415,11 @@ function HomePage() {
                                     onClick={() => setSelectedVr(item)}
                                     className="w-full flex items-center gap-3 px-5 py-4 border-b border-green-light/20 last:border-0 text-left hover:bg-green/5 transition-colors"
                                 >
+                                    {console.log("vr data", vr)}
                                     <span className="w-6 h-6 rounded-full bg-green/10 text-green flex items-center justify-center text-xs font-bold flex-shrink-0">
                                         {i + 1}
                                     </span>
-                                    <p className="text-sm text-deep-text">{ lang === 'TH' ? item.meta_name : item.name_eng}</p>
+                                    <p className="text-sm text-deep-text">{lang === 'TH' ? item.meta_name : item.name_eng}</p>
                                     <svg className="w-4 h-4 text-green-light ml-auto flex-shrink-0" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
                                         <path d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
                                         <path d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -502,7 +503,7 @@ function HomePage() {
                             onClick={e => e.stopPropagation()}
                         >
                             <div className="flex items-center justify-between px-5 py-3.5 border-b border-green-light/30">
-                                <h3 className="text-sm font-bold text-deep-text">{selectedVr.meta_name}</h3>
+                                <h3 className="text-sm font-bold text-deep-text">{lang === 'TH' ? selectedVr.meta_name : selectedVr.name_eng}</h3>
                                 <button
                                     onClick={() => setSelectedVr(null)}
                                     className="w-7 h-7 rounded-full flex items-center justify-center hover:bg-green/10 transition-colors"
