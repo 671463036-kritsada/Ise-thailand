@@ -1,4 +1,5 @@
 import React from 'react'
+import { useTranslation } from 'react-i18next'
 
 const C = {
     forestGreen: 'var(--color-forest-green)',   // #404e3b
@@ -17,6 +18,7 @@ function VideoCard({
     isYoutube = false
 }) {
     const hasContent = title || description || detailLink !== "#"
+    const { t } = useTranslation()
 
     return (
         <div
@@ -59,7 +61,7 @@ function VideoCard({
                             fontSize: 'var(--font-size-xs)',
                         }}
                     >
-                        โครงการ
+                        {t('royal_project_unit')}
                     </span>
 
                     {title && (
@@ -107,7 +109,7 @@ function VideoCard({
                                 onMouseEnter={e => e.currentTarget.style.backgroundColor = C.green}
                                 onMouseLeave={e => e.currentTarget.style.backgroundColor = C.forestGreen}
                             >
-                                รายละเอียดเพิ่มเติม
+                                {t('additional_details')}
                                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                                 </svg>

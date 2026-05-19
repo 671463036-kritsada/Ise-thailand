@@ -1,22 +1,29 @@
 import React, { useState, useMemo, useEffect } from 'react'
 import { useSearchParams, useNavigate } from 'react-router-dom'
 
-import api from '../../api/axios' 
+import { useLang } from '../../context/LanguageContext'
+import { useTranslation } from 'react-i18next'
+
+import api from '../../api/axios'
 
 import { UPLOADS_URL } from '../../constants/uploads_url'
 
 export default function ProjectsPage() {
   const [searchParams, setSearchParams] = useSearchParams()
   const [search, setSearch] = useState('')
-  const [selectedTypeId, setSelectedTypeId] = useState('ทั้งหมด')
+  const [selectedTypeId, setSelectedTypeId] = useState('all')
   const navigate = useNavigate()
+
+
+  const { lang } = useLang()
+  const { t } = useTranslation()
 
   const [projects, setProjects] = useState([])
   const [typeProject, setTypeProject] = useState([])
 
   useEffect(() => {
     const typeId = searchParams.get('typeId') || ''
-    setSelectedTypeId(typeId || 'ทั้งหมด')
+    setSelectedTypeId(typeId || 'all')
   }, [searchParams])
 
   useEffect(() => {
@@ -46,19 +53,28 @@ export default function ProjectsPage() {
 
   const filtered = useMemo(() => {
     return projects.filter((p) => {
-      const matchType = selectedTypeId === 'ทั้งหมด' || p.type_id === selectedTypeId
+      const matchType = selectedTypeId === 'all' || p.type_id === selectedTypeId
       const matchSearch = (p.royal_name ?? '').toLowerCase().includes(search.toLowerCase())
       return matchType && matchSearch
     })
   }, [selectedTypeId, search, projects])
 
-  const selectedLabel = selectedTypeId === 'ทั้งหมด'
-    ? 'ทั้งหมด'
-    : typeProject.find(t => t.type_id === selectedTypeId)?.type_name ?? 'ทั้งหมด'
+  const selectedType = typeProject.find(
+    type => type.type_id === selectedTypeId
+  )
+
+  const selectedLabel =
+    selectedTypeId === 'all'
+      ? t('all')
+      : (
+        lang === 'TH'
+          ? selectedType?.type_name
+          : selectedType?.type_name_eng
+      ) ?? t('all')
 
   const handleSelectType = (typeId) => {
     setSelectedTypeId(typeId)
-    setSearchParams(typeId !== 'ทั้งหมด' ? { typeId } : {})
+    setSearchParams(typeId !== 'all' ? { typeId } : {})
     setSearch('')
   }
 
@@ -72,10 +88,10 @@ export default function ProjectsPage() {
           fontSize: 'var(--font-size-3xl)',
           fontWeight: 'var(--font-weight-bold)',
         }}>
-          โครงการทั้งหมด
+          {t('all_projects')}
         </h1>
         <p style={{ color: 'var(--color-muted-text)', fontSize: 'var(--font-size-sm)', marginTop: 4 }}>
-          {projects.length} โครงการทั้งหมด
+          {projects.length} {t('total_projects')}
         </p>
       </div>
 
@@ -90,7 +106,7 @@ export default function ProjectsPage() {
         </svg>
         <input
           type="text"
-          placeholder="ค้นหาโครงการ..."
+          placeholder={t('search_projects')}
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           className="w-full pl-11 pr-5 py-3 rounded-2xl focus:outline-none transition-colors"
@@ -107,12 +123,15 @@ export default function ProjectsPage() {
 
       {/* Filter Pills */}
       <div className="flex flex-wrap gap-2 mb-6">
-        {[{ type_id: 'ทั้งหมด', type_name: 'ทั้งหมด' }, ...typeProject].map((t) => {
+        {[{
+          type_id: 'all',
+          type_name: t('all'),
+          type_name_eng: t('all')
+        }, ...typeProject].map((t) => {
           const isSelected = selectedTypeId === t.type_id
-          const count = t.type_id === 'ทั้งหมด'
+          const count = t.type_id === 'all'
             ? projects.length
             : projects.filter(p => p.type_id === t.type_id).length
-
           return (
             <button
               key={t.type_id}
@@ -141,7 +160,7 @@ export default function ProjectsPage() {
                 }
               }}
             >
-              <span>{t.type_name}</span>
+              <span>{lang === 'TH' ? t.type_name : t.type_name_eng}</span>
               <span
                 className="text-xs px-1.5 py-0.5 rounded-full"
                 style={{
@@ -160,20 +179,20 @@ export default function ProjectsPage() {
 
       {/* Result count */}
       <p className="mb-5" style={{ color: 'var(--color-muted-text)', fontSize: 'var(--font-size-xs)' }}>
-        แสดง {filtered.length} โครงการ
-        {selectedTypeId !== 'ทั้งหมด' && (
+        {t('showing_projects')} {filtered.length} {t('project_unit')}
+        {selectedTypeId !== 'all' && (
           <>
             <span className="mx-1" style={{ color: 'var(--color-green)' }}>
-              ใน "{selectedLabel}"
+              {t('in_category')} "{selectedLabel}"
             </span>
             <button
-              onClick={() => handleSelectType('ทั้งหมด')}
+              onClick={() => handleSelectType('all')}
               className="underline ml-1"
               style={{ color: 'var(--color-muted-text)', fontSize: 'var(--font-size-xs)' }}
               onMouseEnter={e => e.currentTarget.style.color = 'var(--color-forest-green)'}
               onMouseLeave={e => e.currentTarget.style.color = 'var(--color-muted-text)'}
             >
-              ล้างตัวกรอง
+              {t('clear_filter')}
             </button>
           </>
         )}
@@ -185,7 +204,7 @@ export default function ProjectsPage() {
           <svg className="w-14 h-14" style={{ color: 'var(--color-green-light)' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
           </svg>
-          <p style={{ color: 'var(--color-muted-text)', fontSize: 'var(--font-size-sm)' }}>ไม่พบโครงการที่ค้นหา</p>
+          <p style={{ color: 'var(--color-muted-text)', fontSize: 'var(--font-size-sm)' }}>{t('project_not_found')}</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
@@ -203,9 +222,11 @@ export default function ProjectsPage() {
             >
               <img
                 src={`${UPLOADS_URL}${project.img_1}`}
-                alt={project.royal_name}
+                alt={lang === 'TH' ? project.royal_name : project.royal_name_eng}
                 className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
               />
+
+              {console.log("project data" , project)}
 
 
               {/* Gradient overlay */}
@@ -225,7 +246,7 @@ export default function ProjectsPage() {
                     fontSize: 'var(--font-size-xs)',
                   }}
                 >
-                  {project.type_name}
+                  { lang === 'TH' ? project.type_name : project.type_name_eng }
                 </span>
               </div>
 
@@ -244,10 +265,10 @@ export default function ProjectsPage() {
                     fontWeight: 'var(--font-weight-semibold)',
                   }}
                 >
-                  {project.royal_name}
+                  { lang === 'TH' ? project.royal_name : project.royal_name_eng}
                 </h3>
                 <div className="flex items-center gap-1 mt-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                  <span style={{ color: 'var(--color-gold)', fontSize: 'var(--font-size-xs)' }}>ดูรายละเอียด</span>
+                  <span style={{ color: 'var(--color-gold)', fontSize: 'var(--font-size-xs)' }}>{t('view_details')}</span>
                   <svg className="w-3 h-3" style={{ color: 'var(--color-gold)' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                   </svg>

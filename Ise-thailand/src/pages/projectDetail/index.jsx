@@ -2,6 +2,9 @@ import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import api from '../../api/axios'  // เปลี่ยนมาใช้ axios
 
+import { useLang } from '../../context/LanguageContext'
+import { useTranslation } from 'react-i18next'
+
 import { UPLOADS_URL } from '../../constants/uploads_url'
 
 export default function ProjectDetailPage() {
@@ -10,6 +13,9 @@ export default function ProjectDetailPage() {
     const [project, setProject] = useState(null)
     const [loading, setLoading] = useState(true)
     const [currentImg, setCurrentImg] = useState(0)
+
+    const { lang } = useLang()
+    const { t } = useTranslation()
 
     useEffect(() => {
         const fetchProject = async () => {
@@ -30,17 +36,17 @@ export default function ProjectDetailPage() {
 
     if (loading) return (
         <div className="flex items-center justify-center min-h-screen">
-            <p style={{ color: 'var(--color-muted-text)', fontSize: 'var(--font-size-sm)' }}>กำลังโหลด...</p>
+            <p style={{ color: 'var(--color-muted-text)', fontSize: 'var(--font-size-sm)' }}>{t('loading')}</p>
         </div>
     )
 
     if (!project) return (
         <div className="flex flex-col items-center justify-center min-h-screen gap-4">
-            <p style={{ color: 'var(--color-muted-text)' }}>ไม่พบโครงการนี้</p>
+            <p style={{ color: 'var(--color-muted-text)' }}>{t('project_not_found_detail')}</p>
             <button onClick={() => navigate('/projects')}
                 className="text-sm px-4 py-2 rounded-xl"
                 style={{ backgroundColor: 'var(--color-forest-green)', color: '#fff' }}>
-                กลับไปหน้าโครงการ
+                {t('back_to_projects')}
             </button>
         </div>
     )
@@ -52,14 +58,21 @@ export default function ProjectDetailPage() {
     const sections = [1, 2, 3, 4, 5]
         .map(n => ({
             title: project[`title_${n}`],
+            title_eng: project[`title_${n}_eng`],
             detail: project[`detail_${n}`],
+            detail_eng: project[`detail_${n}_eng`],
             image: project[`img_${n}`] ? `${UPLOADS_URL}${project[`img_${n}`]}` : null,
         }))
         .filter(s => s.title || s.detail)
 
-    const references = project.reference
-        ? project.reference.split('\n').filter(Boolean)
-        : []
+    const references =
+        lang === 'TH'
+            ? (project.reference
+                ? project.reference.split('\n').filter(Boolean)
+                : [])
+            : (project.reference_eng
+                ? project.reference_eng.split('\n').filter(Boolean)
+                : [])
 
     const prev = () => setCurrentImg(i => (i - 1 + images.length) % images.length)
     const next = () => setCurrentImg(i => (i + 1) % images.length)
@@ -76,14 +89,14 @@ export default function ProjectDetailPage() {
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
                 </svg>
-                กลับ
+                {t('back')}
             </button>
 
             {/* Hero Slider */}
             {images.length > 0 && (
                 <div className="relative rounded-2xl overflow-hidden mb-3 group"
                     style={{ height: 720, boxShadow: '0 4px 20px var(--color-shadow-lg)' }}>
-                    <img src={images[currentImg]} alt={project.royal_name}
+                    <img src={images[currentImg]} alt={lang === 'TH' ? project.royal_name : project.royal_name_eng}
                         className="w-full h-full object-cover transition-all duration-500" />
                     <div className="absolute inset-0"
                         style={{ background: 'linear-gradient(to top, rgba(40,56,36,0.88) 0%, rgba(40,56,36,0.15) 55%, transparent 100%)' }} />
@@ -102,23 +115,12 @@ export default function ProjectDetailPage() {
                                         border: '1px solid rgba(186,200,177,0.5)',
                                         fontSize: 'var(--font-size-xs)',
                                     }}>
-                                    {project.type_name}
-                                </span>
-                            )}
-                            {project.royal_id && (
-                                <span className="text-xs px-3 py-1 rounded-full backdrop-blur-sm"
-                                    style={{
-                                        color: 'var(--color-gold)',
-                                        backgroundColor: 'rgba(201,168,76,0.15)',
-                                        border: '1px solid rgba(201,168,76,0.4)',
-                                        fontSize: 'var(--font-size-xs)',
-                                    }}>
-                                    #{project.royal_id}
+                                    {lang === 'TH' ? project.type_name : project.type_name_eng}
                                 </span>
                             )}
                         </div>
                         <h1 className="text-2xl font-bold leading-relaxed text-white drop-shadow-md">
-                            {project.royal_name}
+                            {lang === 'TH' ? project.royal_name : project.royal_name_eng}
                         </h1>
                     </div>
 
@@ -174,7 +176,6 @@ export default function ProjectDetailPage() {
             <div className="space-y-12 mt-8">
                 {sections.map((s, i) => (
                     <div key={i} className={`flex gap-8 items-start ${i % 2 === 0 ? 'flex-row' : 'flex-row-reverse'}`}>
-
                         {/* Text */}
                         <div className="flex-1 min-w-0">
                             <div className="flex items-center gap-3 mb-4">
@@ -187,13 +188,13 @@ export default function ProjectDetailPage() {
                             {s.title && (
                                 <h2 className="font-bold mb-3 leading-relaxed"
                                     style={{ color: 'var(--color-deep-text)', fontSize: 'var(--font-size-lg)' }}>
-                                    {s.title}
+                                    {lang === 'TH' ? s.title : s.title_eng}
                                 </h2>
                             )}
                             {s.detail && (
                                 <p className="text-sm leading-relaxed"
                                     style={{ color: 'var(--color-muted-text)', lineHeight: '1.9' }}>
-                                    {s.detail}
+                                    {lang === 'TH' ? s.detail : s.detail_eng}
                                 </p>
                             )}
                         </div>
@@ -214,7 +215,7 @@ export default function ProjectDetailPage() {
                 <div className="mt-12">
                     <div className="h-px w-full mb-6" style={{ backgroundColor: 'var(--color-border)' }} />
                     <div className="flex flex-col items-center gap-3">
-                        <p className="text-xs font-semibold" style={{ color: 'var(--color-deep-text)' }}>อินโฟกราฟิก</p>
+                        <p className="text-lg font-semibold" style={{ color: 'var(--color-deep-text)' }}>{t('infographic')}</p>
                         <div className="rounded-xl overflow-hidden w-2/4"
                             style={{ boxShadow: '0 2px 8px var(--color-shadow-md)' }}>
                             <img src={`${UPLOADS_URL}${project.infographic}`} alt="infographic" className="w-full h-full object-cover" />
@@ -235,7 +236,7 @@ export default function ProjectDetailPage() {
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
                                 d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
                         </svg>
-                        <p className="text-sm font-semibold" style={{ color: 'var(--color-deep-text)' }}>แหล่งอ้างอิง</p>
+                        <p className="text-sm font-semibold" style={{ color: 'var(--color-deep-text)' }}>{t('references')}</p>
                     </div>
                     <ol className="space-y-2">
                         {references.map((ref, i) => (
@@ -259,7 +260,7 @@ export default function ProjectDetailPage() {
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
                     </svg>
-                    กลับไปยังโครงการทั้งหมด
+                    {t('back_to_all_projects')}
                 </button>
             </div>
         </div>

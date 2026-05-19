@@ -1,6 +1,9 @@
 import { useState, useEffect, useMemo } from 'react'
+import { useLang } from '../../context/LanguageContext'
+import { useTranslation } from 'react-i18next'
 
 const PAGE_SIZE_OPTIONS = [10, 25, 50, 100]
+import api from '../../api/axios'
 
 export default function ResearchPage() {
     const [data, setData] = useState([])
@@ -8,12 +11,13 @@ export default function ResearchPage() {
     const [pageSize, setPageSize] = useState(10)
     const [currentPage, setCurrentPage] = useState(1)
 
+    const {lang} = useLang()
+    const { t } = useTranslation()
+
     useEffect(() => {
-        fetch('http://localhost:2000/api/project/')
-            .then(res => res.json())
-            .then(result => {
-                console.log(result)
-                setData(result.data || [])
+        api.get('/project/')
+            .then(res => {
+                setData(res.data.data || [])
             })
             .catch(err => console.error(err))
     }, [])
@@ -70,7 +74,7 @@ export default function ResearchPage() {
                         fontWeight: 'var(--font-weight-semibold)',
                     }}
                 >
-                    โครงการ / งานวิจัย
+                    {t('project_research')}
                 </h1>
 
                 <p
@@ -80,7 +84,7 @@ export default function ResearchPage() {
                         marginTop: 2,
                     }}
                 >
-                    ภายใต้สถาบันเศรษฐกิจพอเพียง
+                    {t('project_research_subtitle')}
                 </p>
             </div>
 
@@ -93,7 +97,7 @@ export default function ResearchPage() {
                             fontSize: 'var(--font-size-sm)',
                         }}
                     >
-                        แสดง
+                        {t('show')}
                     </span>
 
                     <select
@@ -120,7 +124,7 @@ export default function ResearchPage() {
                             fontSize: 'var(--font-size-sm)',
                         }}
                     >
-                        รายการ
+                        {t('items_per_page')}
                     </span>
                 </div>
 
@@ -144,7 +148,7 @@ export default function ResearchPage() {
                         type="text"
                         value={search}
                         onChange={handleSearch}
-                        placeholder="ค้นหา..."
+                        placeholder={t('search_placeholder')}
                         className="rounded-lg pl-8 pr-3 py-1.5 focus:outline-none transition-colors"
                         style={{
                             border: '1px solid var(--color-border)',
@@ -154,12 +158,12 @@ export default function ResearchPage() {
                             width: 200,
                         }}
                         onFocus={(e) =>
-                            (e.currentTarget.style.borderColor =
-                                'var(--color-border-focus)')
+                        (e.currentTarget.style.borderColor =
+                            'var(--color-border-focus)')
                         }
                         onBlur={(e) =>
-                            (e.currentTarget.style.borderColor =
-                                'var(--color-border)')
+                        (e.currentTarget.style.borderColor =
+                            'var(--color-border)')
                         }
                     />
                 </div>
@@ -195,9 +199,9 @@ export default function ResearchPage() {
                             }}
                         >
                             {[
-                                'ชื่อโครงการ',
-                                'ประเภทโครงการ',
-                                'ชื่อนักวิจัย',
+                                t('project_name'),
+                                t('project_type'),
+                                t('researcher_name'),
                             ].map((col) => (
                                 <th
                                     key={col}
@@ -230,7 +234,7 @@ export default function ResearchPage() {
                                             'var(--font-size-sm)',
                                     }}
                                 >
-                                    ไม่พบข้อมูล
+                                    {t('no_data')}
                                 </td>
                             </tr>
                         ) : (
@@ -248,14 +252,14 @@ export default function ResearchPage() {
                                             'background-color 0.15s',
                                     }}
                                     onMouseEnter={(e) =>
-                                        (e.currentTarget.style.backgroundColor =
-                                            'var(--color-surface-3)')
+                                    (e.currentTarget.style.backgroundColor =
+                                        'var(--color-surface-3)')
                                     }
                                     onMouseLeave={(e) =>
-                                        (e.currentTarget.style.backgroundColor =
-                                            index % 2 === 0
-                                                ? 'var(--color-white)'
-                                                : 'var(--color-surface-2)')
+                                    (e.currentTarget.style.backgroundColor =
+                                        index % 2 === 0
+                                            ? 'var(--color-white)'
+                                            : 'var(--color-surface-2)')
                                     }
                                 >
                                     <td
@@ -300,7 +304,7 @@ export default function ResearchPage() {
                         fontSize: 'var(--font-size-xs)',
                     }}
                 >
-                    แสดง {from}–{to} จาก {filtered.length} รายการ
+                    {t('showing_from_to')} {from}–{to} {t('from_total')} {filtered.length} {t('total_items')}
                 </span>
 
                 <div className="flex gap-1">
@@ -360,16 +364,15 @@ function PageBtn({ onClick, disabled, active, children }) {
             disabled={disabled}
             className="px-3 py-1.5 rounded-lg transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
             style={{
-                border: `1px solid ${
-                    active
+                border: `1px solid ${active
                         ? 'var(--color-forest-green)'
                         : 'var(--color-border)'
-                }`,
+                    }`,
                 backgroundColor: active
                     ? 'var(--color-forest-green)'
                     : hovered
-                    ? 'var(--color-surface-3)'
-                    : 'var(--color-white)',
+                        ? 'var(--color-surface-3)'
+                        : 'var(--color-white)',
                 color: active
                     ? '#fff'
                     : 'var(--color-muted-text)',

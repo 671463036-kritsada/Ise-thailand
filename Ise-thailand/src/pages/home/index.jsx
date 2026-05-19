@@ -5,6 +5,8 @@ import ActivityModal from '../../components/activity/ActivityModal'
 import ActivityDetailFullscreen from '../../components/activity/ActivityDetailFullscreen'
 
 import { useLang } from '../../context/LanguageContext'
+import { useTranslation } from 'react-i18next'
+
 import { UPLOADS_URL } from '../../constants/uploads_url'
 
 import { motion, AnimatePresence } from 'framer-motion'
@@ -61,13 +63,35 @@ function useActivity() {
 }
 
 function useEbookData() {
-    const [data, setData] = useState([])
-    const [loading, setLoading] = useState(true)
-    const [error, setError] = useState(null)
+    const [data, setData] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+
     useEffect(() => {
-        fetcher('/ebooks/summary').then((res) => setData(res.data)).catch(setError).finally(() => setLoading(false))
-    }, [])
-    return { data, loading, error }
+        // กำหนดพาเลทสี สำหรับแจกจ่ายให้ Pie Chart แต่ละหมวดหมู่
+        const colorPalette = ["#10B981", "#3B82F6", "#F59E0B", "#EF4444"];
+
+        fetcher('/Asset/count')
+            .then((res) => {
+                //  เช็คว่าเข้าถึงชั้นข้อมูล Array ด้านในถูกจุด
+                const rawArray = res.data?.data || res.data || [];
+
+                //  ปรับแต่งโครงสร้างฟิลด์ให้ตรงล็อกหน้าบ้านต้องการทันที
+                const formattedData = rawArray.map((item, index) => ({
+                    id: item.assettype_id,
+                    name: item.assettype_name,
+                    name_eng: item.assettype_name_eng,
+                    value: Number(item.total) || 0,
+                    color: colorPalette[index % colorPalette.length] // ยัดสีประจำแท่ง
+                }));
+
+                setData(formattedData);
+            })
+            .catch(setError)
+            .finally(() => setLoading(false));
+    }, []);
+
+    return { data, loading, error };
 }
 
 function useVrItems() {
@@ -75,7 +99,7 @@ function useVrItems() {
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState(null)
     useEffect(() => {
-        fetcher('/videos/vr').then((res) => setData(res.data)).catch(setError).finally(() => setLoading(false))
+        fetcher('/video/vr').then((res) => setData(res.data)).catch(setError).finally(() => setLoading(false))
     }, [])
     return { data, loading, error }
 }
@@ -85,7 +109,7 @@ function useVideoList() {
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState(null)
     useEffect(() => {
-        fetcher('/videos/').then((res) => setData(res.data)).catch(setError).finally(() => setLoading(false))
+        fetcher('/video/').then((res) => setData(res.data)).catch(setError).finally(() => setLoading(false))
     }, [])
     return { data, loading, error }
 }
@@ -129,10 +153,7 @@ const Reveal = ({ children }) => (
     </motion.div>
 )
 
-const ebookData = [
-    { name: 'EBOOK', value: 6, color: '#7B9669' },
-    { name: 'ผลงานวิชาการ', value: 1, color: '#BAC8B1' },
-]
+
 
 function Divider() {
     return <div className="h-px w-full my-8 bg-green-light/30" />
@@ -195,9 +216,10 @@ function HomePage() {
     const [selectedVr, setSelectedVr] = useState(null)
 
     const { lang } = useLang()
+    const { t } = useTranslation()
 
     const activity = useActivity()
-    const ebook = useEbookData()
+    const { data: ebookData, loading } = useEbookData();
     const vr = useVrItems()
     const videoList = useVideoList()
     const royalData = useRoyalData()
@@ -208,7 +230,6 @@ function HomePage() {
 
     return (
         <div className="space-y-10">
-
             {/* 1. Hero */}
             <Reveal>
                 <div className="rounded-2xl overflow-hidden border border-green-light">
@@ -220,18 +241,18 @@ function HomePage() {
             <Reveal>
                 <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
                     <StatCard
-                        label="นักวิจัย"
+                        label={t('researcher')}
                         value={researcherData.loading ? '...' : researcherData.data}
-                        unit="คน"
+                        unit={t('researcher_unit')}
                     />
                     <StatCard
-                        label="โครงการพระราชดำริ"
+                        label={t('royal_project')}
                         value={royalData.loading ? '...' : royalData.data}
-                        unit="โครงการ"
+                        unit={t('royal_project_unit')}
                         dark
                     />
                     <ClickableCard
-                        label="ข่าวประชาสัมพันธ์"
+                        label={t('news')}
                         onClick={() => setShowNewsModal(true)}
                         icon={
                             <svg className="w-5 h-5 text-green" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
@@ -240,7 +261,7 @@ function HomePage() {
                         }
                     />
                     <ClickableCard
-                        label="กิจกรรม"
+                        label={t('activities')}
                         onClick={() => setShowActivityModal(true)}
                         icon={
                             <svg className="w-5 h-5 text-green" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
@@ -256,14 +277,14 @@ function HomePage() {
             {/* 3. Institute Video & E-Book */}
             <Reveal>
                 <section>
-                    <SectionHeader title="วิดีโอแนะนำสถาบัน" />
+                    <SectionHeader title={t('institute_video')} />
                     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
                         {/* Video */}
                         <div className="lg:col-span-2 rounded-xl overflow-hidden border border-green-light">
                             {videoList.loading ? (
                                 <div className="aspect-video bg-neutral-100 flex items-center justify-center">
-                                    <p className="text-sm text-muted-text">กำลังโหลด...</p>
+                                    <p className="text-sm text-muted-text">{t('loading')}</p>
                                 </div>
                             ) : introVideo ? (
                                 <VideoCard
@@ -275,27 +296,31 @@ function HomePage() {
                         </div>
 
                         {/* E-Book Pie */}
-                        <div className="rounded-xl p-6 bg-white border border-green-light shadow-[0_2px_8px_var(--color-shadow)]">
-                            <p className="text-sm font-bold mb-4 text-deep-text">สื่อเผยแพร่</p>
-                            <div className="flex justify-center mb-4">
-                                <PieChart width={160} height={160}>
-                                    <Pie data={ebookData} cx={80} cy={80} innerRadius={44} outerRadius={70} dataKey="value">
-                                        {ebookData.map((entry, i) => <Cell key={i} fill={entry.color} />)}
-                                    </Pie>
-                                </PieChart>
-                            </div>
-                            <div className="space-y-2.5">
-                                {ebookData.map((d, i) => (
-                                    <div key={i} className="flex items-center justify-between">
-                                        <div className="flex items-center gap-2">
-                                            <div className="w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ backgroundColor: d.color }} />
-                                            <p className="text-xs text-muted-text">{d.name}</p>
-                                        </div>
-                                        <p className="text-xs font-bold text-deep-text">{d.value} เรื่อง</p>
+
+                        {loading ? <p>{t('processing_media')}</p> :
+                            <>
+                                <div className="rounded-xl p-6 bg-white border border-green-light shadow-[0_2px_8px_var(--color-shadow)]">
+                                    <p className="text-sm font-bold mb-4 text-deep-text">{t('media')}</p>
+                                    <div className="flex justify-center mb-4">
+                                        <PieChart width={160} height={160}>
+                                            <Pie data={ebookData} cx={80} cy={80} innerRadius={44} outerRadius={70} dataKey="value">
+                                                {ebookData.map((entry, i) => <Cell key={i} fill={entry.color} />)}
+                                            </Pie>
+                                        </PieChart>
                                     </div>
-                                ))}
-                            </div>
-                        </div>
+                                    <div className="space-y-2.5">
+                                        {ebookData.map((d, i) => (
+                                            <div key={i} className="flex items-center justify-between">
+                                                <div className="flex items-center gap-2">
+                                                    <div className="w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ backgroundColor: d.color }} />
+                                                    <p className="text-xs text-muted-text">{lang === 'TH' ? d.name : d.name_eng}</p>
+                                                </div>
+                                                <p className="text-xs font-bold text-deep-text">{d.value} {t('media_unit')}</p>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            </>}
                     </div>
                 </section>
             </Reveal>
@@ -306,11 +331,11 @@ function HomePage() {
             <Reveal>
                 <section>
                     <SectionHeader
-                        title="โครงการภายใต้สถาบันเศรษฐกิจพอเพียง"
-                        badge={projectData.loading ? '...' : `${projectData.data.reduce((s, d) => s + d.value, 0)} โครงการ`}
+                        title={t('institute_projects')}
+                        badge={projectData.loading ? '...' : `${projectData.data.reduce((s, d) => s + d.value, 0)} ${t('project_unit')}`}
                     />
                     {projectData.loading ? (
-                        <p className="text-sm text-muted-text">กำลังโหลด...</p>
+                        <p className="text-sm text-muted-text">{t('loading')}</p>
                     ) : (
                         <div className="flex flex-col gap-6">
 
@@ -342,7 +367,7 @@ function HomePage() {
                                         <Tooltip
                                             cursor={{ fill: 'rgba(186,200,177,0.15)' }}
                                             formatter={(value, name, props) => [
-                                                `${value} โครงการ`,
+                                                `${value} ${t('royal_project_unit')}`,
                                                 lang === 'TH' ? props.payload.name : props.payload.name_eng
                                             ]}
                                             contentStyle={{ fontSize: 12, borderRadius: 8, border: '1px solid #BAC8B1' }}
@@ -380,10 +405,10 @@ function HomePage() {
 
                     {/* VR List */}
                     <div>
-                        <SectionHeader title="สื่อการเรียนรู้เสมือนจริง" />
+                        <SectionHeader title={t('vr_learning')} />
                         <div className="rounded-xl overflow-hidden border border-green-light">
                             {vr.loading ? (
-                                <p className="px-5 py-4 text-sm text-muted-text">กำลังโหลด...</p>
+                                <p className="px-5 py-4 text-sm text-muted-text">{t('loading')}</p>
                             ) : vr.data.map((item, i) => (
                                 <button
                                     key={item.meta_id}
@@ -393,7 +418,7 @@ function HomePage() {
                                     <span className="w-6 h-6 rounded-full bg-green/10 text-green flex items-center justify-center text-xs font-bold flex-shrink-0">
                                         {i + 1}
                                     </span>
-                                    <p className="text-sm text-deep-text">{item.meta_name}</p>
+                                    <p className="text-sm text-deep-text">{ lang === 'TH' ? item.meta_name : item.name_eng}</p>
                                     <svg className="w-4 h-4 text-green-light ml-auto flex-shrink-0" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
                                         <path d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
                                         <path d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -406,11 +431,11 @@ function HomePage() {
                     {/* Video List */}
                     <div className="lg:col-span-2">
                         <SectionHeader
-                            title="วีดีทัศน์โครงการ"
-                            badge={videoList.loading ? '...' : `${videoList.data.filter(v => v.video_url.includes('youtube')).length} รายการ`}
+                            title={t('project_videos')}
+                            badge={videoList.loading ? '...' : `${videoList.data.filter(v => v.video_url.includes('youtube')).length} ${t('list_unit')}`}
                         />
                         {videoList.loading ? (
-                            <p className="text-sm text-muted-text">กำลังโหลด...</p>
+                            <p className="text-sm text-muted-text">{t('loading')}</p>
                         ) : (
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 {videoList.data.filter(v => v.video_url.includes('youtube')).map((v) => (
