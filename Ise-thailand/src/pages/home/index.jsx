@@ -288,7 +288,7 @@ function HomePage() {
                                 </div>
                             ) : introVideo ? (
                                 <VideoCard
-                                    isYoutube={false}
+                                    isYoutube={true}
                                     videoUrl={introVideo.video_url}
                                     title={lang === 'TH' ? introVideo.video_title : introVideo.video_title_eng}
                                 />
@@ -444,6 +444,7 @@ function HomePage() {
                                         key={v.video_id}
                                         isYoutube={true}
                                         videoUrl={v.video_url}
+                                        detailLink = {v.video_detail}
                                         title={lang === 'TH' ? v.video_title : v.video_title_eng}
                                     />
                                 ))}

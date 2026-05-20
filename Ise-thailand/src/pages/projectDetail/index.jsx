@@ -1,11 +1,13 @@
 import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
-import api from '../../api/axios'  // เปลี่ยนมาใช้ axios
+import api from '../../api/axios'
 
 import { useLang } from '../../context/LanguageContext'
 import { useTranslation } from 'react-i18next'
 
 import { UPLOADS_URL } from '../../constants/uploads_url'
+
+const isValidImg = (f) => f && f.trim() !== '' && f !== 'undefined' && f !== 'null'
 
 export default function ProjectDetailPage() {
     const { id } = useParams()
@@ -13,6 +15,7 @@ export default function ProjectDetailPage() {
     const [project, setProject] = useState(null)
     const [loading, setLoading] = useState(true)
     const [currentImg, setCurrentImg] = useState(0)
+    const [validImages, setValidImages] = useState([])
 
     const { lang } = useLang()
     const { t } = useTranslation()
@@ -33,6 +36,26 @@ export default function ProjectDetailPage() {
         fetchProject()
     }, [id])
 
+    useEffect(() => {
+        if (!project) return
+        const imgs = [project.img_banner, project.img_1, project.img_2, project.img_3, project.img_4, project.img_5]
+            .filter(isValidImg)
+            .map(f => `${UPLOADS_URL}${f}`)
+
+        Promise.all(
+            imgs.map(src => new Promise(resolve => {
+                const img = new Image()
+                img.onload = () => resolve(src)
+                img.onerror = () => resolve(null)
+                img.src = src
+            }))
+        ).then(results => {
+            setValidImages(results.filter(Boolean))
+        })
+    }, [project])
+
+    const prev = () => setCurrentImg(i => (i - 1 + validImages.length) % validImages.length)
+    const next = () => setCurrentImg(i => (i + 1) % validImages.length)
 
     if (loading) return (
         <div className="flex items-center justify-center min-h-screen">
@@ -51,31 +74,20 @@ export default function ProjectDetailPage() {
         </div>
     )
 
-    const images = [project.img_banner, project.img_1, project.img_2, project.img_3, project.img_4, project.img_5]
-        .filter(Boolean)
-        .map(f => `${UPLOADS_URL}${f}`)
-
     const sections = [1, 2, 3, 4, 5]
         .map(n => ({
             title: project[`title_${n}`],
             title_eng: project[`title_${n}_eng`],
             detail: project[`detail_${n}`],
             detail_eng: project[`detail_${n}_eng`],
-            image: project[`img_${n}`] ? `${UPLOADS_URL}${project[`img_${n}`]}` : null,
+            image: isValidImg(project[`img_${n}`]) ? `${UPLOADS_URL}${project[`img_${n}`]}` : null,
         }))
         .filter(s => s.title || s.detail)
 
     const references =
         lang === 'TH'
-            ? (project.reference
-                ? project.reference.split('\n').filter(Boolean)
-                : [])
-            : (project.reference_eng
-                ? project.reference_eng.split('\n').filter(Boolean)
-                : [])
-
-    const prev = () => setCurrentImg(i => (i - 1 + images.length) % images.length)
-    const next = () => setCurrentImg(i => (i + 1) % images.length)
+            ? (project.reference ? project.reference.split('\n').filter(Boolean) : [])
+            : (project.reference_eng ? project.reference_eng.split('\n').filter(Boolean) : [])
 
     return (
         <div className="min-h-screen" style={{ backgroundColor: 'var(--color-surface)' }}>
@@ -93,10 +105,10 @@ export default function ProjectDetailPage() {
             </button>
 
             {/* Hero Slider */}
-            {images.length > 0 && (
+            {validImages.length > 0 && (
                 <div className="relative rounded-2xl overflow-hidden mb-3 group"
                     style={{ height: 720, boxShadow: '0 4px 20px var(--color-shadow-lg)' }}>
-                    <img src={images[currentImg]} alt={lang === 'TH' ? project.royal_name : project.royal_name_eng}
+                    <img src={validImages[currentImg]} alt={lang === 'TH' ? project.royal_name : project.royal_name_eng}
                         className="w-full h-full object-cover transition-all duration-500" />
                     <div className="absolute inset-0"
                         style={{ background: 'linear-gradient(to top, rgba(40,56,36,0.88) 0%, rgba(40,56,36,0.15) 55%, transparent 100%)' }} />
@@ -124,7 +136,7 @@ export default function ProjectDetailPage() {
                         </h1>
                     </div>
 
-                    {images.length > 1 && <>
+                    {validImages.length > 1 && <>
                         <button onClick={prev}
                             className="absolute left-4 top-1/2 -translate-y-1/2 rounded-full p-2.5 opacity-0 group-hover:opacity-100 transition-all"
                             style={{
@@ -149,16 +161,16 @@ export default function ProjectDetailPage() {
                         </button>
                         <div className="absolute top-6 right-4 text-xs px-2.5 py-1 rounded-full"
                             style={{ backgroundColor: 'rgba(40,56,36,0.65)', color: '#fff' }}>
-                            {currentImg + 1} / {images.length}
+                            {currentImg + 1} / {validImages.length}
                         </div>
                     </>}
                 </div>
             )}
 
             {/* Thumbnails */}
-            {images.length > 1 && (
+            {validImages.length > 1 && (
                 <div className="flex gap-3 mb-8 overflow-x-auto pb-1">
-                    {images.map((src, i) => (
+                    {validImages.map((src, i) => (
                         <button key={i} onClick={() => setCurrentImg(i)}
                             className="flex-shrink-0 rounded-xl overflow-hidden transition-all duration-200"
                             style={{
@@ -203,7 +215,13 @@ export default function ProjectDetailPage() {
                         {s.image && (
                             <div className="flex-shrink-0 rounded-2xl overflow-hidden"
                                 style={{ width: '42%', boxShadow: '0 2px 12px var(--color-shadow-md)' }}>
-                                <img src={s.image} alt={s.title} className="w-full object-cover" style={{ height: 240 }} />
+                                <img
+                                    src={s.image}
+                                    alt={s.title}
+                                    className="w-full object-cover"
+                                    style={{ height: 240 }}
+                                    onError={e => e.currentTarget.closest('div').style.display = 'none'}
+                                />
                             </div>
                         )}
                     </div>
@@ -211,14 +229,19 @@ export default function ProjectDetailPage() {
             </div>
 
             {/* Infographic */}
-            {project.infographic && (
+            {isValidImg(project.infographic) && (
                 <div className="mt-12">
                     <div className="h-px w-full mb-6" style={{ backgroundColor: 'var(--color-border)' }} />
                     <div className="flex flex-col items-center gap-3">
                         <p className="text-lg font-semibold" style={{ color: 'var(--color-deep-text)' }}>{t('infographic')}</p>
                         <div className="rounded-xl overflow-hidden w-2/4"
                             style={{ boxShadow: '0 2px 8px var(--color-shadow-md)' }}>
-                            <img src={`${UPLOADS_URL}${project.infographic}`} alt="infographic" className="w-full h-full object-cover" />
+                            <img
+                                src={`${UPLOADS_URL}${project.infographic}`}
+                                alt="infographic"
+                                className="w-full h-full object-cover"
+                                onError={e => e.currentTarget.closest('div').parentElement.style.display = 'none'}
+                            />
                         </div>
                     </div>
                 </div>

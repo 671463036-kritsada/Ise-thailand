@@ -78,6 +78,8 @@ export default function ProjectsPage() {
     setSearch('')
   }
 
+
+
   return (
     <div className="min-h-screen" style={{ backgroundColor: 'var(--color-surface)' }}>
 
@@ -208,74 +210,78 @@ export default function ProjectsPage() {
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-          {filtered.map((project) => (
-            <div
-              key={project.royal_id}
-              onClick={() => navigate(`/projects/${project.royal_id}`)}
-              className="relative rounded-2xl overflow-hidden cursor-pointer group transition-all duration-300"
-              style={{
-                height: 256,
-                boxShadow: '0 1px 4px var(--color-shadow)',
-              }}
-              onMouseEnter={e => e.currentTarget.style.boxShadow = '0 8px 24px var(--color-shadow-lg)'}
-              onMouseLeave={e => e.currentTarget.style.boxShadow = '0 1px 4px var(--color-shadow)'}
-            >
-              <img
-                src={`${UPLOADS_URL}${project.img_1}`}
-                alt={lang === 'TH' ? project.royal_name : project.royal_name_eng}
-                className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-              />
+          {filtered.map((project) => {
+            const displayImage = [project.img_banner, project.img_1, project.img_2, project.img_3, project.img_4, project.img_5]
+              .find(Boolean)
 
-
-              {/* Gradient overlay */}
+            return (
               <div
-                className="absolute inset-0"
-                style={{ background: 'linear-gradient(to top, rgba(40,56,36,0.92) 0%, rgba(40,56,36,0.25) 55%, transparent 100%)' }}
-              />
+                key={project.royal_id}
+                onClick={() => navigate(`/projects/${project.royal_id}`)}
+                className="relative rounded-2xl overflow-hidden cursor-pointer group transition-all duration-300"
+                style={{ height: 256, boxShadow: '0 1px 4px var(--color-shadow)' }}
+                onMouseEnter={e => e.currentTarget.style.boxShadow = '0 8px 24px var(--color-shadow-lg)'}
+                onMouseLeave={e => e.currentTarget.style.boxShadow = '0 1px 4px var(--color-shadow)'}
+              >
+                {displayImage && (
+                  <img
+                    src={`${UPLOADS_URL}${displayImage}`}
+                    alt={lang === 'TH' ? project.royal_name : project.royal_name_eng}
+                    className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  />
+                )}
 
-              {/* Type badge */}
-              <div className="absolute top-3 left-3">
-                <span
-                  className="px-2.5 py-1 rounded-full backdrop-blur-sm"
-                  style={{
-                    color: '#ffffff',
-                    backgroundColor: 'rgba(123,150,105,0.45)',
-                    border: '1px solid rgba(186,200,177,0.55)',
-                    fontSize: 'var(--font-size-xs)',
-                  }}
-                >
-                  { lang === 'TH' ? project.type_name : project.type_name_eng }
-                </span>
-              </div>
+                {/* Gradient overlay */}
+                <div
+                  className="absolute inset-0"
+                  style={{ background: 'linear-gradient(to top, rgba(40,56,36,0.92) 0%, rgba(40,56,36,0.25) 55%, transparent 100%)' }}
+                />
 
-              {/* Gold accent line on hover */}
-              <div
-                className="absolute top-0 left-0 right-0 h-0.5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                style={{ backgroundColor: 'var(--color-gold)' }}
-              />
+                {/* Type badge */}
+                <div className="absolute top-3 left-3">
+                  <span
+                    className="px-2.5 py-1 rounded-full backdrop-blur-sm"
+                    style={{
+                      color: '#ffffff',
+                      backgroundColor: 'rgba(123,150,105,0.45)',
+                      border: '1px solid rgba(186,200,177,0.55)',
+                      fontSize: 'var(--font-size-xs)',
+                    }}
+                  >
+                    {lang === 'TH' ? project.type_name : project.type_name_eng}
+                  </span>
+                </div>
 
-              {/* Title */}
-              <div className="absolute bottom-0 left-0 right-0 p-4 translate-y-1 group-hover:translate-y-0 transition-transform duration-300">
-                <h3
-                  className="text-white leading-relaxed line-clamp-2 drop-shadow"
-                  style={{
-                    fontSize: 'var(--font-size-sm)',
-                    fontWeight: 'var(--font-weight-semibold)',
-                  }}
-                >
-                  { lang === 'TH' ? project.royal_name : project.royal_name_eng}
-                </h3>
-                <div className="flex items-center gap-1 mt-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                  <span style={{ color: 'var(--color-gold)', fontSize: 'var(--font-size-xs)' }}>{t('view_details')}</span>
-                  <svg className="w-3 h-3" style={{ color: 'var(--color-gold)' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                  </svg>
+                {/* Gold accent line on hover */}
+                <div
+                  className="absolute top-0 left-0 right-0 h-0.5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                  style={{ backgroundColor: 'var(--color-gold)' }}
+                />
+
+                {/* Title */}
+                <div className="absolute bottom-0 left-0 right-0 p-4 translate-y-1 group-hover:translate-y-0 transition-transform duration-300">
+                  <h3
+                    className="text-white leading-relaxed line-clamp-2 drop-shadow"
+                    style={{
+                      fontSize: 'var(--font-size-sm)',
+                      fontWeight: 'var(--font-weight-semibold)',
+                    }}
+                  >
+                    {lang === 'TH' ? project.royal_name : project.royal_name_eng}
+                  </h3>
+                  <div className="flex items-center gap-1 mt-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                    <span style={{ color: 'var(--color-gold)', fontSize: 'var(--font-size-xs)' }}>{t('view_details')}</span>
+                    <svg className="w-3 h-3" style={{ color: 'var(--color-gold)' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                    </svg>
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
+            )
+          })}
         </div>
-      )}
-    </div>
+      )
+      }
+    </div >
   )
 }

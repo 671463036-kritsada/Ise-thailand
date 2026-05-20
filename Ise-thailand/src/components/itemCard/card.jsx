@@ -14,7 +14,7 @@ function VideoCard({
     videoUrl = "",
     title = "",
     description = "",
-    detailLink = "#",
+    detailLink = "",
     isYoutube = false
 }) {
     const hasContent = title || description || detailLink !== "#"

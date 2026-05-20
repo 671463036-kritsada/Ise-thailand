@@ -3,6 +3,7 @@ import api from '../../api/axios'
 import { useNavigate } from 'react-router-dom'
 import { jwtDecode } from 'jwt-decode'
 import { useTranslation } from 'react-i18next'
+import Swal from 'sweetalert2'
 
 const STEPS_KEYS = ['register_step_1', 'register_step_2', 'register_step_3', 'register_step_4']
 
@@ -75,9 +76,26 @@ export default function LoginPage() {
             const token = res.data.token
             localStorage.setItem('token', token)
             const user = jwtDecode(token)
+
+            await Swal.fire({
+                icon: 'success',
+                title: 'เข้าสู่ระบบสำเร็จ',
+                text: `ยินดีต้อนรับ ${user.name}`,
+                timer: 1500,
+                showConfirmButton: false,
+                confirmButtonColor: 'var(--color-green)',
+            })
+
             if (user.role === 1) navigate('/admin')
             else navigate('/')
         } catch (err) {
+            console.log('login error:', err.response)
+            Swal.fire({
+                icon: 'error',
+                title: 'เข้าสู่ระบบไม่สำเร็จ',
+                text: err.response?.data?.message || 'Login failed',
+                confirmButtonColor: 'var(--color-green)',
+            })
             setError(err.response?.data?.message || 'Login failed')
         } finally {
             setLoading(false)
@@ -89,10 +107,25 @@ export default function LoginPage() {
             setLoading(true)
             setError('')
             await api.post('/auth/register', registerForm)
+
+            await Swal.fire({
+                icon: 'success',
+                title: 'สมัครสมาชิกสำเร็จ',
+                text: 'กรุณาเข้าสู่ระบบด้วยบัญชีที่สร้างไว้',
+                confirmButtonColor: 'var(--color-green)',
+                confirmButtonText: 'เข้าสู่ระบบ',
+            })
+
             setIsRegister(false)
             setStep(0)
             setRegisterForm(initialRegister)
         } catch (err) {
+            Swal.fire({
+                icon: 'error',
+                title: 'สมัครสมาชิกไม่สำเร็จ',
+                text: err.response?.data?.message || 'Register failed',
+                confirmButtonColor: 'var(--color-green)',
+            })
             setError(err.response?.data?.message || 'Register failed')
         } finally {
             setLoading(false)
@@ -184,7 +217,9 @@ export default function LoginPage() {
                     </div>
 
                     <button
-                        onClick={handleLogin} disabled={loading}
+                        type="button" 
+                        onClick={handleLogin}
+                        disabled={loading}
                         className="w-full py-3 bg-gradient-to-r from-forest-green to-green text-white rounded-xl text-sm font-bold tracking-widest hover:opacity-90 active:scale-[0.98] transition-all disabled:opacity-50 shadow-[0_4px_15px_rgba(64,78,59,0.3)]">
                         {loading ? t('login_loading') : t('login_submit')}
                     </button>
