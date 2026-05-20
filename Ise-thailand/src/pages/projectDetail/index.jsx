@@ -211,6 +211,7 @@ export default function ProjectDetailPage() {
                             )}
                         </div>
 
+
                         {/* Image */}
                         {s.image && (
                             <div className="flex-shrink-0 rounded-2xl overflow-hidden"
@@ -218,8 +219,7 @@ export default function ProjectDetailPage() {
                                 <img
                                     src={s.image}
                                     alt={s.title}
-                                    className="w-full object-cover"
-                                    style={{ height: 240 }}
+                                    className="w-full h-auto rounded-2xl"
                                     onError={e => e.currentTarget.closest('div').style.display = 'none'}
                                 />
                             </div>
