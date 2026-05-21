@@ -29,7 +29,7 @@ function App() {
             element={
               <>
                 <Navbar />
-                <main className="container mx-auto mt-9 px-4 py-8">
+                <main className="container max-w-6xl mx-auto mt-10 px-4 py-8">
                   <Routes>
                     <Route path="/" element={<HomePage />} />
                     <Route path="/projects" element={<ProjectsPage />} />

@@ -1,5 +1,16 @@
 @import "tailwindcss";
+
+/* ประกาศให้ Browser รู้ว่าไฟล์ฟอนต์อยู่ที่ไหน */
+@font-face {
+  font-family: "Prompt";
+  src: url("./assets/fonts/Prompt/Prompt-Regular.ttf") format("truetype");
+  font-weight: 400;
+}
+
 @theme {
+  /* font family */
+  --font-sans: "Prompt", sans-serif;
+
   /* ===== Core Brand Colors (ไม่เปลี่ยน) ===== */
   --color-forest-green: #404e3b;
   --color-green: #7b9669;
@@ -37,7 +48,6 @@
   --color-border: #cdd8c8; /* border ทั่วไป */
   --color-border-focus: #7b9669; /* = green เมื่อ focus */
 
-  /* ===== ลบของเดิมที่ซ้ำซ้อน ===== */
   /* --color-primary-light ถูกแทนด้วย --color-green-light */
 
   /* ===== Typography (เหมือนเดิม) ===== */
@@ -68,4 +78,11 @@ body {
   color: var(--color-deep-text);
   font-size: var(--font-size-base);
   line-height: var(--line-height-normal);
+}
+
+@layer base {
+  html,
+  body {
+    font-family: "Prompt", sans-serif;
+  }
 }
