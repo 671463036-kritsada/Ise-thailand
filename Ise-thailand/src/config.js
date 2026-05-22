@@ -1,5 +1,5 @@
 const config = {
-  BASE_URL: 'https://ise-thailand.org',
+  BASE_URL: 'https://ise-thailand.org/api',
 }
 
 export default config
