@@ -129,6 +129,146 @@ function useProjectData() {
     return { data, loading, error }
 }
 
+
+// ── เพิ่ม component นี้ก่อน HomePage function ──
+
+function ActivitySlider({ news, activities, loading, lang, onSelect }) {
+    const [current, setCurrent] = useState(0)
+    const combined = [...news, ...activities]
+    const {t} = useTranslation()
+
+    useEffect(() => {
+        if (combined.length === 0) return
+        const timer = setInterval(() => {
+            setCurrent(i => (i + 1) % combined.length)
+        }, 5000)
+        return () => clearInterval(timer)
+    }, [combined.length])
+
+    if (loading) return (
+        <div className="rounded-3xl bg-white border border-green-light/30 h-72 flex items-center justify-center">
+            <div className="w-8 h-8 border-2 border-green border-t-transparent rounded-full animate-spin" />
+        </div>
+    )
+
+    if (combined.length === 0) return null
+
+    const item = combined[current]
+
+    return (
+        <div className="relative rounded-3xl overflow-hidden bg-white border border-green-light/30 shadow-sm">
+            {/* Slide content */}
+            <AnimatePresence mode="wait">
+                <motion.div
+                    key={current}
+                    initial={{ opacity: 0, x: 30 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: -30 }}
+                    transition={{ duration: 0.4, ease: 'easeOut' }}
+                    className="grid grid-cols-1 md:grid-cols-2 gap-0"
+                >
+                    {/* รูปซ้าย */}
+                    <div className="relative overflow-hidden h-64 md:h-80">
+                        {item.img_file ? (
+                            <img
+                                src={`${UPLOADS_URL}${item.img_file}`}
+                                alt={item.title}
+                                className="w-full h-full object-cover"
+                            />
+                        ) : (
+                            <div className="w-full h-full bg-surface-2 flex items-center justify-center">
+                                <svg className="w-12 h-12 text-green-light" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                </svg>
+                            </div>
+                        )}
+                        {/* Badge ประเภท */}
+                        <div className="absolute top-3 left-3">
+                            <span className="text-xs font-semibold px-2.5 py-1 rounded-full"
+                                style={{
+                                    background: item.typeact_id === '01' ? 'rgba(123,150,105,0.9)' : 'rgba(64,78,59,0.9)',
+                                    color: '#fff',
+                                    backdropFilter: 'blur(4px)',
+                                }}>
+                                {lang === 'TH' ? item.typeact_name : item.typeact_name_eng}
+                            </span>
+                        </div>
+                    </div>
+
+                    {/* เนื้อหาขวา */}
+                    <div className="flex flex-col justify-between p-7">
+                        <div>
+                            {item.activity_date && (
+                                <p className="text-xs text-muted-text mb-2">
+                                    {new Date(item.activity_date).toLocaleDateString(
+                                        lang === 'EN' ? 'en-EN' : 'th-TH',
+                                        { year: 'numeric', month: 'long', day: 'numeric' }
+                                    )}
+                                </p>
+                            )}
+                            <h3 className="text-base font-bold text-deep-text leading-relaxed mb-3 line-clamp-3">
+                                {lang === 'TH' ? item.title : item.title_eng}
+                            </h3>
+                            <p className="text-sm text-muted-text leading-relaxed line-clamp-4">
+                                {lang === 'TH' ? item.detail : item.detail_eng}
+                            </p>
+                        </div>
+                        <button
+                            onClick={() => onSelect(item)}
+                            className="mt-5 self-start flex items-center gap-2 text-sm font-semibold text-green hover:opacity-75 transition-opacity"
+                        >
+                            {t('Read_more_details')}
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                            </svg>
+                        </button>
+                    </div>
+                </motion.div>
+            </AnimatePresence>
+
+            {/* Dots + Arrows */}
+            <div className="absolute bottom-4 left-0 right-0 flex items-center justify-center gap-2">
+                {combined.map((_, i) => (
+                    <button
+                        key={i}
+                        onClick={() => setCurrent(i)}
+                        className="transition-all duration-300 rounded-full"
+                        style={{
+                            width: i === current ? 20 : 6,
+                            height: 6,
+                            background: i === current ? 'var(--color-green)' : 'var(--color-green-light)',
+                            opacity: i === current ? 1 : 0.5,
+                        }}
+                    />
+                ))}
+            </div>
+
+            {/* Prev / Next */}
+            {combined.length > 1 && (
+                <>
+                    <button
+                        onClick={() => setCurrent(i => (i - 1 + combined.length) % combined.length)}
+                        className="absolute left-3 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-white/80 border border-green-light/30 flex items-center justify-center hover:bg-white transition-colors shadow-sm"
+                    >
+                        <svg className="w-4 h-4 text-deep-text" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+                        </svg>
+                    </button>
+                    <button
+                        onClick={() => setCurrent(i => (i + 1) % combined.length)}
+                        className="absolute right-3 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-white/80 border border-green-light/30 flex items-center justify-center hover:bg-white transition-colors shadow-sm"
+                    >
+                        <svg className="w-4 h-4 text-deep-text" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                        </svg>
+                    </button>
+                </>
+            )}
+        </div>
+    )
+}
+
+
 // ─── UI Primitives ───────────────────────────────────────────────────────────
 
 const fadeUp = {
@@ -251,6 +391,16 @@ function HomePage() {
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
                 </div>
+            </Reveal>
+
+            <Reveal>
+                <ActivitySlider
+                    news={activity.news}
+                    activities={activity.activities}
+                    loading={activity.loading}
+                    lang={lang}
+                    onSelect={(item) => setSelectedActivity(item)}
+                />
             </Reveal>
 
             {/* ── Stats ── */}
@@ -481,12 +631,6 @@ function HomePage() {
                             </div>
                         )}
                     </div>
-
-
-                    {/* foolter */}
-                    <div>
-                        <p>©2022 Institute of Sufficiency Economy. All rights reserved.</p>
-                    </div>
                 </div>
             </Reveal>
 
@@ -528,34 +672,118 @@ function HomePage() {
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
                         className="fixed inset-0 z-50 flex items-center justify-center p-4"
-                        style={{ backgroundColor: 'rgba(0,0,0,0.7)' }}
+                        style={{ backgroundColor: 'rgba(0,0,0,0.75)', backdropFilter: 'blur(6px)', WebkitBackdropFilter: 'blur(6px)' }}
                         onClick={() => setSelectedVr(null)}
                     >
                         <motion.div
-                            initial={{ scale: 0.96, opacity: 0, y: 12 }}
+                            initial={{ scale: 0.95, opacity: 0, y: 16 }}
                             animate={{ scale: 1, opacity: 1, y: 0 }}
-                            exit={{ scale: 0.96, opacity: 0, y: 12 }}
-                            transition={{ duration: 0.25, ease: 'easeOut' }}
-                            className="w-full max-w-3xl rounded-2xl overflow-hidden bg-white shadow-2xl"
+                            exit={{ scale: 0.95, opacity: 0, y: 16 }}
+                            transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
+                            className="w-full max-w-6xl overflow-hidden"
+                            style={{
+                                borderRadius: 20,
+                                background: 'linear-gradient(160deg, #1a2e1a 0%, #0f1f0f 100%)',
+                                border: '1px solid rgba(197,168,105,0.25)',
+                                boxShadow: '0 32px 80px rgba(0,0,0,0.6), 0 0 0 1px rgba(197,168,105,0.08)',
+                            }}
                             onClick={e => e.stopPropagation()}
                         >
-                            <div className="flex items-center justify-between px-5 py-4 border-b border-green-light/20">
-                                <h3 className="text-sm font-bold text-deep-text">
-                                    {lang === 'TH' ? selectedVr.meta_name : selectedVr.name_eng}
-                                </h3>
+                            {/* Gold shimmer line */}
+                            <div style={{
+                                height: 2,
+                                background: 'linear-gradient(90deg, transparent, rgba(197,168,105,0.5) 30%, rgba(220,190,120,0.9) 50%, rgba(197,168,105,0.5) 70%, transparent)',
+                            }} />
+
+                            {/* Header */}
+                            <div className="flex items-center justify-between px-5 py-4">
+                                {/* Left: icon + title */}
+                                <div className="flex items-center gap-3 min-w-0">
+                                    <div style={{
+                                        width: 34, height: 34, borderRadius: 10, flexShrink: 0,
+                                        background: 'rgba(197,168,105,0.12)',
+                                        border: '1px solid rgba(197,168,105,0.3)',
+                                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                    }}>
+                                        <svg width="16" height="16" fill="none" stroke="rgba(197,168,105,0.9)" strokeWidth="1.5" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" d="M15 10l4.553-2.069A1 1 0 0121 8.82v6.36a1 1 0 01-1.447.89L15 14M3 8a2 2 0 012-2h8a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2V8z" />
+                                        </svg>
+                                    </div>
+                                    <div className="min-w-0">
+                                        <p style={{
+                                            fontSize: '0.82rem',
+                                            fontWeight: 600,
+                                            color: 'rgba(255,255,255,0.92)',
+                                            overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
+                                            maxWidth: 420,
+                                        }}>
+                                            {lang === 'TH' ? selectedVr.meta_name : selectedVr.name_eng}
+                                        </p>
+                                        <p style={{ fontSize: '0.68rem', color: 'rgba(197,168,105,0.65)', marginTop: 1 }}>
+                                            วิดีโอ VR · กดพื้นที่ว่างเพื่อปิด
+                                        </p>
+                                    </div>
+                                </div>
+
+                                {/* Close */}
                                 <button
                                     onClick={() => setSelectedVr(null)}
-                                    className="w-8 h-8 rounded-full flex items-center justify-center hover:bg-green-light/20 transition-colors"
+                                    style={{
+                                        width: 32, height: 32, borderRadius: 8, flexShrink: 0,
+                                        background: 'rgba(255,255,255,0.06)',
+                                        border: '1px solid rgba(255,255,255,0.1)',
+                                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                        cursor: 'pointer', transition: 'all 0.2s',
+                                        color: 'rgba(255,255,255,0.5)',
+                                    }}
+                                    onMouseEnter={e => {
+                                        e.currentTarget.style.background = 'rgba(239,68,68,0.15)'
+                                        e.currentTarget.style.borderColor = 'rgba(239,68,68,0.3)'
+                                        e.currentTarget.style.color = 'rgba(252,165,165,0.9)'
+                                    }}
+                                    onMouseLeave={e => {
+                                        e.currentTarget.style.background = 'rgba(255,255,255,0.06)'
+                                        e.currentTarget.style.borderColor = 'rgba(255,255,255,0.1)'
+                                        e.currentTarget.style.color = 'rgba(255,255,255,0.5)'
+                                    }}
                                 >
-                                    <svg className="w-4 h-4 text-muted-text" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
                                     </svg>
                                 </button>
                             </div>
-                            <div className="aspect-video bg-black">
-                                <video key={selectedVr.meta_id} className="w-full h-full" controls autoPlay preload="metadata">
-                                    <source src={`${UPLOADS_URL}${selectedVr.path}`} type="video/mp4" />
-                                </video>
+
+                            {/* Separator */}
+                            <div style={{ height: 1, background: 'rgba(197,168,105,0.12)', margin: '0 20px' }} />
+
+                            {/* Video */}
+                            <div style={{ position: 'relative', background: '#000', margin: '16px 20px 20px', borderRadius: 12, overflow: 'hidden' }}>
+                                {/* Aspect ratio box */}
+                                <div style={{ paddingTop: '56.25%', position: 'relative' }}>
+                                    <video
+                                        key={selectedVr.meta_id}
+                                        style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', display: 'block' }}
+                                        controls
+                                        autoPlay
+                                        preload="metadata"
+                                    >
+                                        <source src={`${UPLOADS_URL}${selectedVr.path}`} type="video/mp4" />
+                                    </video>
+                                </div>
+
+                                {/* Corner badge */}
+                                <div style={{
+                                    position: 'absolute', top: 10, left: 10,
+                                    padding: '3px 8px', borderRadius: 6,
+                                    background: 'rgba(0,0,0,0.55)',
+                                    border: '1px solid rgba(197,168,105,0.3)',
+                                    fontSize: '0.62rem', fontWeight: 600, letterSpacing: '0.1em',
+                                    color: 'rgba(197,168,105,0.9)',
+                                    backdropFilter: 'blur(4px)',
+                                    pointerEvents: 'none',
+                                }}>
+                                    VR
+                                </div>
                             </div>
                         </motion.div>
                     </motion.div>

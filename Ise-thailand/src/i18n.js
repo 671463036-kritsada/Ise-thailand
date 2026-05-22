@@ -9,6 +9,7 @@ const resources = {
   th: {
     translation: {
       // home page
+      overview: "ภาพรวม",
       researcher: "นักวิจัย",
       researcher_unit: "คน",
 
@@ -192,13 +193,38 @@ const resources = {
       nav_administrator: "Administrator",
       nav_user: "User",
       // end navbar
+
+      // footer
+      footer_brand: "สถาบันเศรษฐกิจพอเพียง",
+      footer_tagline:
+        "น้อมนำหลักปรัชญาของเศรษฐกิจพอเพียง\nสู่การพัฒนาที่ยั่งยืน",
+      footer_menu: "เมนูหลัก",
+      footer_nav_home: "หน้าแรก",
+      footer_nav_about: "เกี่ยวกับเรา",
+      footer_nav_research: "งานวิจัย",
+      footer_nav_news: "ข่าวสาร",
+      footer_contact: "ติดต่อเรา",
+      footer_address: "99 หมู่ 1 ถ.พหลโยธิน แขวงลาดยาว เขตจตุจักร กรุงเทพฯ",
+      footer_phone: "02-123-4567",
+      footer_email: "info@sufficiency.or.th",
+      footer_copyright:
+        "©2022 Institute of Sufficiency Economy. All rights reserved.",
+      footer_privacy: "นโยบายความเป็นส่วนตัว",
+      footer_terms: "เงื่อนไขการใช้งาน",
+      // end footer
+
+
+      Read_more_details: "อ่านรายละเอียดเพิ่มเติม",
+      Image_Gallery: "อัลบั้มรูปภาพ",
+      unit_image : "รูป",
+      image_at : "รูปที่"
     },
   },
 
   en: {
     translation: {
       // home page
-
+      overview: "Overview",
       researcher: "Researchers",
       researcher_unit: "People",
 
@@ -381,6 +407,30 @@ const resources = {
       nav_administrator: "Administrator",
       nav_user: "User",
       // end navbar
+
+      // footer
+      footer_brand: "Sufficiency Economy Institute",
+      footer_tagline:
+        "Promoting the Philosophy of\nSufficiency Economy for Sustainable Development",
+      footer_menu: "Menu",
+      footer_nav_home: "Home",
+      footer_nav_about: "About Us",
+      footer_nav_research: "Research",
+      footer_nav_news: "News",
+      footer_contact: "Contact Us",
+      footer_address: "99 Moo 1, Phahon Yothin Rd, Lat Yao, Chatuchak, Bangkok",
+      footer_phone: "02-123-4567",
+      footer_email: "info@sufficiency.or.th",
+      footer_copyright:
+        "©2022 Institute of Sufficiency Economy. All rights reserved.",
+      footer_privacy: "Privacy Policy",
+      footer_terms: "Terms of Use",
+      // end footer
+
+       Read_more_details: "Read more details",
+       Image_Gallery : "Image Gallery",
+       unit_image : "Image",
+       image_at : "Image"
     },
   },
 };

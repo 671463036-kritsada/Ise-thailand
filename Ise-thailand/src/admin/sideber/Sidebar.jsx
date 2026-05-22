@@ -4,6 +4,8 @@ import { LayoutDashboard, Boxes, Folder, BarChart3, LogOut, ChevronDown } from "
 import { useAuth } from '../../hook/useAuth'  // เพิ่ม s
 import api from '../../api/axios'
 
+import Swal from 'sweetalert2'
+
 export default function Sidebar({ open }) {
   const location = useLocation()
   const navigator = useNavigate()
@@ -188,12 +190,24 @@ export default function Sidebar({ open }) {
 
       <div className="p-3 border-t border-[var(--color-surface-3)] bg-[var(--color-surface)]/10">
         <button
-          onClick={() => {
-            localStorage.removeItem('token')
-            navigator("/login")
+          onClick={async () => {
+            const result = await Swal.fire({
+              title: 'ออกจากระบบ?',
+              text: 'คุณต้องการออกจากระบบใช่หรือไม่?',
+              icon: 'warning',
+              showCancelButton: true,
+              confirmButtonText: 'ออกจากระบบ',
+              cancelButtonText: 'ยกเลิก',
+              confirmButtonColor: '#b85c4a',
+              cancelButtonColor: '#404e3b',
+            })
+            if (result.isConfirmed) {
+              localStorage.removeItem('token')
+              navigator('/login')
+            }
           }}
           className={`flex items-center justify-center rounded-xl bg-rose-50 text-rose-600 hover:bg-rose-100 transition-all duration-200 group font-bold text-xs cursor-pointer
-                ${open ? "w-full px-3 py-2 gap-2 shadow-sm shadow-rose-100" : "w-8 h-8"}`}
+    ${open ? "w-full px-3 py-2 gap-2 shadow-sm shadow-rose-100" : "w-8 h-8"}`}
         >
           <LogOut className="w-3.5 h-3.5 shrink-0 group-hover:scale-105 transition-transform" />
           {open && <span>ออกจากระบบ</span>}

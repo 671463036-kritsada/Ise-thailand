@@ -1,13 +1,11 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import { LanguageProvider } from './context/LanguageContext'
 import Navbar from './components/Navbar'
+import Footer from './components/Footer'
 import HomePage from './pages/home/index'
 import ProjectsPage from './pages/project/index'
 import ResearchPage from './pages/research'
 import EbookPage from './pages/ebook'
-import AcademicPage from './pages/academic'
-import MediaPage from './pages/media'
-import VideoPage from './pages/video'
 import InstitutePage from './pages/institute/index'
 import LoginPage from './pages/login/index'
 import ProjectDetailPage from './pages/projectDetail/index'
@@ -35,14 +33,12 @@ function App() {
                     <Route path="/projects" element={<ProjectsPage />} />
                     <Route path="/research" element={<ResearchPage />} />
                     <Route path="/ebook" element={<EbookPage />} />
-                    <Route path="/academic" element={<AcademicPage />} />
-                    <Route path="/media" element={<MediaPage />} />
-                    <Route path="/video" element={<VideoPage />} />
                     <Route path="/institute" element={<InstitutePage />} />
                     <Route path="/login" element={<LoginPage />} />
                     <Route path="/projects/:id" element={<ProjectDetailPage />} />
                   </Routes>
                 </main>
+                <Footer />
               </>
             }
           />

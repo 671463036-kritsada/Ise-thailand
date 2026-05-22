@@ -114,13 +114,6 @@ const EbookPage = () => {
           </div>
         )}
       </main>
-
-      {/* Footer */}
-      <footer className="w-full bg-forest-green py-6 mt-auto">
-        <p className="text-center text-green-light text-xs font-medium tracking-wider">
-          ©2022 Institute of Sufficiency Economy. All rights reserved.
-        </p>
-      </footer>
     </div>
   );
 };

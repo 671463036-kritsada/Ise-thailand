@@ -2,10 +2,13 @@ import React, { useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { UPLOADS_URL } from '../../constants/uploads_url'
 import { useLang } from '../../context/LanguageContext'
+import { useTranslation } from 'react-i18next'
 
 export default function ActivityModal({ title, data, loading, error, onClose, onSelectActivity }) {
 
     const { lang } = useLang()
+    const { t } = useTranslation()
+
 
     useEffect(() => {
         document.body.style.overflow = 'hidden'
@@ -44,7 +47,7 @@ export default function ActivityModal({ title, data, loading, error, onClose, on
                     <div className="flex items-center justify-between">
                         <div>
                             <p className="text-xs font-medium mb-1 text-white/60">
-                                ทั้งหมด {data?.length ?? '—'} รายการ
+                                {t('all')} {data?.length ?? '—'} {t('list_unit')}
                             </p>
                             <h2 className="text-xl font-bold text-white">{title}</h2>
                         </div>
@@ -113,13 +116,13 @@ export default function ActivityModal({ title, data, loading, error, onClose, on
                                     </p>
                                     <div className="flex items-center justify-between mt-6">
                                         <span className="text-sm font-medium text-green">
-                                            อ่านรายละเอียดเพิ่มเติม →
+                                            {t('Read_more_details')} →
                                         </span>
-                                        {item.pdf_file && (
+                                        {/* {item.pdf_file && (
                                             <span className="text-xs px-3 py-1 rounded-full bg-green/10 text-green">
                                                 PDF
                                             </span>
-                                        )}
+                                        )} */}
                                     </div>
                                 </div>
                             </div>

@@ -172,50 +172,30 @@ export default function ResearchPage() {
                 </div>
             </div>
 
-            {/* Table */}
+            {/* Table — desktop only */}
             <div
-                className="rounded-xl overflow-hidden"
+                className="rounded-xl overflow-hidden hidden md:block"
                 style={{
                     border: '1px solid var(--color-border)',
                     backgroundColor: 'var(--color-white)',
                     boxShadow: '0 1px 4px var(--color-shadow)',
                 }}
             >
-                <table
-                    className="w-full"
-                    style={{
-                        fontSize: 'var(--font-size-sm)',
-                        tableLayout: 'fixed',
-                    }}
-                >
+                <table className="w-full" style={{ fontSize: 'var(--font-size-sm)', tableLayout: 'fixed' }}>
                     <colgroup>
                         <col style={{ width: '48%' }} />
                         <col style={{ width: '32%' }} />
                         <col style={{ width: '20%' }} />
                     </colgroup>
-
                     <thead>
-                        <tr
-                            style={{
-                                backgroundColor:
-                                    'var(--color-forest-green)',
-                            }}
-                        >
-                            {[
-                                t('project_name'),
-                                t('project_type'),
-                                t('researcher_name'),
-                            ].map((col) => (
-                                <th
-                                    key={col}
-                                    className="px-5 py-3 text-left"
+                        <tr style={{ backgroundColor: 'var(--color-forest-green)' }}>
+                            {[t('project_name'), t('project_type'), t('researcher_name')].map((col) => (
+                                <th key={col} className="px-5 py-3 text-left"
                                     style={{
                                         color: '#fff',
-                                        fontWeight:
-                                            'var(--font-weight-medium)',
+                                        fontWeight: 'var(--font-weight-medium)',
                                         fontSize: 'var(--font-size-xs)',
-                                        borderBottom:
-                                            '2px solid var(--color-gold)',
+                                        borderBottom: '2px solid var(--color-gold)',
                                     }}
                                 >
                                     {col}
@@ -223,19 +203,11 @@ export default function ResearchPage() {
                             ))}
                         </tr>
                     </thead>
-
                     <tbody>
                         {paginated.length === 0 ? (
                             <tr>
-                                <td
-                                    colSpan={3}
-                                    className="py-12 text-center"
-                                    style={{
-                                        color:
-                                            'var(--color-muted-text)',
-                                        fontSize:
-                                            'var(--font-size-sm)',
-                                    }}
+                                <td colSpan={3} className="py-12 text-center"
+                                    style={{ color: 'var(--color-muted-text)', fontSize: 'var(--font-size-sm)' }}
                                 >
                                     {t('no_data')}
                                 </td>
@@ -245,51 +217,20 @@ export default function ResearchPage() {
                                 <tr
                                     key={item.id}
                                     style={{
-                                        backgroundColor:
-                                            index % 2 === 0
-                                                ? 'var(--color-white)'
-                                                : 'var(--color-surface-2)',
-                                        borderBottom:
-                                            '1px solid var(--color-border)',
-                                        transition:
-                                            'background-color 0.15s',
+                                        backgroundColor: index % 2 === 0 ? 'var(--color-white)' : 'var(--color-surface-2)',
+                                        borderBottom: '1px solid var(--color-border)',
+                                        transition: 'background-color 0.15s',
                                     }}
-                                    onMouseEnter={(e) =>
-                                    (e.currentTarget.style.backgroundColor =
-                                        'var(--color-surface-3)')
-                                    }
-                                    onMouseLeave={(e) =>
-                                    (e.currentTarget.style.backgroundColor =
-                                        index % 2 === 0
-                                            ? 'var(--color-white)'
-                                            : 'var(--color-surface-2)')
-                                    }
+                                    onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = 'var(--color-surface-3)')}
+                                    onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = index % 2 === 0 ? 'var(--color-white)' : 'var(--color-surface-2)')}
                                 >
-                                    <td
-                                        className="px-5 py-3"
-                                        style={{
-                                            color:
-                                                'var(--color-deep-text)',
-                                            lineHeight:
-                                                'var(--line-height-relaxed)',
-                                        }}
-                                    >
+                                    <td className="px-5 py-3" style={{ color: 'var(--color-deep-text)', lineHeight: 'var(--line-height-relaxed)' }}>
                                         {lang === 'TH' ? item.name_thai : item.name_eng}
                                     </td>
-
                                     <td className="px-5 py-3">
-                                        <CategoryBadge
-                                            category={lang === 'TH' ? item.type_name : item.type_name_eng}
-                                        />
+                                        <CategoryBadge category={lang === 'TH' ? item.type_name : item.type_name_eng} />
                                     </td>
-
-                                    <td
-                                        className="px-5 py-3"
-                                        style={{
-                                            color:
-                                                'var(--color-muted-text)',
-                                        }}
-                                    >
+                                    <td className="px-5 py-3" style={{ color: 'var(--color-muted-text)' }}>
                                         {lang === 'TH' ? item.researcher_fullname : item.researcher_fullname_eng}
                                     </td>
                                 </tr>
@@ -297,6 +238,58 @@ export default function ResearchPage() {
                         )}
                     </tbody>
                 </table>
+            </div>
+
+            {/* Card layout — mobile only */}
+            <div className="flex flex-col gap-3 md:hidden">
+                {paginated.length === 0 ? (
+                    <div className="py-12 text-center rounded-xl"
+                        style={{
+                            color: 'var(--color-muted-text)',
+                            fontSize: 'var(--font-size-sm)',
+                            border: '1px solid var(--color-border)',
+                            backgroundColor: 'var(--color-white)',
+                        }}
+                    >
+                        {t('no_data')}
+                    </div>
+                ) : (
+                    paginated.map((item) => (
+                        <div
+                            key={item.id}
+                            className="rounded-xl px-4 py-4 flex flex-col gap-2"
+                            style={{
+                                backgroundColor: 'var(--color-white)',
+                                border: '1px solid var(--color-border)',
+                                boxShadow: '0 1px 4px var(--color-shadow)',
+                            }}
+                        >
+                            {/* ชื่อโครงการ */}
+                            <p style={{
+                                color: 'var(--color-deep-text)',
+                                fontSize: 'var(--font-size-sm)',
+                                fontWeight: 'var(--font-weight-medium)',
+                                lineHeight: 'var(--line-height-relaxed)',
+                            }}>
+                                {lang === 'TH' ? item.name_thai : item.name_eng}
+                            </p>
+
+                            {/* Divider */}
+                            <div style={{ height: 1, backgroundColor: 'var(--color-border)' }} />
+
+                            {/* ประเภท + นักวิจัย */}
+                            <div className="flex items-center justify-between gap-2 flex-wrap">
+                                <CategoryBadge category={lang === 'TH' ? item.type_name : item.type_name_eng} />
+                                <span style={{
+                                    color: 'var(--color-muted-text)',
+                                    fontSize: 'var(--font-size-xs)',
+                                }}>
+                                    {lang === 'TH' ? item.researcher_fullname : item.researcher_fullname_eng}
+                                </span>
+                            </div>
+                        </div>
+                    ))
+                )}
             </div>
 
             {/* Pagination */}
