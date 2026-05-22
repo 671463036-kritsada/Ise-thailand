@@ -10,6 +10,8 @@ import heroImg from "/images/heroImage.png"
 import VideoCard from '../../components/itemCard/card'
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Cell, ResponsiveContainer, PieChart, Pie } from 'recharts'
 
+import { useNavigate } from 'react-router-dom'
+
 async function fetcher(endpoint) {
     const res = await api.get(endpoint)
     return res.data
@@ -130,12 +132,27 @@ function useProjectData() {
 }
 
 
-// ── เพิ่ม component นี้ก่อน HomePage function ──
+function useRoyalProjects() {
+    const [data, setData] = useState([])
+    const [loading, setLoading] = useState(true)
+    useEffect(() => {
+        fetcher('/royal/').then((res) => {
+            const all = res.data || []
+            const shuffled = [...all].sort(() => Math.random() - 0.5).slice(0, 4)
+            setData(shuffled)
+        }).catch(console.error).finally(() => setLoading(false))
+    }, [])
+    return { data, loading }
+}
+
+
+
+// ──  activity slider function ──
 
 function ActivitySlider({ news, activities, loading, lang, onSelect }) {
     const [current, setCurrent] = useState(0)
     const combined = [...news, ...activities]
-    const {t} = useTranslation()
+    const { t } = useTranslation()
 
     useEffect(() => {
         if (combined.length === 0) return
@@ -269,6 +286,89 @@ function ActivitySlider({ news, activities, loading, lang, onSelect }) {
 }
 
 
+
+// ── project slider function ──
+function FeaturedProjects({ data, loading, lang }) {
+    const navigate = useNavigate()
+    return (
+        <div>
+            <SectionLabel text="แนะนำโครงการ" />
+            <div className="flex items-end justify-between mb-6">
+                <h2 className="text-2xl font-bold text-deep-text leading-tight">
+                    {lang === 'TH' ? 'แนะนำโครงการพระราชดำริ' : 'Featured Royal Projects'}
+                </h2>
+                <button
+                    onClick={() => navigate('/projects')}
+                    className="flex items-center gap-2 text-xs font-semibold px-4 py-2 rounded-full transition-all duration-200"
+                    style={{
+                        background: 'var(--color-forest-green)',
+                        color: '#fff',
+                    }}
+                >
+                    ดูทั้งหมด
+                    <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                    </svg>
+                </button>
+            </div>
+
+            {loading ? (
+                <div className="h-40 flex items-center justify-center">
+                    <div className="w-8 h-8 border-2 border-green border-t-transparent rounded-full animate-spin" />
+                </div>
+            ) : (
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    {data.map((item) => (
+                        <motion.button
+                            key={item.royal_id}
+                            whileHover={{ y: -4 }}
+                            whileTap={{ scale: 0.98 }}
+                            onClick={() => navigate(`/projects/${item.royal_id}`)}
+                            className="text-left rounded-2xl overflow-hidden border border-green-light/30 bg-white hover:border-green/40 hover:shadow-lg transition-all duration-200 group"
+                        >
+                            {/* รูป */}
+                            <div className="relative aspect-video overflow-hidden bg-surface-2">
+                                {item.img_1 ? (
+                                    <img
+                                        src={`${UPLOADS_URL}${item.img_1}`}
+                                        alt={item.img_1}
+                                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                                    />
+                                ) : (
+                                    <div className="w-full h-full flex items-center justify-center">
+                                        <svg className="w-8 h-8 text-green-light" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                        </svg>
+                                    </div>
+                                )}
+                                {/* Play icon overlay */}
+                                <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                                    style={{ background: 'rgba(64,78,59,0.3)' }}>
+                                    <div className="w-10 h-10 rounded-full bg-white/90 flex items-center justify-center">
+                                        <svg className="w-4 h-4 text-forest-green ml-0.5" fill="currentColor" viewBox="0 0 24 24">
+                                            <path d="M8 5v14l11-7z" />
+                                        </svg>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* เนื้อหา */}
+                            <div className="p-4">
+                                <p className="text-sm font-bold text-deep-text leading-snug mb-1.5 line-clamp-2 group-hover:text-green transition-colors">
+                                    {lang === 'TH' ? item.royal_name : item.royal_name_eng}
+                                </p>
+                                <p className="text-xs text-muted-text leading-relaxed line-clamp-2">
+                                    {lang === 'TH' ? item.detail : item.detail_eng}
+                                </p>
+                            </div>
+                        </motion.button>
+                    ))}
+                </div>
+            )}
+        </div>
+    )
+}
+
 // ─── UI Primitives ───────────────────────────────────────────────────────────
 
 const fadeUp = {
@@ -363,8 +463,12 @@ function HomePage() {
     const [showNewsModal, setShowNewsModal] = useState(false)
     const [selectedVr, setSelectedVr] = useState(null)
 
+    const royalProjects = useRoyalProjects()
+
     const { lang } = useLang()
     const { t } = useTranslation()
+
+    const navigate = useNavigate() 
 
     const activity = useActivity()
     const { data: ebookData, loading: ebookLoading } = useEbookData()
@@ -393,6 +497,8 @@ function HomePage() {
                 </div>
             </Reveal>
 
+
+            {/* -- activity slider  -- */}
             <Reveal>
                 <ActivitySlider
                     news={activity.news}
@@ -400,6 +506,16 @@ function HomePage() {
                     loading={activity.loading}
                     lang={lang}
                     onSelect={(item) => setSelectedActivity(item)}
+                />
+            </Reveal>
+
+
+            {/* ── Featured Royal Projects ── */}
+            <Reveal delay={0.1}>
+                <FeaturedProjects
+                    data={royalProjects.data}
+                    loading={royalProjects.loading}
+                    lang={lang}
                 />
             </Reveal>
 
