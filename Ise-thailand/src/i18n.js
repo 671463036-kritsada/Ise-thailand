@@ -217,7 +217,9 @@ const resources = {
       Read_more_details: "อ่านรายละเอียดเพิ่มเติม",
       Image_Gallery: "อัลบั้มรูปภาพ",
       unit_image : "รูป",
-      image_at : "รูปที่"
+      image_at : "รูปที่",
+      Project_Introduction : "แนะนำโครงการ",
+      VR_Video_Click_empty_space_to_close : "วิดีโอ VR · กดพื้นที่ว่างเพื่อปิด"
     },
   },
 
@@ -430,7 +432,9 @@ const resources = {
        Read_more_details: "Read more details",
        Image_Gallery : "Image Gallery",
        unit_image : "Image",
-       image_at : "Image"
+       image_at : "Image",
+       Project_Introduction: "Project Introduction",
+       VR_Video_Click_empty_space_to_close : "VR Video · Click empty space to close"
     },
   },
 };

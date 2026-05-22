@@ -6,6 +6,8 @@ import api from '../api/axios'
 import { useTranslation } from 'react-i18next'
 import Swal from 'sweetalert2'
 
+import imageLogo from '../../public/logo.jpg'
+
 function Navbar() {
     const { lang, setLang } = useLang()
     const [langOpen, setLangOpen] = useState(false)
@@ -135,7 +137,7 @@ function Navbar() {
                     className="flex items-center gap-2.5 flex-shrink-0 group"
                     style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}
                 >
-                    <div style={{
+                    {/* <div style={{
                         width: 30, height: 30,
                         borderRadius: '8px',
                         background: 'linear-gradient(135deg, rgba(197,168,105,0.25), rgba(197,168,105,0.08))',
@@ -149,7 +151,8 @@ function Navbar() {
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
                             <path d="M12 2L4 7v10l8 5 8-5V7L12 2z" stroke="rgba(197,168,105,0.9)" strokeWidth="1.5" strokeLinejoin="round" />
                         </svg>
-                    </div>
+                    </div> */}
+                    <img className='w-10 h-10' src={imageLogo} alt="" />
                     <div className="flex flex-col leading-none">
                         <span style={{
                             fontSize: '0.8rem', fontWeight: 700, letterSpacing: '0.12em',

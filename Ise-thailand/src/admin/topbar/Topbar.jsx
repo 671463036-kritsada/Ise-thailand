@@ -45,7 +45,7 @@ export default function Topbar({ onToggleSidebar }) {
         <div className="flex items-center gap-2">
 
           {/* Notification Bell */}
-          <div className="relative z-50">
+          {/* <div className="relative z-50">
             <button
               onClick={() => { setShowNotif((v) => !v); setShowProfile(false); }}
               className="relative w-8 h-8 rounded-lg bg-[var(--color-surface-2)] border border-[var(--color-border)] flex items-center justify-center text-[var(--color-muted-text)] hover:bg-[var(--color-surface-3)] transition-colors cursor-pointer"
@@ -86,7 +86,7 @@ export default function Topbar({ onToggleSidebar }) {
                 </div>
               </div>
             )}
-          </div>
+          </div> */}
 
           {/* Profile */}
           <div className="relative z-50">
