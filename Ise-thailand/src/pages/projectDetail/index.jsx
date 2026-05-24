@@ -106,62 +106,100 @@ export default function ProjectDetailPage() {
 
             {/* Hero Slider */}
             {validImages.length > 0 && (
-                <div className="relative rounded-2xl overflow-hidden mb-3 group"
-                    style={{ height: 720, boxShadow: '0 4px 20px var(--color-shadow-lg)' }}>
-                    <img src={validImages[currentImg]} alt={lang === 'TH' ? project.royal_name : project.royal_name_eng}
-                        className="w-full h-full object-cover transition-all duration-500" />
-                    <div className="absolute inset-0"
-                        style={{ background: 'linear-gradient(to top, rgba(40,56,36,0.88) 0%, rgba(40,56,36,0.15) 55%, transparent 100%)' }} />
+                <div className="relative rounded-3xl overflow-hidden mb-6 group"
+                    style={{ boxShadow: '0 16px 48px rgba(0,0,0,0.18)' }}>
 
-                    {/* Gold accent top bar */}
-                    <div className="absolute top-0 left-0 right-0 h-1"
-                        style={{ backgroundColor: 'var(--color-gold)' }} />
+                    {/* Main Image */}
+                    <img src={validImages[currentImg]}
+                        alt={lang === 'TH' ? project.royal_name : project.royal_name_eng}
+                        className="w-full transition-all duration-700"
+                        style={{
+                            display: 'block',
+                            maxHeight: '80vh',
+                            width: '100%',
+                            objectFit: 'contain',
+                            backgroundColor: 'rgba(28,40,24,0.04)',
+                        }} />
 
-                    <div className="absolute bottom-0 left-0 right-0 p-6">
-                        <div className="flex flex-wrap gap-2 mb-3">
-                            {project.type_name && (
-                                <span className="text-xs px-3 py-1 rounded-full backdrop-blur-sm"
-                                    style={{
-                                        color: '#fff',
-                                        backgroundColor: 'rgba(123,150,105,0.5)',
-                                        border: '1px solid rgba(186,200,177,0.5)',
-                                        fontSize: 'var(--font-size-xs)',
-                                    }}>
-                                    {lang === 'TH' ? project.type_name : project.type_name_eng}
-                                </span>
-                            )}
-                        </div>
-                        <h1 className="text-2xl font-bold leading-relaxed text-white drop-shadow-md">
+                    {/* Gradient overlay — บางลง ไม่บดบังรูป */}
+                    <div className="absolute inset-0 pointer-events-none"
+                        style={{ background: 'linear-gradient(to top, rgba(20,32,18,0.85) 0%, rgba(20,32,18,0.1) 40%, transparent 70%)' }} />
+
+                    {/* Gold top bar */}
+                    <div className="absolute top-0 left-0 right-0 h-[3px]"
+                        style={{ background: 'linear-gradient(to right, var(--color-gold), rgba(186,160,80,0.4), var(--color-gold))' }} />
+
+                    {/* Bottom info */}
+                    <div className="absolute bottom-0 left-0 right-0 px-8 py-7">
+                        {project.type_name && (
+                            <span className="inline-flex items-center gap-1.5 text-xs px-3 py-1 rounded-full mb-3 backdrop-blur-md"
+                                style={{
+                                    color: 'var(--color-gold)',
+                                    backgroundColor: 'rgba(186,160,80,0.12)',
+                                    border: '1px solid rgba(186,160,80,0.35)',
+                                    letterSpacing: '0.06em',
+                                    fontWeight: 600,
+                                }}>
+                                <span style={{ width: 5, height: 5, borderRadius: '50%', backgroundColor: 'var(--color-gold)', display: 'inline-block' }} />
+                                {lang === 'TH' ? project.type_name : project.type_name_eng}
+                            </span>
+                        )}
+                        <h1 className="font-bold leading-snug text-white"
+                            style={{
+                                fontSize: 'clamp(1.25rem, 2.5vw, 1.75rem)',
+                                maxWidth: '70%',
+                                textShadow: '0 2px 16px rgba(0,0,0,0.5)',
+                                letterSpacing: '-0.01em',
+                            }}>
                             {lang === 'TH' ? project.royal_name : project.royal_name_eng}
                         </h1>
                     </div>
 
+                    {/* Prev/Next */}
                     {validImages.length > 1 && <>
                         <button onClick={prev}
-                            className="absolute left-4 top-1/2 -translate-y-1/2 rounded-full p-2.5 opacity-0 group-hover:opacity-100 transition-all"
+                            className="absolute left-4 top-1/2 -translate-y-1/2 rounded-full p-3 opacity-0 group-hover:opacity-100 transition-all duration-300"
                             style={{
                                 backgroundColor: 'rgba(255,255,255,0.92)',
                                 color: 'var(--color-forest-green)',
-                                boxShadow: '0 2px 8px var(--color-shadow-md)',
+                                boxShadow: '0 4px 16px rgba(0,0,0,0.18)',
+                                backdropFilter: 'blur(4px)',
                             }}>
-                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M15 19l-7-7 7-7" />
                             </svg>
                         </button>
                         <button onClick={next}
-                            className="absolute right-4 top-1/2 -translate-y-1/2 rounded-full p-2.5 opacity-0 group-hover:opacity-100 transition-all"
+                            className="absolute right-4 top-1/2 -translate-y-1/2 rounded-full p-3 opacity-0 group-hover:opacity-100 transition-all duration-300"
                             style={{
                                 backgroundColor: 'rgba(255,255,255,0.92)',
                                 color: 'var(--color-forest-green)',
-                                boxShadow: '0 2px 8px var(--color-shadow-md)',
+                                boxShadow: '0 4px 16px rgba(0,0,0,0.18)',
+                                backdropFilter: 'blur(4px)',
                             }}>
-                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" />
                             </svg>
                         </button>
-                        <div className="absolute top-6 right-4 text-xs px-2.5 py-1 rounded-full"
-                            style={{ backgroundColor: 'rgba(40,56,36,0.65)', color: '#fff' }}>
-                            {currentImg + 1} / {validImages.length}
+
+                        {/* Counter + dot indicators */}
+                        <div className="absolute top-4 right-4 flex items-center gap-2">
+                            <div className="flex gap-1.5">
+                                {validImages.map((_, idx) => (
+                                    <button key={idx} onClick={() => setCurrentImg(idx)}
+                                        className="transition-all duration-300"
+                                        style={{
+                                            width: idx === currentImg ? 20 : 6,
+                                            height: 6,
+                                            borderRadius: 99,
+                                            backgroundColor: idx === currentImg ? 'var(--color-gold)' : 'rgba(255,255,255,0.45)',
+                                        }} />
+                                ))}
+                            </div>
+                            <span className="text-xs px-2.5 py-1 rounded-full font-medium ml-1"
+                                style={{ backgroundColor: 'rgba(0,0,0,0.4)', color: '#fff', backdropFilter: 'blur(4px)' }}>
+                                {currentImg + 1} / {validImages.length}
+                            </span>
                         </div>
                     </>}
                 </div>
