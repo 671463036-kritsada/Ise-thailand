@@ -6,7 +6,7 @@ import api from '../api/axios'
 import { useTranslation } from 'react-i18next'
 import Swal from 'sweetalert2'
 
-import imageLogo from '../../public/logo.jpg'
+import imageLogo from '/logo.jpg'
 
 function Navbar() {
     const { lang, setLang } = useLang()

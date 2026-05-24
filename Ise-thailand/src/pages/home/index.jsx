@@ -150,7 +150,7 @@ function useRoyalProjects() {
         if (allData.length === 0) return
         const timer = setInterval(() => {
             setData([...allData].sort(() => Math.random() - 0.5).slice(0, 4))
-        }, 5000)
+        }, 8000)
         return () => clearInterval(timer)
     }, [allData])
 
@@ -490,19 +490,105 @@ function HomePage() {
     const youtubeVideos = videoList.data.filter(v => v.video_url.includes('youtube'))
     const totalProjects = projectData.data.reduce((s, d) => s + d.value, 0)
 
+    const [heroIndex, setHeroIndex] = useState(0)
+
+    // auto slide ทุก 4 วิ เมื่อ royalProjects.data เปลี่ยน
+    useEffect(() => {
+        const banners = royalProjects.data.filter(p => p.img_banner)
+        if (banners.length === 0) return
+        const timer = setInterval(() => {
+            setHeroIndex(i => (i + 1) % banners.length)
+        }, 8000)
+        return () => clearInterval(timer)
+    }, [royalProjects.data])
+
+
+
+
     return (
         <div className=" space-y-16">
 
+
             {/* ── Hero ── */}
             <Reveal>
-                <div className="relative rounded-3xl overflow-hidden">
-                    <img
-                        src={heroImg}
-                        alt="Hero"
-                        className="w-full object-cover max-h-[480px]"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
-                </div>
+                {(() => {
+                    const banners = royalProjects.data.filter(p => p.img_banner)
+                    if (royalProjects.loading || banners.length === 0) {
+                        return (
+                            <div className="relative rounded-3xl overflow-hidden">
+                                <img
+                                    src={heroImg}
+                                    alt="Hero"
+                                    className="w-full object-cover max-h-[480px]"
+                                />
+                                <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
+                            </div>
+                        )
+                    }
+
+                    const current = banners[heroIndex % banners.length]
+
+                    return (
+                        <div className="relative rounded-3xl overflow-hidden" style={{ height: 480 }}>
+
+                            {/* Slides */}
+                            <AnimatePresence mode="wait">
+                                <motion.img
+                                    key={current.royal_id}
+                                    src={`${UPLOADS_URL}${current.img_banner}`}
+                                    alt={lang === 'TH' ? current.royal_name : current.royal_name_eng}
+                                    initial={{ opacity: 0, scale: 1.03 }}
+                                    animate={{ opacity: 1, scale: 1 }}
+                                    exit={{ opacity: 0 }}
+                                    transition={{ duration: 0.6 }}
+                                    className="absolute inset-0 w-full h-full object-cover"
+                                />
+                            </AnimatePresence>
+
+                            {/* Gradient */}
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent" />
+
+                            {/* ชื่อโครงการ */}
+                            <AnimatePresence mode="wait">
+                                <motion.div
+                                    key={current.royal_id + '_text'}
+                                    initial={{ opacity: 0, y: 16 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    exit={{ opacity: 0, y: -8 }}
+                                    transition={{ duration: 0.5, delay: 0.2 }}
+                                    className="absolute bottom-0 left-0 right-0 p-8"
+                                >
+                                    <p className="text-xs font-semibold tracking-widest uppercase mb-2"
+                                        style={{ color: 'var(--color-gold)' }}>
+                                        {lang === 'TH' ? current.type_name : current.type_name_eng}
+                                    </p>
+                                    <h2 className="text-xl font-bold text-white leading-relaxed line-clamp-2 drop-shadow-md">
+                                        {lang === 'TH' ? current.royal_name : current.royal_name_eng}
+                                    </h2>
+                                </motion.div>
+                            </AnimatePresence>
+
+                            {/* Dots */}
+                            <div className="absolute bottom-4 right-6 flex gap-1.5">
+                                {banners.map((_, i) => (
+                                    <button
+                                        key={i}
+                                        onClick={() => setHeroIndex(i)}
+                                        className="transition-all duration-300 rounded-full"
+                                        style={{
+                                            width: i === heroIndex % banners.length ? 20 : 6,
+                                            height: 6,
+                                            backgroundColor: i === heroIndex % banners.length
+                                                ? 'var(--color-gold)'
+                                                : 'rgba(255,255,255,0.4)',
+                                        }}
+                                    />
+                                ))}
+                            </div>
+
+                        </div>
+                    )
+                })()}
             </Reveal>
 
 
