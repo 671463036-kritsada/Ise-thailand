@@ -1,11 +1,8 @@
 import React, { useState, useMemo, useEffect } from 'react'
 import { useSearchParams, useNavigate } from 'react-router-dom'
-
 import { useLang } from '../../context/LanguageContext'
 import { useTranslation } from 'react-i18next'
-
 import api from '../../api/axios'
-
 import { UPLOADS_URL } from '../../constants/uploads_url'
 
 export default function ProjectsPage() {
@@ -13,11 +10,8 @@ export default function ProjectsPage() {
   const [search, setSearch] = useState('')
   const [selectedTypeId, setSelectedTypeId] = useState('all')
   const navigate = useNavigate()
-
-
   const { lang } = useLang()
   const { t } = useTranslation()
-
   const [projects, setProjects] = useState([])
   const [typeProject, setTypeProject] = useState([])
 
@@ -27,29 +21,12 @@ export default function ProjectsPage() {
   }, [searchParams])
 
   useEffect(() => {
-    const fetchProjects = async () => {
-      try {
-        const res = await api.get('/royal/')
-        setProjects(res.data.data || [])
-      } catch (err) {
-        console.error('API error:', err)
-      }
-    }
-    fetchProjects()
+    api.get('/royal/').then(res => setProjects(res.data.data || [])).catch(console.error)
   }, [])
 
   useEffect(() => {
-    const fetchTypeProject = async () => {
-      try {
-        const res = await api.get('/royal/types')
-        setTypeProject(res.data.data || [])
-      } catch (err) {
-        console.error('API error:', err)
-      }
-    }
-    fetchTypeProject()
+    api.get('/royal/types').then(res => setTypeProject(res.data.data || [])).catch(console.error)
   }, [])
-
 
   const filtered = useMemo(() => {
     return projects.filter((p) => {
@@ -59,18 +36,10 @@ export default function ProjectsPage() {
     })
   }, [selectedTypeId, search, projects])
 
-  const selectedType = typeProject.find(
-    type => type.type_id === selectedTypeId
-  )
-
-  const selectedLabel =
-    selectedTypeId === 'all'
-      ? t('all')
-      : (
-        lang === 'TH'
-          ? selectedType?.type_name
-          : selectedType?.type_name_eng
-      ) ?? t('all')
+  const selectedType = typeProject.find(t => t.type_id === selectedTypeId)
+  const selectedLabel = selectedTypeId === 'all'
+    ? t('all')
+    : (lang === 'TH' ? selectedType?.type_name : selectedType?.type_name_eng) ?? t('all')
 
   const handleSelectType = (typeId) => {
     setSelectedTypeId(typeId)
@@ -78,23 +47,18 @@ export default function ProjectsPage() {
     setSearch('')
   }
 
-
-
   return (
     <div className="min-h-screen" style={{ backgroundColor: 'var(--color-surface)' }}>
 
       {/* Page Header */}
-      <div className="mb-8">
+      <div className="mb-6">
         <h1 style={{
-          color: 'var(--color-deep-text)',
-          fontSize: 'var(--font-size-3xl)',
+          color: 'var(--color-forest-green)',
+          fontSize: 'var(--font-size-2xl)',
           fontWeight: 'var(--font-weight-bold)',
         }}>
           {t('all_projects')}
         </h1>
-        <p style={{ color: 'var(--color-muted-text)', fontSize: 'var(--font-size-sm)', marginTop: 4 }}>
-          {projects.length} {t('total_projects')}
-        </p>
       </div>
 
       {/* Search */}
@@ -111,9 +75,9 @@ export default function ProjectsPage() {
           placeholder={t('search_projects')}
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="w-full pl-11 pr-5 py-3 rounded-2xl focus:outline-none transition-colors"
+          className="w-full pl-11 pr-5 py-2.5 rounded-xl focus:outline-none transition-colors"
           style={{
-            backgroundColor: 'var(--color-surface-2)',
+            backgroundColor: 'white',
             border: '1.5px solid var(--color-border)',
             color: 'var(--color-deep-text)',
             fontSize: 'var(--font-size-sm)',
@@ -123,53 +87,34 @@ export default function ProjectsPage() {
         />
       </div>
 
-      {/* Filter Pills */}
-      <div className="flex flex-wrap gap-2 mb-6">
-        {[{
-          type_id: 'all',
-          type_name: t('all'),
-          type_name_eng: t('all')
-        }, ...typeProject].map((t) => {
-          const isSelected = selectedTypeId === t.type_id
-          const count = t.type_id === 'all'
+      {/* Filter Tabs */}
+      <div
+        className="flex flex-wrap gap-1 mb-6 p-1 rounded-xl"
+        style={{ backgroundColor: 'var(--color-surface-2)', border: '1px solid var(--color-border)' }}
+      >
+        {[{ type_id: 'all', type_name: t('all'), type_name_eng: t('all') }, ...typeProject].map((type) => {
+          const isSelected = selectedTypeId === type.type_id
+          const count = type.type_id === 'all'
             ? projects.length
-            : projects.filter(p => p.type_id === t.type_id).length
+            : projects.filter(p => p.type_id === type.type_id).length
           return (
             <button
-              key={t.type_id}
-              onClick={() => handleSelectType(t.type_id)}
-              className="flex items-center gap-2 px-4 py-2 rounded-full transition-all duration-200"
+              key={type.type_id}
+              onClick={() => handleSelectType(type.type_id)}
+              className="flex items-center gap-1.5 px-4 py-2 rounded-lg transition-all duration-200 text-sm font-medium"
               style={{
-                backgroundColor: isSelected ? 'var(--color-forest-green)' : 'var(--color-surface-2)',
-                border: `1.5px solid ${isSelected ? 'var(--color-forest-green)' : 'var(--color-border)'}`,
+                backgroundColor: isSelected ? 'var(--color-forest-green)' : 'transparent',
                 color: isSelected ? '#ffffff' : 'var(--color-muted-text)',
-                fontSize: 'var(--font-size-sm)',
                 fontWeight: isSelected ? 'var(--font-weight-semibold)' : 'var(--font-weight-normal)',
-                boxShadow: isSelected ? '0 2px 8px var(--color-shadow-md)' : 'none',
-              }}
-              onMouseEnter={e => {
-                if (!isSelected) {
-                  e.currentTarget.style.backgroundColor = 'var(--color-surface-3)'
-                  e.currentTarget.style.borderColor = 'var(--color-green-light)'
-                  e.currentTarget.style.color = 'var(--color-deep-text)'
-                }
-              }}
-              onMouseLeave={e => {
-                if (!isSelected) {
-                  e.currentTarget.style.backgroundColor = 'var(--color-surface-2)'
-                  e.currentTarget.style.borderColor = 'var(--color-border)'
-                  e.currentTarget.style.color = 'var(--color-muted-text)'
-                }
               }}
             >
-              <span>{lang === 'TH' ? t.type_name : t.type_name_eng}</span>
+              <span>{lang === 'TH' ? type.type_name : type.type_name_eng}</span>
               <span
                 className="text-xs px-1.5 py-0.5 rounded-full"
                 style={{
                   backgroundColor: isSelected ? 'rgba(255,255,255,0.2)' : 'var(--color-surface-3)',
-                  color: isSelected ? '#ffffff' : 'var(--color-green)',
+                  color: isSelected ? '#ffffff' : 'var(--color-muted-text)',
                   fontSize: '0.65rem',
-                  fontWeight: 'var(--font-weight-semibold)',
                 }}
               >
                 {count}
@@ -180,27 +125,31 @@ export default function ProjectsPage() {
       </div>
 
       {/* Result count */}
-      <p className="mb-5" style={{ color: 'var(--color-muted-text)', fontSize: 'var(--font-size-xs)' }}>
-        {t('showing_projects')} {filtered.length} {t('project_unit')}
-        {selectedTypeId !== 'all' && (
-          <>
-            <span className="mx-1" style={{ color: 'var(--color-green)' }}>
-              {t('in_category')} "{selectedLabel}"
+      <div className="flex items-center justify-between mb-5">
+        <p style={{ color: 'var(--color-muted-text)', fontSize: 'var(--font-size-xs)' }}>
+          {t('showing_projects')} <strong style={{ color: 'var(--color-deep-text)' }}>{filtered.length}</strong> {t('project_unit')}
+          {selectedTypeId !== 'all' && (
+            <span className="ml-1">
+              {t('in_category')} "<span style={{ color: 'var(--color-green)' }}>{selectedLabel}</span>"
             </span>
-            <button
-              onClick={() => handleSelectType('all')}
-              className="underline ml-1"
-              style={{ color: 'var(--color-muted-text)', fontSize: 'var(--font-size-xs)' }}
-              onMouseEnter={e => e.currentTarget.style.color = 'var(--color-forest-green)'}
-              onMouseLeave={e => e.currentTarget.style.color = 'var(--color-muted-text)'}
-            >
-              {t('clear_filter')}
-            </button>
-          </>
+          )}
+        </p>
+        {selectedTypeId !== 'all' && (
+          <button
+            onClick={() => handleSelectType('all')}
+            className="text-xs px-3 py-1 rounded-full transition-colors"
+            style={{
+              border: '1px solid var(--color-border)',
+              color: 'var(--color-muted-text)',
+              backgroundColor: 'white',
+            }}
+          >
+            {t('clear_filter')} ✕
+          </button>
         )}
-      </p>
+      </div>
 
-      {/* Cards Grid */}
+      {/* Cards Grid — รูปบน ชื่อล่าง เหมือนในรูป */}
       {filtered.length === 0 ? (
         <div className="flex flex-col items-center justify-center mt-24 gap-4">
           <svg className="w-14 h-14" style={{ color: 'var(--color-green-light)' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -209,7 +158,7 @@ export default function ProjectsPage() {
           <p style={{ color: 'var(--color-muted-text)', fontSize: 'var(--font-size-sm)' }}>{t('project_not_found')}</p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {filtered.map((project) => {
             const displayImage = [project.img_banner, project.img_1, project.img_2, project.img_3, project.img_4, project.img_5]
               .find(Boolean)
@@ -218,70 +167,44 @@ export default function ProjectsPage() {
               <div
                 key={project.royal_id}
                 onClick={() => navigate(`/projects/${project.royal_id}`)}
-                className="relative rounded-2xl overflow-hidden cursor-pointer group transition-all duration-300"
-                style={{ height: 256, boxShadow: '0 1px 4px var(--color-shadow)' }}
-                onMouseEnter={e => e.currentTarget.style.boxShadow = '0 8px 24px var(--color-shadow-lg)'}
-                onMouseLeave={e => e.currentTarget.style.boxShadow = '0 1px 4px var(--color-shadow)'}
+                className="cursor-pointer group"
               >
-                {displayImage && (
-                  <img
-                    src={`${UPLOADS_URL}${displayImage}`}
-                    alt={lang === 'TH' ? project.royal_name : project.royal_name_eng}
-                    className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                  />
-                )}
-
-                {/* Gradient overlay */}
+                {/* รูปภาพ */}
                 <div
-                  className="absolute inset-0"
-                  style={{ background: 'linear-gradient(to top, rgba(40,56,36,0.92) 0%, rgba(40,56,36,0.25) 55%, transparent 100%)' }}
-                />
-
-                {/* Type badge */}
-                <div className="absolute top-3 left-3">
-                  <span
-                    className="px-2.5 py-1 rounded-full backdrop-blur-sm"
-                    style={{
-                      color: '#ffffff',
-                      backgroundColor: 'rgba(123,150,105,0.45)',
-                      border: '1px solid rgba(186,200,177,0.55)',
-                      fontSize: 'var(--font-size-xs)',
-                    }}
-                  >
-                    {lang === 'TH' ? project.type_name : project.type_name_eng}
-                  </span>
+                  className="w-full rounded-xl overflow-hidden mb-3 relative"
+                  style={{ height: 200, backgroundColor: 'var(--color-surface-3)' }}
+                >
+                  {displayImage ? (
+                    <img
+                      src={`${UPLOADS_URL}${displayImage}`}
+                      alt={lang === 'TH' ? project.royal_name : project.royal_name_eng}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center">
+                      <svg className="w-10 h-10" style={{ color: 'var(--color-disabled)' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                      </svg>
+                    </div>
+                  )}
                 </div>
 
-                {/* Gold accent line on hover */}
-                <div
-                  className="absolute top-0 left-0 right-0 h-0.5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                  style={{ backgroundColor: 'var(--color-gold)' }}
-                />
-
-                {/* Title */}
-                <div className="absolute bottom-0 left-0 right-0 p-4 translate-y-1 group-hover:translate-y-0 transition-transform duration-300">
-                  <h3
-                    className="text-white leading-relaxed line-clamp-2 drop-shadow"
-                    style={{
-                      fontSize: 'var(--font-size-sm)',
-                      fontWeight: 'var(--font-weight-semibold)',
-                    }}
-                  >
-                    {lang === 'TH' ? project.royal_name : project.royal_name_eng}
-                  </h3>
-                  <div className="flex items-center gap-1 mt-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                    <span style={{ color: 'var(--color-gold)', fontSize: 'var(--font-size-xs)' }}>{t('view_details')}</span>
-                    <svg className="w-3 h-3" style={{ color: 'var(--color-gold)' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                    </svg>
-                  </div>
-                </div>
+                {/* ชื่อโครงการ */}
+                <p
+                  className="line-clamp-3 group-hover:text-forest-green transition-colors"
+                  style={{
+                    color: 'var(--color-deep-text)',
+                    fontSize: 'var(--font-size-sm)',
+                    lineHeight: 'var(--line-height-relaxed)',
+                  }}
+                >
+                  {lang === 'TH' ? project.royal_name : project.royal_name_eng}
+                </p>
               </div>
             )
           })}
         </div>
-      )
-      }
-    </div >
+      )}
+    </div>
   )
 }
