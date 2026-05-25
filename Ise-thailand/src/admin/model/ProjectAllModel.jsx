@@ -158,10 +158,10 @@ export default function ProjectAllModel({ isOpen, onClose, projectData, mode, on
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-[var(--color-forest-green)]/40 font-sans antialiased p-2 sm:p-4 backdrop-blur-sm">
       
-      {/* ── MAIN MODAL CONTAINER (เพิ่ม max-h และจัดเงื่อนไขความสูงไม่ให้โดนตัด) ── */}
+      {/* ── MAIN MODAL CONTAINER ── */}
       <div className="bg-[var(--color-white)] w-full max-w-[72rem] h-[95vh] sm:h-[90vh] rounded-2xl flex flex-col shadow-xl border border-[var(--color-border)] overflow-hidden">
         
-        {/* ── HEADER ส่วนหัวโครงสร้างฟอร์ม ── */}
+        {/* ── HEADER ส่วนหัวฟอร์ม ── */}
         <header className="flex items-center justify-between px-4 sm:px-6 py-4 border-b border-[var(--color-border)] shrink-0 bg-[var(--color-surface)]">
           <div>
             <h1 className="text-base sm:text-xl font-bold text-[var(--color-forest-green)]">
@@ -185,11 +185,13 @@ export default function ProjectAllModel({ isOpen, onClose, projectData, mode, on
           </button>
         </header>
 
-        {/* ── FORM CONTENT (ปรับให้เลื่อน Scroll แนวตั้งรวมกันบนจอเล็ก และแยกกันบนจอ lg) ── */}
+        {/* ── FORM CONTENT ── */}
+        {/* 💡 แยกการ Scroll ให้สมบูรณ์: จอเล็กเลื่อนดิ่งรวมที่ฟอร์มด้วย overflow-y-auto ส่วนจอใหญ่ lg ล็อคความสูงด้วย overflow-hidden แล้วแยกตัวสกรอลล์ด้านใน */}
         <form onSubmit={handleSubmit} className="flex-1 flex flex-col lg:flex-row overflow-y-auto lg:overflow-hidden bg-[var(--color-surface)]">
           
-          {/* ── คอลัมน์ซ้าย (SIDEBAR): ส่วนควบคุมไฟล์ PDF และเช็คลิสต์หัวข้อ ── */}
-          <aside className="w-full lg:w-72 border-b lg:border-b-0 lg:border-r border-[var(--color-border)] bg-[var(--color-surface-2)] p-4 shrink-0 flex flex-col gap-4">
+          {/* ── คอลัมน์ซ้าย (SIDEBAR): ส่วนจัดการไฟล์ PDF และเช็คลิสต์หัวข้อ ── */}
+          {/* 💡 แก้ไข: เพิ่ม `lg:overflow-y-auto` และคลาส scrollbar เพื่อให้ฝั่งซ้ายสามารถ Scroll แยกเดี่ยวได้เมื่ออยู่บนหน้าจอคอมพิวเตอร์ขนาดใหญ่ */}
+          <aside className="w-full lg:w-72 border-b lg:border-b-0 lg:border-r border-[var(--color-border)] bg-[var(--color-surface-2)] p-4 shrink-0 flex flex-col gap-4 lg:overflow-y-auto custom-project-scrollbar">
             
             {/* 1. ส่วนจัดการไฟล์แนบ (PDF) */}
             <div className="flex flex-col gap-1.5">
