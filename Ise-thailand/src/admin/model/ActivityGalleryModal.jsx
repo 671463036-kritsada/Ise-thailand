@@ -3,6 +3,8 @@ import { X, Upload, Trash2, Images } from "lucide-react";
 import Swal from "sweetalert2";
 import api from "../../api/axios";
 
+import { UPLOADS_URL } from "../../constants/uploads_url";
+
 export default function ActivityGalleryModal({ open, onClose, docno }) {
   const [images, setImages] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -157,7 +159,7 @@ export default function ActivityGalleryModal({ open, onClose, docno }) {
                   className="relative group rounded-xl overflow-hidden border border-[var(--color-border)] aspect-video bg-[var(--color-surface-2)]"
                 >
                   <img
-                    src={`/uploads/${img.act_imgname}`}
+                    src={`${UPLOADS_URL}${img.act_imgname}`}
                     alt={img.act_imgname}
                     className="w-full h-full object-cover"
                   />

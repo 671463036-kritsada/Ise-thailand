@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react"
 import { X, Image } from "lucide-react"
 
-import {UPLOADS_URL} from "../../constants/uploads_url.js"
+import { UPLOADS_URL } from "../../constants/uploads_url"
 
 export default function TypeProjectModal({ isOpen, onClose, onSave, editData }) {
   const [form, setForm] = useState({ type_name: '', type_name_eng: '' })

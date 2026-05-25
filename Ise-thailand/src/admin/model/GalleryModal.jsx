@@ -3,6 +3,9 @@ import { X, Upload, Trash2, ImageIcon } from "lucide-react";
 import Swal from "sweetalert2";
 import api from "../../api/axios";
 
+import { UPLOADS_URL } from "../../constants/uploads_url";
+
+
 export default function GalleryModal({ open, onClose, royalId }) {
     const [images, setImages] = useState([]);
     const [loading, setLoading] = useState(false);
@@ -150,7 +153,7 @@ export default function GalleryModal({ open, onClose, royalId }) {
 
                         {coverImg ? (
                             <div className="relative group rounded-xl overflow-hidden border border-[var(--color-border)] aspect-video bg-[var(--color-surface-2)]">
-                                <img src={`/uploads/${coverImg.image_path}`} alt="cover" className="w-full h-full object-cover" />
+                                <img src={`${UPLOADS_URL}${coverImg.image_path}`} alt="cover" className="w-full h-full object-cover" />
                                 <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                                     <button onClick={handleDeleteCover} className="p-2 rounded-full bg-red-500 text-white hover:bg-red-600 cursor-pointer">
                                         <Trash2 className="w-4 h-4" />
@@ -192,7 +195,7 @@ export default function GalleryModal({ open, onClose, royalId }) {
                             <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
                                 {images.map((img) => (
                                     <div key={img.roworder} className="relative group rounded-xl overflow-hidden border border-[var(--color-border)] aspect-video bg-[var(--color-surface-2)]">
-                                        <img src={`/uploads/${img.royal_imgname}`} alt={img.royal_imgname} className="w-full h-full object-cover" />
+                                        <img src={`${UPLOADS_URL}${img.royal_imgname}`} alt={img.royal_imgname} className="w-full h-full object-cover" />
                                         <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                                             <button onClick={() => handleDelete(img)} className="p-2 rounded-full bg-red-500 text-white hover:bg-red-600 transition-colors cursor-pointer">
                                                 <Trash2 className="w-4 h-4" />

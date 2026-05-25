@@ -5,6 +5,8 @@ import api from "../../api/axios";
 
 import { useAuth } from "../../hook/useAuth";
 
+import { UPLOADS_URL } from "../../constants/uploads_url"
+
 export default function ActivityModal({ open, onClose, onCreateSuccess, onUpdateSuccess, onError, editData = null, typeId = null }) {
   const { user } = useAuth();
   const isEdit = !!editData;
@@ -242,22 +244,36 @@ export default function ActivityModal({ open, onClose, onCreateSuccess, onUpdate
           {/* รูปภาพ + PDF */}
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-bold text-[var(--color-deep-text)] mb-1">
-                รูปภาพหลัก
-              </label>
-              <label className="flex items-center gap-2 px-4 py-2 border border-dashed border-[var(--color-border)] rounded-xl cursor-pointer hover:border-[var(--color-green)] hover:bg-[var(--color-surface)]/20 transition-all">
-                <Upload className="w-4 h-4 text-[var(--color-muted-text)]" />
-                <span className="text-sm text-[var(--color-muted-text)] truncate">
-                  {form.img_file ? form.img_file.name : (isEdit && editData?.img_file) ? editData.img_file : "เลือกไฟล์รูป..."}
-                </span>
-                <input
-                  type="file"
-                  name="img_file"
-                  accept="image/*"
-                  onChange={handleChange}
-                  className="hidden"
-                />
-              </label>
+              <div>
+                <label className="block text-sm font-bold text-[var(--color-deep-text)] mb-1">
+                  รูปภาพหลัก
+                </label>
+
+                {/* Preview รูปเดิม */}
+                {!form.img_file && editData?.img_file && (
+                  <img
+                    src={`${UPLOADS_URL}${editData.img_file}`}
+                    alt="preview"
+                    className="w-full h-32 object-cover rounded-xl mb-2 border border-[var(--color-border)]"
+                  />
+                )}
+                {/* Preview รูปที่เลือกใหม่ */}
+                {form.img_file && (
+                  <img
+                    src={URL.createObjectURL(form.img_file)}
+                    alt="preview"
+                    className="w-full h-32 object-cover rounded-xl mb-2 border border-[var(--color-border)]"
+                  />
+                )}
+
+                <label className="flex items-center gap-2 px-4 py-2 border border-dashed border-[var(--color-border)] rounded-xl cursor-pointer hover:border-[var(--color-green)] hover:bg-[var(--color-surface)]/20 transition-all">
+                  <Upload className="w-4 h-4 text-[var(--color-muted-text)]" />
+                  <span className="text-sm text-[var(--color-muted-text)] truncate">
+                    {form.img_file ? form.img_file.name : (isEdit && editData?.img_file) ? editData.img_file : "เลือกไฟล์รูป..."}
+                  </span>
+                  <input type="file" name="img_file" accept="image/*" onChange={handleChange} className="hidden" />
+                </label>
+              </div>
             </div>
 
             <div>

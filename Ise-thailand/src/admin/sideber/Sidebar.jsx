@@ -56,7 +56,7 @@ export default function Sidebar({ open }) {
         { label: "แผน", href: "/admin/plans" },
         { label: "แผนย่อย", href: "/admin/sub-plans" },
         { label: "จัดการวีดีโอหน้าแรก", href: "/admin/video-landing" },
-        { label: 'ตรวจสอบรูปภาพ Royal', href: '/admin/royal-images-check' }
+        // { label: 'ตรวจสอบรูปภาพ Royal', href: '/admin/royal-images-check' }
       ]
     },
     {
