@@ -219,7 +219,7 @@ export default function RoyalModel({ isOpen, onClose, projectData, mode, onSave 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-[var(--color-forest-green)]/40 font-sans antialiased p-2 sm:p-4 backdrop-blur-sm">
       
-      {/* ── MAIN MODAL CONTAINER (ปรับให้ยืดหยุ่นหดเต็มความสูงพิกัดบนจอมือถือ) ── */}
+      {/* ── MAIN MODAL CONTAINER ── */}
       <div className="bg-[var(--color-white)] w-full max-w-[70rem] h-[95vh] sm:h-[90vh] rounded-2xl flex flex-col shadow-xl border border-[var(--color-border)] overflow-hidden">
         
         {/* ── HEADER ส่วนหัวฟอร์ม ── */}
@@ -242,11 +242,13 @@ export default function RoyalModel({ isOpen, onClose, projectData, mode, onSave 
           </button>
         </header>
 
-        {/* ── FORM CONTENT (ปรับให้ม้วน Scroll รวมแผงเดียวกันแนวตั้งบนโมบายล์ และแยกฝั่งตามเดิมเมื่อจอใหญ่ lg) ── */}
+        {/* ── FORM CONTENT ── */}
+        {/* 💡 ปรับปรุง: แยกความคุมการสกรอลล์ให้ถูกต้อง — บนจอเล็ก (ก่อน lg) ม้วนรวมเลื่อนแนวดิ่งที่แท็ก form ด้วย overflow-y-auto ส่วนจอคอม lg จะปิดสกรอลล์รวมเพื่อเปิดแยกส่วน */}
         <form onSubmit={handleSubmit} className="flex-1 flex flex-col lg:flex-row overflow-y-auto lg:overflow-hidden bg-[var(--color-surface)]">
           
           {/* ── คอลัมน์ซ้าย (SIDEBAR): ส่วนจัดการรูปภาพทั้งหมดตาม Mockup ── */}
-          <aside className="w-full lg:w-72 border-b lg:border-b-0 lg:border-r border-[var(--color-border)] bg-[var(--color-surface-2)] p-4 shrink-0 flex flex-col gap-4">
+          {/* 💡 ปรับปรุง: เติม `lg:overflow-y-auto` และ `custom-theme-scrollbar` เพื่อให้ฝั่งซ้ายสกรอลล์เมาส์แยกต่างหากได้อย่างสมบูรณ์บนหน้าจอใหญ่คอมพิวเตอร์ */}
+          <aside className="w-full lg:w-72 border-b lg:border-b-0 lg:border-r border-[var(--color-border)] bg-[var(--color-surface-2)] p-4 shrink-0 flex flex-col gap-4 lg:overflow-y-auto custom-theme-scrollbar">
             
             {/* 1. รูป BANNER */}
             <SidebarImageUpload
@@ -380,7 +382,7 @@ export default function RoyalModel({ isOpen, onClose, projectData, mode, onSave 
               </div>
             </fieldset>
 
-            {/* 2. กล่องเนื้อหาแต่ละส่วน (แบ่ง Grid 2 คอลัมน์บนจอคอมพิวเตอร์) */}
+            {/* 2. กล่องเนื้อหาแต่ละส่วน */}
             <fieldset className="border border-[var(--color-border)] bg-[var(--color-surface)]/40 rounded-xl p-3 sm:p-4 space-y-4 shadow-xs">
               <legend className="text-xs font-bold px-2 text-[var(--color-forest-green)] flex items-center gap-1.5">
                 <span>㗊</span> เนื้อหาแต่ละส่วน
@@ -396,7 +398,7 @@ export default function RoyalModel({ isOpen, onClose, projectData, mode, onSave 
                       <span className="text-xs font-bold text-[var(--color-deep-text)]">ส่วนที่ {num} {num === 1 && <span className="text-[var(--color-error)]">*</span>}</span>
                     </div>
 
-                    {/* จัดหน้ากากรูปด้านซ้าย และ Input ขวา (ปรับเป็นคอลัมน์เดียวบนโมบายล์แคบ) */}
+                    {/* จัดหน้ากากรูปด้านซ้าย และ Input ขวา */}
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                       <div className="col-span-1">
                         <InlineImageField
