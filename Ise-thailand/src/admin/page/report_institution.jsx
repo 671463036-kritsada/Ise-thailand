@@ -16,7 +16,7 @@ export default function ReportInstitution() {
 
   // โหลด dropdown ประเภทโครงการ
   useEffect(() => {
-    api.get("/type-project")              
+    api.get("/type-project")
       .then((res) => {
         if (res.data.success) setTypeOptions(res.data.data);
       })
@@ -46,7 +46,6 @@ export default function ReportInstitution() {
       setLoading(false);
     }
   };
-
 
   const formatMoney = (value) =>
     new Intl.NumberFormat("th-TH", { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(value);
@@ -129,7 +128,7 @@ export default function ReportInstitution() {
 
       <div className="mb-6 print-hidden">
         <h1 className="text-2xl font-bold text-slate-800 tracking-tight flex items-center gap-2">
-          <BarChart3 className="w-7 h-7 text-[var(--color-green)]" />
+          <BarChart3 className="w-7 h-7 text-[var(--color-blue)]" />
           <span>รายงานโครงการภายใต้สถาบันเศรษฐกิจพอเพียง (ตามประเภทโครงการ)</span>
         </h1>
       </div>
@@ -149,9 +148,10 @@ export default function ReportInstitution() {
               ))}
             </select>
           </div>
+          {/* ✅ เปลี่ยนปุ่มประมวลผลเป็นสีน้ำเงิน */}
           <button
             type="submit"
-            className="px-4 py-2 mt-6 bg-slate-600 text-white text-sm font-semibold rounded-lg hover:bg-slate-700 transition-colors cursor-pointer shadow-xs flex items-center gap-1.5"
+            className="px-4 py-2 mt-6 bg-[var(--color-blue)] text-white text-sm font-semibold rounded-lg hover:bg-[var(--color-forest-blue)] transition-colors cursor-pointer shadow-xs flex items-center gap-1.5"
           >
             <RefreshCw className="w-4 h-4" />
             <span>ประมวลผล</span>
@@ -184,7 +184,8 @@ export default function ReportInstitution() {
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="bg-[#2B6CB0] border-b border-slate-300 text-white text-sm print:bg-white print:text-black">
+              {/* ✅ เปลี่ยนหัวตารางเป็นสีน้ำเงิน */}
+              <tr className="bg-[var(--color-blue)] border-b border-slate-300 text-white text-sm print:bg-white print:text-black">
                 <th className="px-4 py-3 font-bold w-16 text-center border-r border-blue-500/30 print:text-black">ลำดับที่</th>
                 <th className="px-4 py-3 font-bold border-r border-blue-500/30 print:text-black">ชื่อโครงการ</th>
                 <th className="px-4 py-3 font-bold w-44 border-r border-blue-500/30 print:text-black">ชื่อหัวหน้าโครงการ</th>
@@ -237,7 +238,11 @@ export default function ReportInstitution() {
             </button>
             {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
               <button key={p} onClick={() => setCurrentPage(p)}
-                className={`w-8 h-8 font-extrabold rounded-lg transition-all cursor-pointer ${currentPage === p ? "bg-slate-200 text-slate-700 border border-slate-300 shadow-inner" : "border border-slate-200 bg-white text-slate-500 hover:bg-slate-100"}`}>
+                className={`w-8 h-8 font-extrabold rounded-lg transition-all cursor-pointer ${
+                  currentPage === p
+                    ? "bg-[var(--color-blue)] text-white border border-[var(--color-blue)] shadow-inner"
+                    : "border border-slate-200 bg-white text-slate-500 hover:bg-slate-100"
+                }`}>
                 {p}
               </button>
             ))}

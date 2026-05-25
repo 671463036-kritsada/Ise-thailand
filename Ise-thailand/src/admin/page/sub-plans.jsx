@@ -8,7 +8,7 @@ const PER_PAGE = 5;
 
 export default function SubPlans() {
   const [subPlans, setSubPlans] = useState([]);
-  const [plans, setPlans] = useState([]); // สำหรับ dropdown ใน modal
+  const [plans, setPlans] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
@@ -29,7 +29,7 @@ export default function SubPlans() {
       setSubPlans(subData);
       setPlans(planData);
     } catch {
-      Swal.fire({ title: "เกิดข้อผิดพลาด", text: "ไม่สามารถโหลดข้อมูลแผนย่อยได้", icon: "error", confirmButtonColor: "var(--color-green)" });
+      Swal.fire({ title: "เกิดข้อผิดพลาด", text: "ไม่สามารถโหลดข้อมูลแผนย่อยได้", icon: "error", confirmButtonColor: "var(--color-blue)" });
     } finally {
       setLoading(false);
     }
@@ -41,7 +41,6 @@ export default function SubPlans() {
   const filtered = subPlans.filter((s) =>
     s.subplan_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
     String(s.subplan_id).includes(searchTerm) ||
-    // หา plan_name จาก plans array เพื่อ search
     plans.find((p) => p.plan_id === s.plan_id)?.plan_name?.toLowerCase().includes(searchTerm.toLowerCase())
   );
   const totalPages = Math.ceil(filtered.length / PER_PAGE);
@@ -59,25 +58,25 @@ export default function SubPlans() {
     try {
       if (modalMode === "delete") {
         await api.delete(`/plan/subplan/${formData.subplan_id}`);
-        Swal.fire({ title: "ลบสำเร็จ!", text: "ลบข้อมูลแผนย่อยออกจากระบบแล้ว", icon: "success", confirmButtonColor: "var(--color-green)" });
+        Swal.fire({ title: "ลบสำเร็จ!", text: "ลบข้อมูลแผนย่อยออกจากระบบแล้ว", icon: "success", confirmButtonColor: "var(--color-blue)" });
       } else if (modalMode === "edit") {
         await api.put(`/plan/subplan/${formData.subplan_id}`, {
           subplan_name: formData.subplan_name,
           plan_id: formData.plan_id,
         });
-        Swal.fire({ title: "บันทึกสำเร็จ!", text: "ปรับปรุงข้อมูลแผนย่อยเรียบร้อยแล้ว", icon: "success", confirmButtonColor: "var(--color-green)" });
+        Swal.fire({ title: "บันทึกสำเร็จ!", text: "ปรับปรุงข้อมูลแผนย่อยเรียบร้อยแล้ว", icon: "success", confirmButtonColor: "var(--color-blue)" });
       } else {
         await api.post("/plan/subplan", {
           subplan_name: formData.subplan_name,
           plan_id: formData.plan_id,
         });
-        Swal.fire({ title: "เพิ่มสำเร็จ!", text: "เพิ่มแผนย่อยใหม่เข้าสู่ระบบแล้ว", icon: "success", confirmButtonColor: "var(--color-green)" });
+        Swal.fire({ title: "เพิ่มสำเร็จ!", text: "เพิ่มแผนย่อยใหม่เข้าสู่ระบบแล้ว", icon: "success", confirmButtonColor: "var(--color-blue)" });
       }
       setIsModalOpen(false);
       fetchSubPlans();
     } catch (err) {
       const msg = err.response?.data?.message || "ไม่สามารถบันทึกข้อมูลได้";
-      Swal.fire({ title: "เกิดข้อผิดพลาด", text: msg, icon: "error", confirmButtonColor: "var(--color-green)" });
+      Swal.fire({ title: "เกิดข้อผิดพลาด", text: msg, icon: "error", confirmButtonColor: "var(--color-blue)" });
     }
   };
 
@@ -87,8 +86,8 @@ export default function SubPlans() {
       {/* ── HEADER ── */}
       <div className="flex justify-between items-center mb-6 gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-[var(--color-forest-green)] tracking-tight flex items-center gap-2">
-            <Layers className="w-8 h-8 text-[var(--color-green)]" />
+          <h1 className="text-3xl font-bold text-[var(--color-forest-blue)] tracking-tight flex items-center gap-2">
+            <Layers className="w-8 h-8 text-[var(--color-blue)]" />
             <span>จัดการข้อมูลแผนย่อย</span>
           </h1>
           <p className="text-base text-[var(--color-muted-text)] mt-0.5 font-medium">
@@ -97,7 +96,7 @@ export default function SubPlans() {
         </div>
         <button
           onClick={handleOpenAddModal}
-          className="px-5 py-2.5 bg-[var(--color-green)] text-white text-base font-bold rounded-xl shadow-md hover:bg-[var(--color-forest-green)] transition-all flex items-center gap-1.5 cursor-pointer shrink-0"
+          className="px-5 py-2.5 bg-[var(--color-blue)] text-white text-base font-bold rounded-xl shadow-md hover:bg-[var(--color-forest-blue)] transition-all flex items-center gap-1.5 cursor-pointer shrink-0"
         >
           <Plus className="w-5 h-5 stroke-[2.5]" />
           <span>เพิ่มแผนย่อย</span>
@@ -113,7 +112,7 @@ export default function SubPlans() {
             placeholder="ค้นหาด้วยชื่อแผนย่อย หรือ ชื่อแผนงานหลัก..."
             value={searchTerm}
             onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(1); }}
-            className="w-full pl-11 pr-4 py-2 border border-[var(--color-border)] rounded-xl text-base focus:outline-none focus:border-[var(--color-border-focus)] focus:ring-2 focus:ring-[var(--color-green-light)]/50 transition-all bg-[var(--color-surface)]/20 text-[var(--color-deep-text)] placeholder:text-[var(--color-placeholder)]"
+            className="w-full pl-11 pr-4 py-2 border border-[var(--color-border)] rounded-xl text-base focus:outline-none focus:border-[var(--color-border-focus)] focus:ring-2 focus:ring-[var(--color-blue-light)]/50 transition-all bg-[var(--color-surface)]/20 text-[var(--color-deep-text)] placeholder:text-[var(--color-placeholder)]"
           />
         </div>
       </div>
@@ -123,7 +122,7 @@ export default function SubPlans() {
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="bg-[var(--color-surface-2)] border-b border-[var(--color-surface-3)] text-[var(--color-forest-green)] text-base">
+              <tr className="bg-[var(--color-forest-blue)] text-white text-base">
                 <th className="px-5 py-4 font-bold w-32 text-center">รหัสแผนย่อย</th>
                 <th className="px-5 py-4 font-bold">ชื่อแผนย่อย</th>
                 <th className="px-5 py-4 font-bold w-72">ชื่อแผน</th>
@@ -134,7 +133,7 @@ export default function SubPlans() {
               {loading ? (
                 <tr>
                   <td colSpan="4" className="px-5 py-10 text-center text-[var(--color-disabled)]">
-                    <Loader2 className="w-6 h-6 animate-spin mx-auto mb-2 text-[var(--color-green)]" />
+                    <Loader2 className="w-6 h-6 animate-spin mx-auto mb-2 text-[var(--color-blue)]" />
                     <span className="font-medium">กำลังโหลดข้อมูล...</span>
                   </td>
                 </tr>
@@ -142,7 +141,7 @@ export default function SubPlans() {
                 currentItems.map((row, idx) => (
                   <tr key={row.subplan_id}
                     className={`hover:bg-[var(--color-surface-2)]/30 transition-colors ${idx % 2 === 0 ? "bg-white" : "bg-[var(--color-surface)]/20"}`}>
-                    <td className="px-5 py-4 text-center font-mono font-bold text-[var(--color-green)]">
+                    <td className="px-5 py-4 text-center font-mono font-bold text-[var(--color-blue)]">
                       {String(row.subplan_id).padStart(3, "0")}
                     </td>
                     <td className="px-5 py-4 font-semibold text-[var(--color-deep-text)]">
@@ -154,7 +153,7 @@ export default function SubPlans() {
                     <td className="px-5 py-4 text-center whitespace-nowrap">
                       <div className="flex justify-center gap-1.5">
                         <button onClick={() => handleOpenEditModal(row)}
-                          className="p-1.5 rounded-lg bg-[var(--color-surface-2)] text-[var(--color-green)] hover:bg-[var(--color-green)] hover:text-white transition-all duration-150 cursor-pointer">
+                          className="p-1.5 rounded-lg bg-[var(--color-surface-2)] text-[var(--color-blue)] hover:bg-[var(--color-blue)] hover:text-white transition-all duration-150 cursor-pointer">
                           <Pencil className="w-4 h-4" />
                         </button>
                         <button onClick={() => handleOpenDeleteModal(row)}
@@ -188,7 +187,7 @@ export default function SubPlans() {
             </button>
             {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
               <button key={p} onClick={() => setCurrentPage(p)}
-                className={`w-8 h-8 font-bold rounded-lg transition-colors cursor-pointer ${currentPage === p ? "bg-[var(--color-green)] text-white shadow-sm" : "border border-[var(--color-border)] bg-white text-[var(--color-muted-text)] hover:bg-[var(--color-surface-2)]"}`}>
+                className={`w-8 h-8 font-bold rounded-lg transition-colors cursor-pointer ${currentPage === p ? "bg-[var(--color-blue)] text-white shadow-sm" : "border border-[var(--color-border)] bg-white text-[var(--color-muted-text)] hover:bg-[var(--color-surface-2)]"}`}>
                 {p}
               </button>
             ))}

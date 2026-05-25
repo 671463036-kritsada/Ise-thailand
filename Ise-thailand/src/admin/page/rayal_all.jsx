@@ -5,14 +5,13 @@ import Swal from "sweetalert2";
 import RoyalModel from "../model/RoyalModel";
 import api from "../../api/axios";
 
-
 import { Images } from "lucide-react";
 import GalleryModal from "../model/GalleryModal";
-
 
 function getCategoryLabel(typeId, types) {
   return types.find((t) => t.type_id === typeId)?.type_name ?? "อื่นๆ";
 }
+
 export default function RoyalAll() {
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -25,13 +24,11 @@ export default function RoyalAll() {
   const [selectedData, setSelectedData] = useState(null);
   const [modalMode, setModalMode] = useState("add");
 
-
   const [galleryModalOpen, setGalleryModalOpen] = useState(false);
   const [galleryRoyalId, setGalleryRoyalId] = useState(null);
 
   const [types, setTypes] = useState([]);
 
-  // ── FETCH ──
   const fetchProjects = useCallback(async () => {
     setLoading(true);
     try {
@@ -50,13 +47,10 @@ export default function RoyalAll() {
       .catch((err) => console.error("โหลด types ไม่สำเร็จ", err));
   }, []);
 
-
-
   useEffect(() => {
     fetchProjects();
   }, [fetchProjects]);
 
-  // ── FILTER & PAGINATION ──
   const filteredProjects = projects.filter((proj) => {
     const matchSearch =
       proj.royal_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -72,7 +66,6 @@ export default function RoyalAll() {
     currentPage * itemsPerPage
   );
 
-  // ── MODAL HANDLERS ──
   const handleOpenAddModal = () => {
     setModalMode("add");
     setSelectedData(null);
@@ -91,44 +84,32 @@ export default function RoyalAll() {
     setIsModalOpen(true);
   };
 
-  // ── SAVE (CREATE / UPDATE / DELETE) ──
-  // ── SAVE (CREATE / UPDATE / DELETE) ──
   const handleSaveProject = async ({ formValues, fileValues }) => {
     try {
       if (modalMode === "delete") {
         await api.delete(`/royal/${formValues.royal_id}`);
-        Swal.fire({ title: "ลบสำเร็จ!", text: "ลบข้อมูลโครงการเรียบร้อยแล้ว", icon: "success", confirmButtonColor: "var(--color-green)" });
+        Swal.fire({ title: "ลบสำเร็จ!", text: "ลบข้อมูลโครงการเรียบร้อยแล้ว", icon: "success", confirmButtonColor: "var(--color-blue)" });
 
       } else if (modalMode === "edit") {
         const payload = new FormData();
-
-        // 1. ส่งข้อมูล text/string ทั่วไปเข้า payload
         Object.entries(formValues).forEach(([key, val]) => {
           if (val !== undefined && val !== null) payload.append(key, val);
         });
-
-        // 🔄 [เพิ่มจุดนี้] ดักส่งชื่อไฟล์ภาพเก่าที่มีอยู่ก่อนแก้ไข เพื่อให้ Backend เอาไปสั่งลบในโฟลเดอร์ uploads
         const imageFields = ["img_banner", "img_1", "img_2", "img_3", "img_4", "img_5", "infographic"];
         imageFields.forEach((field) => {
-          // ดึงชื่อไฟล์เดิมที่เคยมีอยู่ใน database (จากตัวแปร selectedData ที่ใช้เปิดแก้ไข)
           if (selectedData && selectedData[field]) {
             payload.append(`old_${field}`, selectedData[field]);
           }
         });
-
-        // 2. ส่งไฟล์ข้อมูลรูปภาพใหม่ (ถ้ามีการเลือกใหม่)
         Object.entries(fileValues).forEach(([key, file]) => {
           payload.append(key, file);
         });
-
-        // ยิง API อัปเดตข้อมูล
         await api.put(`/royal/${formValues.royal_id}`, payload, {
           headers: { "Content-Type": "multipart/form-data" },
         });
-        Swal.fire({ title: "บันทึกสำเร็จ!", text: "ปรับปรุงข้อมูลโครงการแล้ว", icon: "success", confirmButtonColor: "var(--color-green)" });
+        Swal.fire({ title: "บันทึกสำเร็จ!", text: "ปรับปรุงข้อมูลโครงการแล้ว", icon: "success", confirmButtonColor: "var(--color-blue)" });
 
       } else {
-        // โหมด "add" (เพิ่มรูปภาพใหม่) ปล่อยไว้ตามเดิมได้เลยครับ ไม่ต้องแก้ไขอะไร
         const payload = new FormData();
         Object.entries(formValues).forEach(([key, val]) => {
           if (val !== undefined && val !== null) payload.append(key, val);
@@ -139,7 +120,7 @@ export default function RoyalAll() {
         await api.post("/royal", payload, {
           headers: { "Content-Type": "multipart/form-data" },
         });
-        Swal.fire({ title: "เพิ่มสำเร็จ!", text: "เพิ่มข้อมูลโครงการใหม่เรียบร้อย", icon: "success", confirmButtonColor: "var(--color-green)" });
+        Swal.fire({ title: "เพิ่มสำเร็จ!", text: "เพิ่มข้อมูลโครงการใหม่เรียบร้อย", icon: "success", confirmButtonColor: "var(--color-blue)" });
       }
 
       setIsModalOpen(false);
@@ -149,15 +130,14 @@ export default function RoyalAll() {
     }
   };
 
-
   return (
     <div className="p-6 bg-[var(--color-surface)] min-h-screen font-sans antialiased text-[var(--color-deep-text)]">
 
       {/* ── PAGE HEADER & ADD BUTTON ── */}
       <div className="flex justify-between items-center mb-6 gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-[var(--color-forest-green)] tracking-tight flex items-center gap-2">
-            <Leaf className="w-7 h-7 text-[var(--color-green)]" />
+          <h1 className="text-2xl font-bold text-[var(--color-forest-blue)] tracking-tight flex items-center gap-2">
+            <Leaf className="w-7 h-7 text-[var(--color-blue)]" />
             <span>โครงการพระราชดำริ</span>
           </h1>
           <p className="text-sm text-[var(--color-muted-text)] mt-0.5 font-medium">
@@ -166,7 +146,7 @@ export default function RoyalAll() {
         </div>
         <button
           onClick={handleOpenAddModal}
-          className="px-4 py-2 bg-[var(--color-green)] text-white text-base font-bold rounded-xl shadow-md hover:bg-[var(--color-forest-green)] transition-all flex items-center gap-1.5 cursor-pointer shrink-0"
+          className="px-4 py-2 bg-[var(--color-blue)] text-white text-base font-bold rounded-xl shadow-md hover:bg-[var(--color-forest-blue)] transition-all flex items-center gap-1.5 cursor-pointer shrink-0"
         >
           <Plus className="w-5 h-5 stroke-[2.5]" />
           <span>เพิ่มข้อมูลโครงการ</span>
@@ -205,7 +185,7 @@ export default function RoyalAll() {
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="bg-[var(--color-surface-2)] border-b border-[var(--color-surface-3)] text-[var(--color-forest-green)] text-sm">
+              <tr className="bg-[var(--color-forest-blue)] border-b border-[var(--color-surface-3)] text-white text-sm">
                 <th className="px-4 py-3 font-bold w-28 text-center">รหัส</th>
                 <th className="px-4 py-3 font-bold">ชื่อโครงการ</th>
                 <th className="px-4 py-3 font-bold w-56">ประเภทโครงการ</th>
@@ -224,10 +204,9 @@ export default function RoyalAll() {
                 currentItems.map((row, idx) => (
                   <tr
                     key={row.royal_id}
-                    className={`hover:bg-[var(--color-surface-2)]/30 transition-colors ${idx % 2 === 0 ? "bg-white" : "bg-[var(--color-surface)]/20"
-                      }`}
+                    className={`hover:bg-[var(--color-surface-2)]/30 transition-colors ${idx % 2 === 0 ? "bg-white" : "bg-[var(--color-surface)]/20"}`}
                   >
-                    <td className="px-4 py-3 font-bold text-[var(--color-green)] text-center font-mono text-sm">
+                    <td className="px-4 py-3 font-bold text-[var(--color-blue)] text-center font-mono text-sm">
                       {row.royal_id}
                     </td>
                     <td className="px-4 py-3 font-semibold text-[var(--color-deep-text)] max-w-md">
@@ -245,7 +224,7 @@ export default function RoyalAll() {
                       <div className="flex justify-center gap-1.5">
                         <button
                           onClick={() => handleOpenEditModal(row)}
-                          className="p-1.5 rounded-lg bg-[var(--color-surface-2)] text-[var(--color-green)] hover:bg-[var(--color-green)] hover:text-white transition-all cursor-pointer"
+                          className="p-1.5 rounded-lg bg-[var(--color-surface-2)] text-[var(--color-blue)] hover:bg-[var(--color-blue)] hover:text-white transition-all cursor-pointer"
                           title="แก้ไขข้อมูล"
                         >
                           <Pencil className="w-4 h-4" />
@@ -253,7 +232,7 @@ export default function RoyalAll() {
 
                         <button
                           onClick={() => { setGalleryRoyalId(row.royal_id); setGalleryModalOpen(true); }}
-                          className="p-1.5 rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-600 hover:text-white transition-all cursor-pointer"
+                          className="p-1.5 rounded-lg bg-[var(--color-surface-2)] text-[var(--color-blue-light)] hover:bg-[var(--color-blue-light)] hover:text-white transition-all cursor-pointer"
                           title="จัดการรูป Gallery"
                         >
                           <Images className="w-4 h-4" />
@@ -298,10 +277,11 @@ export default function RoyalAll() {
               <button
                 key={p}
                 onClick={() => setCurrentPage(p)}
-                className={`w-8 h-8 font-bold rounded-lg transition-colors cursor-pointer ${currentPage === p
-                  ? "bg-[var(--color-green)] text-white"
-                  : "border border-[var(--color-border)] bg-white text-[var(--color-muted-text)] hover:bg-[var(--color-surface-2)]"
-                  }`}
+                className={`w-8 h-8 font-bold rounded-lg transition-colors cursor-pointer ${
+                  currentPage === p
+                    ? "bg-[var(--color-blue)] text-white"
+                    : "border border-[var(--color-border)] bg-white text-[var(--color-muted-text)] hover:bg-[var(--color-surface-2)]"
+                }`}
               >
                 {p}
               </button>
@@ -317,7 +297,6 @@ export default function RoyalAll() {
         </div>
       </div>
 
-      {/* ── MODAL CONTAINER ── */}
       <RoyalModel
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}

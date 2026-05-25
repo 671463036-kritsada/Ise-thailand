@@ -1,12 +1,5 @@
 @import "tailwindcss";
 
-/* ประกาศให้ Browser รู้ว่าไฟล์ฟอนต์อยู่ที่ไหน */
-@font-face {
-  font-family: "Prompt";
-  src: url("./assets/fonts/Prompt/Prompt-Regular.ttf") format("truetype");
-  font-weight: 400;
-}
-
 @font-face {
   font-family: "Prompt";
   src: url("./assets/fonts/Prompt/Prompt-Regular.ttf") format("truetype");
@@ -26,49 +19,53 @@
 }
 
 @theme {
-  /* font family */
   --font-sans: "Prompt", sans-serif;
 
-  /* ===== Core Brand Colors (ไม่เปลี่ยน) ===== */
+  /* ===== Core Brand Colors — Blue ===== */
+  --color-forest-blue: #0f2044;
+  --color-blue: #1a4080;
+  --color-blue-light: #6b9fd4;
+
+  /* ===== Core Brand Colors — Green ===== */
   --color-forest-green: #404e3b;
   --color-green: #7b9669;
   --color-green-light: #bac8b1;
+
+  /* ===== Shared ===== */
   --color-gold: #c9a84c;
   --color-gold-hover: #b8923e;
   --color-white: #ffffff;
 
-  /* ===== เพิ่ม: Tonal Layers (จาก forest green เจือจาง) ===== */
-  --color-surface: #f5f7f4; /* bg หลัก — เขียวอ่อนมากๆ ไม่ขาวตาย */
-  --color-surface-2: #eaefe7; /* card bg, input bg — มีน้ำหนักขึ้นมาอีก step */
-  --color-surface-3: #dce4d8; /* hover state, divider bg */
+  /* ===== Tonal Layers ===== */
+  --color-surface: #f0f3f9;
+  --color-surface-2: #dde5f2;
+  --color-surface-3: #c8d5ea;
 
-  /* ===== เพิ่ม: Accent Gold ที่ใช้งานได้จริง ===== */
-  --color-gold-subtle: #fdf6e3; /* gold tint bg — ใช้ใน badge, highlight */
-  --color-gold-border: #e8d5a3; /* border สำหรับ gold element */
+  /* ===== Accent Gold ===== */
+  --color-gold-subtle: #fdf6e3;
+  --color-gold-border: #e8d5a3;
 
-  /* ===== เพิ่ม: Semantic Status ===== */
-  --color-success: #5a8a5a; /* success state */
-  --color-warning: #c9a84c; /* = gold */
-  --color-error: #b85c4a; /* error — warm red ไม่หลุด palette */
+  /* ===== Semantic Status ===== */
+  --color-success: #2e7d5e;
+  --color-warning: #c9a84c;
+  --color-error: #b85c4a;
 
-  /* ===== Text (ชัดขึ้นกว่าเดิม) ===== */
-  --color-deep-text: #2d3829; /* เข้มกว่า forest green เล็กน้อย */
-  --color-muted-text: #5a7065; /* ปรับให้เขียวน้อยลง อ่านง่ายขึ้น */
-  --color-placeholder: #94a89e; /* สำหรับ input placeholder โดยเฉพาะ */
-  --color-disabled: #b8c4b4; /* disabled state */
+  /* ===== Text ===== */
+  --color-deep-text: #0a1628;
+  --color-muted-text: #3a5275;
+  --color-placeholder: #6b8cae;
+  --color-disabled: #a0b4cc;
 
-  /* ===== Shadow (เพิ่ม levels) ===== */
-  --color-shadow: rgba(40, 56, 36, 0.07);
-  --color-shadow-md: rgba(40, 56, 36, 0.13);
-  --color-shadow-lg: rgba(40, 56, 36, 0.2);
+  /* ===== Shadow ===== */
+  --color-shadow: rgba(15, 32, 68, 0.07);
+  --color-shadow-md: rgba(15, 32, 68, 0.13);
+  --color-shadow-lg: rgba(15, 32, 68, 0.2);
 
   /* ===== Border ===== */
-  --color-border: #cdd8c8; /* border ทั่วไป */
-  --color-border-focus: #7b9669; /* = green เมื่อ focus */
+  --color-border: #a8bdd8;
+  --color-border-focus: #1a4080;
 
-  /* --color-primary-light ถูกแทนด้วย --color-green-light */
-
-  /* ===== Typography (เหมือนเดิม) ===== */
+  /* ===== Typography ===== */
   --font-size-xs: 0.75rem;
   --font-size-sm: 0.875rem;
   --font-size-base: 1rem;
@@ -84,7 +81,7 @@
   --line-height-normal: 1.5;
   --line-height-relaxed: 1.75;
 
-  /* ===== Radius (เหมือนเดิม) ===== */
+  /* ===== Radius ===== */
   --radius-sm: 0.5rem;
   --radius-md: 1rem;
   --radius-lg: 1.5rem;

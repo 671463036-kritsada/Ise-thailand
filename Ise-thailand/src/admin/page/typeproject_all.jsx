@@ -38,12 +38,12 @@ export default function TypeProjectAll() {
         await api.put(`/type-project/${typeId}`, formData, {
           headers: { 'Content-Type': 'multipart/form-data' }
         })
-        Swal.fire({ title: "แก้ไขสำเร็จ!", icon: "success", confirmButtonColor: "var(--color-green)" })
+        Swal.fire({ title: "แก้ไขสำเร็จ!", icon: "success", confirmButtonColor: "var(--color-blue)" })
       } else {
         await api.post("/type-project", formData, {
           headers: { 'Content-Type': 'multipart/form-data' }
         })
-        Swal.fire({ title: "เพิ่มสำเร็จ!", icon: "success", confirmButtonColor: "var(--color-green)" })
+        Swal.fire({ title: "เพิ่มสำเร็จ!", icon: "success", confirmButtonColor: "var(--color-blue)" })
       }
       fetchData()
       setIsModalOpen(false)
@@ -67,7 +67,7 @@ export default function TypeProjectAll() {
     if (result.isConfirmed) {
       try {
         await api.delete(`/type-project/${cat.type_id}`)
-        Swal.fire({ title: "ลบสำเร็จ!", icon: "success", confirmButtonColor: "var(--color-green)" })
+        Swal.fire({ title: "ลบสำเร็จ!", icon: "success", confirmButtonColor: "var(--color-blue)" })
         fetchData()
       } catch (err) {
         Swal.fire({ title: "เกิดข้อผิดพลาด", text: err.message, icon: "error" })
@@ -81,12 +81,12 @@ export default function TypeProjectAll() {
       {/* PAGE HEADER */}
       <div className="flex justify-between items-center mb-6 gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-[var(--color-forest-green)] tracking-tight">จัดการประเภทโครงการ</h1>
+          <h1 className="text-3xl font-bold text-[var(--color-forest-blue)] tracking-tight">จัดการประเภทโครงการ</h1>
           <p className="text-base text-[var(--color-muted-text)] mt-0.5 font-medium">แสดงรายการประเภทโครงการในระบบ</p>
         </div>
         <button
           onClick={() => { setSelectedCategory(null); setIsModalOpen(true) }}
-          className="px-4 py-2.5 bg-[var(--color-green)] text-white text-base font-bold rounded-xl shadow-md hover:bg-[var(--color-forest-green)] transition-all flex items-center gap-1.5 cursor-pointer shrink-0"
+          className="px-4 py-2.5 bg-[var(--color-blue)] text-white text-base font-bold rounded-xl shadow-md hover:bg-[var(--color-forest-blue)] transition-all flex items-center gap-1.5 cursor-pointer shrink-0"
         >
           <Plus className="w-5 h-5 stroke-[2.5]" />
           <span>เพิ่มประเภทโครงการ</span>
@@ -107,7 +107,7 @@ export default function TypeProjectAll() {
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="bg-[var(--color-surface-2)] border-b border-[var(--color-surface-3)] text-[var(--color-forest-green)] text-base">
+              <tr className="bg-[var(--color-forest-blue)] border-b border-[var(--color-surface-3)] text-white text-base">
                 <th className="px-5 py-3.5 font-bold w-24 text-center">รหัส</th>
                 <th className="px-5 py-3.5 font-bold w-28 text-center">รูปภาพ</th>
                 <th className="px-5 py-3.5 font-bold">ชื่อประเภท (ไทย)</th>
@@ -122,7 +122,7 @@ export default function TypeProjectAll() {
                 currentItems.map((row, idx) => (
                   <tr key={row.type_id}
                     className={`hover:bg-[var(--color-surface-2)]/30 transition-colors ${idx % 2 === 0 ? "bg-white" : "bg-[var(--color-surface)]/20"}`}>
-                    <td className="px-5 py-3.5 font-bold text-[var(--color-green)] text-center font-mono">{row.type_id}</td>
+                    <td className="px-5 py-3.5 font-bold text-[var(--color-blue)] text-center font-mono">{row.type_id}</td>
                     <td className="px-5 py-3.5 text-center">
                       {row.type_image ? (
                         <img
@@ -140,7 +140,7 @@ export default function TypeProjectAll() {
                     <td className="px-5 py-3.5 text-center">
                       <div className="flex justify-center gap-1.5">
                         <button onClick={() => { setSelectedCategory(row); setIsModalOpen(true) }}
-                          className="p-1.5 rounded-lg bg-[var(--color-surface-2)] text-[var(--color-green)] hover:bg-[var(--color-green)] hover:text-white transition-all cursor-pointer">
+                          className="p-1.5 rounded-lg bg-[var(--color-surface-2)] text-[var(--color-blue)] hover:bg-[var(--color-blue)] hover:text-white transition-all cursor-pointer">
                           <Pencil className="w-4 h-4" />
                         </button>
                         <button onClick={() => handleDelete(row)}
@@ -168,7 +168,7 @@ export default function TypeProjectAll() {
             </button>
             {Array.from({ length: totalPages }, (_, i) => i + 1).map(p => (
               <button key={p} onClick={() => setCurrentPage(p)}
-                className={`w-8 h-8 font-bold rounded-lg cursor-pointer ${currentPage === p ? "bg-[var(--color-green)] text-white" : "border border-[var(--color-border)] bg-white text-[var(--color-muted-text)] hover:bg-[var(--color-surface-2)]"}`}>
+                className={`w-8 h-8 font-bold rounded-lg cursor-pointer ${currentPage === p ? "bg-[var(--color-blue)] text-white" : "border border-[var(--color-border)] bg-white text-[var(--color-muted-text)] hover:bg-[var(--color-surface-2)]"}`}>
                 {p}
               </button>
             ))}

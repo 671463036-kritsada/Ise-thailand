@@ -3,8 +3,6 @@ import { Pencil, Trash2, Plus, FileText } from "lucide-react";
 import Swal from "sweetalert2";
 import ProjectAllModel from "../model/ProjectAllModel";
 import api from "../../api/axios";
-
-
 import { useAuth } from "../../hook/useAuth";
 
 const PER_PAGE = 10;
@@ -20,7 +18,7 @@ export default function ProjectAll() {
   const [selectedData, setSelectedData] = useState(null);
   const [modalMode, setModalMode] = useState("add");
 
-  const { user } = useAuth(); // ดึง user จาก token
+  const { user } = useAuth();
 
   const fetchProjects = useCallback(() => {
     setLoading(true);
@@ -30,9 +28,7 @@ export default function ProjectAll() {
       .finally(() => setLoading(false));
   }, []);
 
-  useEffect(() => {
-    fetchProjects();
-  }, [fetchProjects]);
+  useEffect(() => { fetchProjects(); }, [fetchProjects]);
 
   const getStatusStyle = (status) => {
     switch (status) {
@@ -61,38 +57,21 @@ export default function ProjectAll() {
 
   const currentItems = filteredProjects.slice((currentPage - 1) * PER_PAGE, currentPage * PER_PAGE);
 
-  const handleOpenAddModal = () => {
-    setModalMode("add");
-    setSelectedData(null);
-    setIsModalOpen(true);
-  };
-
-  const handleOpenEditModal = (row) => {
-    setModalMode("edit");
-    setSelectedData(row);
-    setIsModalOpen(true);
-  };
-
-  const handleOpenDeleteModal = (row) => {
-    setModalMode("delete");
-    setSelectedData(row);
-    setIsModalOpen(true);
-  };
+  const handleOpenAddModal = () => { setModalMode("add"); setSelectedData(null); setIsModalOpen(true); };
+  const handleOpenEditModal = (row) => { setModalMode("edit"); setSelectedData(row); setIsModalOpen(true); };
+  const handleOpenDeleteModal = (row) => { setModalMode("delete"); setSelectedData(row); setIsModalOpen(true); };
 
   const handleSaveProject = async (formData) => {
     setSaving(true);
     try {
       if (modalMode === "delete") {
         await api.delete(`/project/${formData.project_id}`, {
-          data: { pdffile: selectedData?.pdffile } // ใช้ selectedData แทน formData
+          data: { pdffile: selectedData?.pdffile }
         });
-        Swal.fire({ title: "ลบสำเร็จ!", icon: "success", confirmButtonColor: "var(--color-green)" });
+        Swal.fire({ title: "ลบสำเร็จ!", icon: "success", confirmButtonColor: "var(--color-blue)" });
       } else {
         const payload = new FormData();
-
-        // แนบ u_id จาก token
         if (user?.id) payload.append("u_id", user.id);
-
         Object.entries(formData).forEach(([key, value]) => {
           if (value !== null && value !== undefined && value !== "") {
             payload.append(key, value);
@@ -103,12 +82,12 @@ export default function ProjectAll() {
           await api.put(`/project/${formData.project_id}`, payload, {
             headers: { "Content-Type": "multipart/form-data" },
           });
-          Swal.fire({ title: "บันทึกสำเร็จ!", icon: "success", confirmButtonColor: "var(--color-green)" });
+          Swal.fire({ title: "บันทึกสำเร็จ!", icon: "success", confirmButtonColor: "var(--color-blue)" });
         } else {
           await api.post("/project/", payload, {
             headers: { "Content-Type": "multipart/form-data" },
           });
-          Swal.fire({ title: "เพิ่มสำเร็จ!", icon: "success", confirmButtonColor: "var(--color-green)" });
+          Swal.fire({ title: "เพิ่มสำเร็จ!", icon: "success", confirmButtonColor: "var(--color-blue)" });
         }
       }
 
@@ -127,8 +106,8 @@ export default function ProjectAll() {
       {/* PAGE HEADER */}
       <div className="flex justify-between items-center mb-6 gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-[var(--color-forest-green)] tracking-tight flex items-center gap-2">
-            <FileText className="w-8 h-8 text-[var(--color-green)]" />
+          <h1 className="text-3xl font-bold text-[var(--color-forest-blue)] tracking-tight flex items-center gap-2">
+            <FileText className="w-8 h-8 text-[var(--color-blue)]" />
             <span>โครงการ / งานวิจัยสถาบัน</span>
           </h1>
           <p className="text-base text-[var(--color-muted-text)] mt-0.5 font-medium">
@@ -138,7 +117,7 @@ export default function ProjectAll() {
         <button
           onClick={handleOpenAddModal}
           disabled={saving}
-          className="px-5 py-2.5 bg-[var(--color-green)] text-white text-base font-bold rounded-xl shadow-md hover:bg-[var(--color-forest-green)] transition-all duration-200 flex items-center gap-1.5 cursor-pointer shrink-0 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="px-5 py-2.5 bg-[var(--color-blue)] text-white text-base font-bold rounded-xl shadow-md hover:bg-[var(--color-forest-blue)] transition-all duration-200 flex items-center gap-1.5 cursor-pointer shrink-0 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           <Plus className="w-5 h-5 stroke-[2.5]" />
           <span>เพิ่มโครงการวิจัย</span>
@@ -152,7 +131,7 @@ export default function ProjectAll() {
           placeholder="ค้นหาด้วยชื่อโครงการ หรือรหัสงานวิจัย..."
           value={searchTerm}
           onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(1); }}
-          className="w-full px-4 py-2 border border-[var(--color-border)] rounded-xl text-base focus:outline-none focus:border-[var(--color-border-focus)] focus:ring-2 focus:ring-[var(--color-green-light)]/50 transition-all bg-[var(--color-surface)]/20 text-[var(--color-deep-text)] placeholder:text-[var(--color-placeholder)]"
+          className="w-full px-4 py-2 border border-[var(--color-border)] rounded-xl text-base focus:outline-none focus:border-[var(--color-border-focus)] focus:ring-2 focus:ring-[var(--color-blue-light)]/30 transition-all bg-[var(--color-surface)]/20 text-[var(--color-deep-text)] placeholder:text-[var(--color-placeholder)]"
         />
       </div>
 
@@ -161,7 +140,7 @@ export default function ProjectAll() {
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="bg-[var(--color-surface-2)] border-b border-[var(--color-surface-3)] text-[var(--color-forest-green)] text-base">
+              <tr className="bg-[var(--color-forest-blue)] border-b border-[var(--color-surface-3)] text-white text-base">
                 <th className="px-5 py-3.5 font-bold w-36 text-center">รหัสโครงการ</th>
                 <th className="px-5 py-3.5 font-bold">ชื่อโครงการ</th>
                 <th className="px-5 py-3.5 font-bold w-56 text-center">ประเภทโครงการ</th>
@@ -172,9 +151,7 @@ export default function ProjectAll() {
             <tbody className="divide-y divide-[var(--color-surface-3)] text-base">
               {loading ? (
                 <tr>
-                  <td colSpan="5" className="px-5 py-10 text-center text-[var(--color-muted-text)]">
-                    กำลังโหลด...
-                  </td>
+                  <td colSpan="5" className="px-5 py-10 text-center text-[var(--color-muted-text)]">กำลังโหลด...</td>
                 </tr>
               ) : currentItems.length > 0 ? (
                 currentItems.map((row, idx) => (
@@ -182,7 +159,7 @@ export default function ProjectAll() {
                     key={row.project_id}
                     className={`hover:bg-[var(--color-surface-2)]/30 transition-colors ${idx % 2 === 0 ? "bg-white" : "bg-[var(--color-surface)]/20"}`}
                   >
-                    <td className="px-5 py-3.5 font-bold text-[var(--color-green)] text-center font-mono">
+                    <td className="px-5 py-3.5 font-bold text-[var(--color-blue)] text-center font-mono">
                       {row.project_id}
                     </td>
                     <td className="px-5 py-3.5 font-semibold text-[var(--color-deep-text)] min-w-[320px]">
@@ -208,7 +185,7 @@ export default function ProjectAll() {
                         <button
                           onClick={() => handleOpenEditModal(row)}
                           disabled={saving}
-                          className="p-1.5 rounded-lg bg-[var(--color-surface-2)] text-[var(--color-green)] hover:bg-[var(--color-green)] hover:text-white transition-all duration-150 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                          className="p-1.5 rounded-lg bg-[var(--color-surface-2)] text-[var(--color-blue)] hover:bg-[var(--color-blue)] hover:text-white transition-all duration-150 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                           title="แก้ไข"
                         >
                           <Pencil className="w-4 h-4" />
@@ -254,7 +231,7 @@ export default function ProjectAll() {
                 key={p}
                 onClick={() => setCurrentPage(p)}
                 className={`w-8 h-8 font-bold rounded-lg transition-colors cursor-pointer ${currentPage === p
-                  ? "bg-[var(--color-green)] text-white shadow-sm"
+                  ? "bg-[var(--color-blue)] text-white shadow-sm"
                   : "border border-[var(--color-border)] bg-white text-[var(--color-muted-text)] hover:bg-[var(--color-surface-2)]"
                   }`}
               >

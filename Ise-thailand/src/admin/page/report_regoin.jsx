@@ -99,6 +99,7 @@ export default function ReportRegion() {
         }
       `}</style>
 
+      {/* PRINT HEADER */}
       <div className="hidden print:block mb-6">
         <div className="flex justify-between items-baseline border-b pb-2">
           <h1 className="text-2xl font-black tracking-wider text-black">TASSASCIT || ADMIN</h1>
@@ -107,19 +108,21 @@ export default function ReportRegion() {
         <div className="text-xs font-bold text-slate-500 mt-1">{new Date().toLocaleDateString("th-TH")}</div>
       </div>
 
+      {/* HEADER */}
       <div className="mb-6 print-hidden">
-        <h1 className="text-2xl font-bold text-slate-800 tracking-tight flex items-center gap-2">
-          <BarChart3 className="w-7 h-7 text-[var(--color-green)]" />
+        <h1 className="text-2xl font-bold text-[var(--color-forest-blue)] tracking-tight flex items-center gap-2">
+          <BarChart3 className="w-7 h-7 text-[var(--color-blue)]" />
           <span>รายงานโครงการภายใต้สถาบันเศรษฐกิจพอเพียง (แยกตามประเภทโครงการ/พื้นที่ภาค)</span>
         </h1>
       </div>
 
+      {/* FILTER FORM */}
       <div className="bg-white p-5 rounded-xl border border-[var(--color-border)] shadow-sm mb-5 print-hidden">
         <form onSubmit={handleProcess} className="grid grid-cols-1 sm:grid-cols-3 gap-4 items-end">
           <div className="flex flex-col gap-1">
-            <label className="text-sm font-bold text-slate-700">ประเภทโครงการ *:</label>
+            <label className="text-sm font-bold text-[var(--color-deep-text)]">ประเภทโครงการ *:</label>
             <select value={selectedType} onChange={(e) => setSelectedType(e.target.value)}
-              className="w-full px-3 py-1.5 border border-[var(--color-border)] rounded-lg text-sm bg-white focus:outline-none">
+              className="w-full px-3 py-1.5 border border-[var(--color-border)] rounded-lg text-sm bg-white focus:outline-none focus:border-[var(--color-border-focus)]">
               <option value="">-เลือกทั้งหมด-</option>
               {typeOptions.map((t) => (
                 <option key={t.type_id} value={t.type_id}>{t.type_name}</option>
@@ -127,9 +130,9 @@ export default function ReportRegion() {
             </select>
           </div>
           <div className="flex flex-col gap-1">
-            <label className="text-sm font-bold text-slate-700">ภาค *:</label>
+            <label className="text-sm font-bold text-[var(--color-deep-text)]">ภาค *:</label>
             <select value={selectedRegion} onChange={(e) => setSelectedRegion(e.target.value)}
-              className="w-full px-3 py-1.5 border border-[var(--color-border)] rounded-lg text-sm bg-white focus:outline-none">
+              className="w-full px-3 py-1.5 border border-[var(--color-border)] rounded-lg text-sm bg-white focus:outline-none focus:border-[var(--color-border-focus)]">
               <option value="">-เลือกทั้งหมด-</option>
               {regionOptions.map((g) => (
                 <option key={g.id} value={g.id}>{g.name}</option>
@@ -138,89 +141,96 @@ export default function ReportRegion() {
           </div>
           <div>
             <button type="submit"
-              className="px-4 py-1.5 bg-slate-600 text-white text-sm font-semibold rounded-lg hover:bg-slate-700 transition-colors cursor-pointer flex items-center gap-1.5">
+              className="px-4 py-1.5 bg-[var(--color-blue)] text-white text-sm font-semibold rounded-lg hover:bg-[var(--color-forest-blue)] transition-colors cursor-pointer flex items-center gap-1.5">
               <RefreshCw className="w-4 h-4" /><span>ประมวลผล</span>
             </button>
           </div>
         </form>
       </div>
 
+      {/* TOOLBAR */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-4 print-hidden">
-        <div className="flex items-center gap-4 text-sm font-semibold text-slate-600">
+        <div className="flex items-center gap-4 text-sm font-semibold text-[var(--color-muted-text)]">
           <button onClick={handleExportExcel} className="hover:text-emerald-600 flex items-center gap-1 transition-colors cursor-pointer">
             <FileSpreadsheet className="w-4 h-4 text-emerald-600" /><span>Excel</span>
           </button>
-          <button onClick={handlePrint} className="hover:text-blue-600 flex items-center gap-1 transition-colors cursor-pointer">
-            <Printer className="w-4 h-4 text-blue-600" /><span>Print</span>
+          <button onClick={handlePrint} className="hover:text-[var(--color-blue)] flex items-center gap-1 transition-colors cursor-pointer">
+            <Printer className="w-4 h-4 text-[var(--color-blue)]" /><span>Print</span>
           </button>
         </div>
         <div className="w-full sm:w-72 relative flex items-center">
-          <Search className="w-4 h-4 text-slate-400 absolute left-3 pointer-events-none" />
-          <input type="text" placeholder="Search..." value={searchTerm}
+          <Search className="w-4 h-4 text-[var(--color-disabled)] absolute left-3 pointer-events-none" />
+          <input type="text" placeholder="ค้นหา..." value={searchTerm}
             onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(1); }}
-            className="w-full pl-9 pr-3 py-1.5 border border-[var(--color-border)] rounded-lg text-sm focus:outline-none bg-white text-[var(--color-deep-text)]" />
+            className="w-full pl-9 pr-3 py-1.5 border border-[var(--color-border)] rounded-lg text-sm focus:outline-none focus:border-[var(--color-border-focus)] focus:ring-2 focus:ring-[var(--color-blue-light)]/50 bg-white text-[var(--color-deep-text)]" />
         </div>
       </div>
 
-      <div className="bg-white rounded-xl border border-slate-200 shadow-xs overflow-hidden print:border-none print:shadow-none">
+      {/* TABLE */}
+      <div className="bg-white rounded-xl border border-[var(--color-border)] shadow-sm overflow-hidden print:border-none print:shadow-none">
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="bg-[#2B6CB0] border-b border-slate-300 text-white text-sm print:bg-white print:text-black">
-                <th className="px-4 py-3 font-bold w-16 text-center border-r border-blue-500/30 print:text-black">ลำดับที่</th>
-                <th className="px-4 py-3 font-bold border-r border-blue-500/30 print:text-black">ชื่อโครงการ</th>
-                <th className="px-4 py-3 font-bold w-72 border-r border-blue-500/30 print:text-black">ประเภทโครงการ</th>
+              <tr className="bg-[var(--color-forest-blue)] text-white text-sm print:bg-white print:text-black">
+                <th className="px-4 py-3 font-bold w-16 text-center border-r border-white/10 print:text-black">ลำดับที่</th>
+                <th className="px-4 py-3 font-bold border-r border-white/10 print:text-black">ชื่อโครงการ</th>
+                <th className="px-4 py-3 font-bold w-72 border-r border-white/10 print:text-black">ประเภทโครงการ</th>
                 <th className="px-4 py-3 font-bold w-36 text-center print:text-black">ภาค</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-200 text-sm font-medium text-slate-700 print:divide-slate-300">
+            <tbody className="divide-y divide-[var(--color-surface-3)] text-sm font-medium text-[var(--color-deep-text)] print:divide-slate-300">
               {loading ? (
-                <tr><td colSpan="4" className="px-4 py-12 text-center text-slate-400">กำลังโหลดข้อมูล...</td></tr>
+                <tr><td colSpan="4" className="px-4 py-12 text-center text-[var(--color-muted-text)]">กำลังโหลดข้อมูล...</td></tr>
               ) : currentItems.length > 0 ? (
                 currentItems.map((row, index) => (
-                  <tr key={row.project_id} className={`hover:bg-slate-50 transition-colors ${index % 2 === 0 ? "bg-white" : "bg-slate-50/50 print:bg-white"}`}>
-                    <td className="px-4 py-3.5 text-center font-mono text-slate-500 border-r border-slate-100 print:text-black">
+                  <tr key={row.project_id} className={`hover:bg-[var(--color-surface-2)]/30 transition-colors ${index % 2 === 0 ? "bg-white" : "bg-[var(--color-surface)]/20 print:bg-white"}`}>
+                    <td className="px-4 py-3.5 text-center font-mono text-[var(--color-blue)] border-r border-[var(--color-surface-3)] print:text-black">
                       {(currentPage - 1) * itemsPerPage + index + 1}
                     </td>
-                    <td className="px-4 py-3.5 text-slate-800 font-semibold max-w-md leading-relaxed border-r border-slate-100 print:text-black">
+                    <td className="px-4 py-3.5 font-semibold text-[var(--color-deep-text)] max-w-md leading-relaxed border-r border-[var(--color-surface-3)] print:text-black">
                       {row.name_thai}
                     </td>
-                    <td className="px-4 py-3.5 text-slate-600 border-r border-slate-100 print:text-black">
+                    <td className="px-4 py-3.5 text-[var(--color-muted-text)] border-r border-[var(--color-surface-3)] print:text-black">
                       {row.type_name || "ไม่ระบุ"}
                     </td>
-                    <td className="px-4 py-3.5 text-center text-slate-600 print:text-black">
+                    <td className="px-4 py-3.5 text-center text-[var(--color-muted-text)] print:text-black">
                       {row.geography_name || "ไม่ระบุ"}
                     </td>
                   </tr>
                 ))
               ) : (
-                <tr><td colSpan="4" className="px-4 py-12 text-center text-slate-400 font-medium bg-slate-50/30">ไม่พบข้อมูลรายงานโครงการวิจัยภายใต้เงื่อนไขนี้</td></tr>
+                <tr><td colSpan="4" className="px-4 py-12 text-center text-[var(--color-disabled)] font-medium">ไม่พบข้อมูลรายงานโครงการวิจัยภายใต้เงื่อนไขนี้</td></tr>
               )}
             </tbody>
           </table>
         </div>
 
-        <div className="px-5 py-3.5 border-t border-slate-200 flex flex-col sm:flex-row justify-between items-center gap-3 bg-slate-50/50 text-xs print-hidden">
-          <p className="font-semibold text-slate-500">
-            Showing {filteredData.length > 0 ? (currentPage - 1) * itemsPerPage + 1 : 0} to {Math.min(currentPage * itemsPerPage, filteredData.length)} of {filteredData.length} entries
+        {/* PAGINATION */}
+        <div className="px-5 py-3.5 border-t border-[var(--color-surface-3)] flex flex-col sm:flex-row justify-between items-center gap-3 bg-[var(--color-surface)]/10 text-xs print-hidden">
+          <p className="font-medium text-[var(--color-muted-text)]">
+            แสดง {filteredData.length > 0 ? (currentPage - 1) * itemsPerPage + 1 : 0} ถึง {Math.min(currentPage * itemsPerPage, filteredData.length)} จาก {filteredData.length} รายการ
           </p>
           <div className="flex items-center gap-1.5">
             <button onClick={() => setCurrentPage((p) => Math.max(1, p - 1))} disabled={currentPage === 1}
-              className="px-3 py-1.5 font-bold rounded-lg border border-slate-200 bg-white text-slate-500 hover:bg-slate-100 cursor-pointer disabled:opacity-40">Previous</button>
+              className="px-3 py-1.5 font-semibold rounded-lg border border-[var(--color-border)] bg-white text-[var(--color-muted-text)] hover:bg-[var(--color-surface-2)] disabled:opacity-40 disabled:cursor-not-allowed transition-colors shadow-sm cursor-pointer">
+              ย้อนกลับ
+            </button>
             {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
               <button key={p} onClick={() => setCurrentPage(p)}
-                className={`w-8 h-8 font-extrabold rounded-lg transition-all cursor-pointer ${currentPage === p ? "bg-slate-200 text-slate-700 border border-slate-300" : "border border-slate-200 bg-white text-slate-500 hover:bg-slate-100"}`}>
+                className={`w-8 h-8 font-bold rounded-lg transition-colors cursor-pointer ${currentPage === p ? "bg-[var(--color-blue)] text-white shadow-sm" : "border border-[var(--color-border)] bg-white text-[var(--color-muted-text)] hover:bg-[var(--color-surface-2)]"}`}>
                 {p}
               </button>
             ))}
             <button onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))} disabled={currentPage >= totalPages || totalPages === 0}
-              className="px-3 py-1.5 font-bold rounded-lg border border-slate-200 bg-white text-slate-500 hover:bg-slate-100 cursor-pointer disabled:opacity-40">Next</button>
+              className="px-3 py-1.5 font-semibold rounded-lg border border-[var(--color-border)] bg-white text-[var(--color-muted-text)] hover:bg-[var(--color-surface-2)] disabled:opacity-40 disabled:cursor-not-allowed transition-colors shadow-sm cursor-pointer">
+              ถัดไป
+            </button>
           </div>
         </div>
       </div>
 
-      <div className="mt-4 flex justify-between text-xs font-semibold text-slate-400 print:hidden">
-        <span>Showing 1 to {Math.min(itemsPerPage, filteredData.length)} of {filteredData.length} entries</span>
+      <div className="mt-4 flex justify-between text-xs font-semibold text-[var(--color-disabled)] print:hidden">
+        <span>แสดง 1 ถึง {Math.min(itemsPerPage, filteredData.length)} จาก {filteredData.length} รายการ</span>
         <span>2022 © TASSA</span>
       </div>
     </div>

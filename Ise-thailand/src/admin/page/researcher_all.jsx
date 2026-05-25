@@ -48,14 +48,14 @@ export default function ResearcherPage() {
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "var(--color-error)",
-      cancelButtonColor: "var(--color-green)",
+      cancelButtonColor: "var(--color-blue)",
       confirmButtonText: "ลบ",
       cancelButtonText: "ยกเลิก",
     }).then(async (result) => {
       if (!result.isConfirmed) return;
       try {
         await api.delete(`/researcher/${row.researcher_id}`);
-        Swal.fire({ title: "ลบสำเร็จ!", icon: "success", confirmButtonColor: "var(--color-green)" });
+        Swal.fire({ title: "ลบสำเร็จ!", icon: "success", confirmButtonColor: "var(--color-blue)" });
         fetchResearchers();
       } catch (err) {
         Swal.fire({ title: "เกิดข้อผิดพลาด", text: err.message, icon: "error" });
@@ -79,8 +79,8 @@ export default function ResearcherPage() {
       {/* HEADER */}
       <div className="flex justify-between items-center mb-6 gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-[var(--color-forest-green)] flex items-center gap-2">
-            <UserCheck className="w-7 h-7 text-[var(--color-green)]" />
+          <h1 className="text-2xl font-bold text-[var(--color-forest-blue)] flex items-center gap-2">
+            <UserCheck className="w-7 h-7 text-[var(--color-blue)]" />
             ทะเบียนนักวิจัย
           </h1>
           <p className="text-sm text-[var(--color-muted-text)] mt-0.5 font-medium">
@@ -89,7 +89,7 @@ export default function ResearcherPage() {
         </div>
         <button
           onClick={() => { setEditData(null); setModalOpen(true); }}
-          className="px-4 py-2 bg-[var(--color-green)] text-white text-sm font-bold rounded-xl shadow-md hover:bg-[var(--color-forest-green)] transition-all flex items-center gap-1.5 cursor-pointer"
+          className="px-4 py-2 bg-[var(--color-blue)] text-white text-sm font-bold rounded-xl shadow-md hover:bg-[var(--color-forest-blue)] transition-all flex items-center gap-1.5 cursor-pointer"
         >
           <Plus className="w-5 h-5" />
           เพิ่มนักวิจัย
@@ -103,7 +103,7 @@ export default function ResearcherPage() {
           placeholder="ค้นหาด้วยชื่อ, รหัส หรือ email..."
           value={searchTerm}
           onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(1); }}
-          className="w-full px-4 py-2 border border-[var(--color-border)] rounded-xl text-sm focus:outline-none focus:border-[var(--color-border-focus)] transition-all text-[var(--color-deep-text)]"
+          className="w-full px-4 py-2 border border-[var(--color-border)] rounded-xl text-sm focus:outline-none focus:border-[var(--color-border-focus)] focus:ring-2 focus:ring-[var(--color-blue-light)]/50 transition-all text-[var(--color-deep-text)]"
         />
       </div>
 
@@ -112,7 +112,7 @@ export default function ResearcherPage() {
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="bg-[var(--color-surface-2)] border-b border-[var(--color-surface-3)] text-[var(--color-forest-green)] text-sm">
+              <tr className="bg-[var(--color-forest-blue)] text-white text-sm">
                 <th className="px-4 py-3 font-bold w-28 text-center">รหัส</th>
                 <th className="px-4 py-3 font-bold">ชื่อ-นามสกุล</th>
                 <th className="px-4 py-3 font-bold">สถาบัน</th>
@@ -135,7 +135,7 @@ export default function ResearcherPage() {
                     key={row.researcher_id}
                     className={`hover:bg-[var(--color-surface-2)]/30 transition-colors ${idx % 2 === 0 ? "bg-white" : "bg-[var(--color-surface)]/20"}`}
                   >
-                    <td className="px-4 py-3 text-center font-mono font-bold text-[var(--color-green)]">
+                    <td className="px-4 py-3 text-center font-mono font-bold text-[var(--color-blue)]">
                       {row.researcher_id}
                     </td>
                     <td className="px-4 py-3 font-semibold">
@@ -164,7 +164,7 @@ export default function ResearcherPage() {
                       <div className="flex justify-center gap-1.5">
                         <button
                           onClick={() => { setEditData(row); setModalOpen(true); }}
-                          className="p-1.5 rounded-lg bg-[var(--color-surface-2)] text-[var(--color-green)] hover:bg-[var(--color-green)] hover:text-white transition-all cursor-pointer"
+                          className="p-1.5 rounded-lg bg-[var(--color-surface-2)] text-[var(--color-blue)] hover:bg-[var(--color-blue)] hover:text-white transition-all cursor-pointer"
                           title="แก้ไข"
                         >
                           <Pencil className="w-4 h-4" />
@@ -210,7 +210,7 @@ export default function ResearcherPage() {
                 onClick={() => setCurrentPage(p)}
                 className={`w-8 h-8 font-bold rounded-lg transition-colors cursor-pointer ${
                   currentPage === p
-                    ? "bg-[var(--color-green)] text-white"
+                    ? "bg-[var(--color-blue)] text-white"
                     : "border border-[var(--color-border)] bg-white text-[var(--color-muted-text)] hover:bg-[var(--color-surface-2)]"
                 }`}
               >

@@ -9,23 +9,23 @@ import {
 } from "lucide-react";
 
 const ASSET_CONFIG = {
-  "01": { icon: BookOpen, color: "bg-[var(--color-green-light)]/20 text-[var(--color-forest-green)] border-[var(--color-green-light)]/40" },
-  "02": { icon: GraduationCap, color: "bg-[var(--color-surface-2)] text-[var(--color-green)] border-[var(--color-border)]" },
+  "01": { icon: BookOpen, color: "bg-[var(--color-blue-light)]/20 text-[var(--color-forest-blue)] border-[var(--color-blue-light)]/40" },
+  "02": { icon: GraduationCap, color: "bg-[var(--color-surface-2)] text-[var(--color-blue)] border-[var(--color-border)]" },
   "03": { icon: Lightbulb, color: "bg-slate-50 text-slate-400 border-slate-200" },
   "04": { icon: Video, color: "bg-slate-50 text-slate-400 border-slate-200" },
 }
 
 const TYPE_COLORS = {
-  "00": "#b8c4b4",
-  "01": "#404e3b",
-  "02": "#7b9669",
-  "03": "#5a8a5a",
+  "00": "#a0b4cc",
+  "01": "#0f2044",
+  "02": "#1a4080",
+  "03": "#1e5fa8",
   "04": "#b8923e",
-  "05": "#5a8a5a",
+  "05": "#2e7d5e",
   "06": "#c9a84c",
   "07": "#b85c4a",
-  "08": "#94a89e",
-  "09": "#2d3829",
+  "08": "#6b8cae",
+  "09": "#0a1628",
 }
 
 function useAssetCount() {
@@ -86,7 +86,7 @@ export default function Dashboard() {
   const chartData = projectByTypeData.map(d => ({
     ...d,
     name: d.type_name,
-    color: TYPE_COLORS[d.type_id] || "#94a89e"
+    color: TYPE_COLORS[d.type_id] || "#7da3b3"
   }))
 
   const filteredGraphData = selectedFilter === "ALL"
@@ -98,7 +98,7 @@ export default function Dashboard() {
 
       {/* PAGE TITLE */}
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-[var(--color-forest-green)] tracking-tight">ภาพรวมระบบสารสนเทศ</h1>
+        <h1 className="text-2xl font-bold text-[var(--color-forest-blue)] tracking-tight">ภาพรวมระบบสารสนเทศ</h1>
         <p className="text-sm text-[var(--color-muted-text)] font-medium mt-0.5">ระบบรายงานสถิติข้อมูลสถาบันเศรษฐกิจพอเพียง</p>
       </div>
 
@@ -132,7 +132,7 @@ export default function Dashboard() {
               {researcherLoading ? '...' : researcherTotal}
             </p>
           </div>
-          <div className="w-11 h-11 rounded-xl flex items-center justify-center border bg-[var(--color-surface-2)] text-[var(--color-green)] border-[var(--color-border)] shrink-0">
+          <div className="w-11 h-11 rounded-xl flex items-center justify-center border bg-[var(--color-surface-2)] text-[var(--color-blue)] border-[var(--color-border)] shrink-0">
             <Users className="w-6 h-6 stroke-[2.5]" />
           </div>
         </div>
@@ -145,7 +145,7 @@ export default function Dashboard() {
               {projectLoading ? '...' : projectTotal}
             </p>
           </div>
-          <div className="w-11 h-11 rounded-xl flex items-center justify-center border bg-[var(--color-surface-2)] text-[var(--color-green)] border-[var(--color-border)] shrink-0">
+          <div className="w-11 h-11 rounded-xl flex items-center justify-center border bg-[var(--color-surface-2)] text-[var(--color-blue)] border-[var(--color-border)] shrink-0">
             <Layers className="w-6 h-6 stroke-[2.5]" />
           </div>
         </div>
@@ -153,8 +153,8 @@ export default function Dashboard() {
 
       {/* CHARTS TITLE */}
       <div className="mb-4">
-        <h2 className="text-xl font-bold text-[var(--color-forest-green)] tracking-tight flex items-center gap-2">
-          <Layers className="w-5 h-5 text-[var(--color-green)]" />
+        <h2 className="text-xl font-bold text-[var(--color-forest-blue)] tracking-tight flex items-center gap-2">
+          <Layers className="w-5 h-5 text-[var(--color-blue)]" />
           <span>สถิติจำแนกตามประเภทโครงการพระราชดำริ</span>
         </h2>
       </div>
@@ -165,7 +165,7 @@ export default function Dashboard() {
         {/* Bar Chart */}
         <div className="bg-white rounded-2xl border border-[var(--color-border)] shadow-sm overflow-hidden lg:col-span-2 flex flex-col">
           <div className="flex items-center justify-between px-5 py-3 border-b border-[var(--color-surface-3)] bg-[var(--color-surface)]/30">
-            <h3 className="text-sm font-bold text-[var(--color-forest-green)]">แผนภูมิแท่งเปรียบเทียบสัดส่วนงาน</h3>
+            <h3 className="text-sm font-bold text-[var(--color-forest-blue)]">แผนภูมิแท่งเปรียบเทียบสัดส่วนงาน</h3>
             <select
               value={selectedFilter}
               onChange={(e) => setSelectedFilter(e.target.value)}
@@ -201,7 +201,7 @@ export default function Dashboard() {
         {/* Pie Chart */}
         <div className="bg-white rounded-2xl border border-[var(--color-border)] shadow-sm overflow-hidden flex flex-col">
           <div className="px-5 py-3 border-b border-[var(--color-surface-3)] bg-[var(--color-surface)]/30">
-            <h3 className="text-sm font-bold text-[var(--color-forest-green)]">อัตราส่วนโครงสร้างสถิติ</h3>
+            <h3 className="text-sm font-bold text-[var(--color-forest-blue)]">อัตราส่วนโครงสร้างสถิติ</h3>
           </div>
           <div className="p-4 flex flex-col justify-center items-center h-64 flex-1">
             <div className="w-full h-40 shrink-0 relative flex items-center justify-center">
@@ -229,7 +229,7 @@ export default function Dashboard() {
                     <span className="w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: item.color }} />
                     <span className="text-[var(--color-deep-text)] truncate text-[11px] font-semibold">{item.name}</span>
                   </div>
-                  <span className="font-bold font-mono text-[var(--color-green)] text-[11px] bg-[var(--color-surface-2)] px-1.5 py-0.5 rounded shrink-0">
+                  <span className="font-bold font-mono text-[var(--color-blue)] text-[11px] bg-[var(--color-surface-2)] px-1.5 py-0.5 rounded shrink-0">
                     {item.value}
                   </span>
                 </div>

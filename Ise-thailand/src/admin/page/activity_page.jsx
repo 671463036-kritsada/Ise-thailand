@@ -4,7 +4,6 @@ import { Pencil, Trash2, Plus, CalendarDays, Images } from "lucide-react";
 import Swal from "sweetalert2";
 import api from "../../api/axios";
 
-
 import ActivityGalleryModal from "../model/ActivityGalleryModal";
 import ActivityModal from "../model/ActivityModal";
 
@@ -20,7 +19,6 @@ export default function ActivityPage() {
 
     const [galleryModalOpen, setGalleryModalOpen] = useState(false);
     const [galleryDocno, setGalleryDocno] = useState(null);
-
 
     const [modalOpen, setModalOpen] = useState(false);
     const [editData, setEditData] = useState(null);
@@ -50,21 +48,19 @@ export default function ActivityPage() {
     const totalPages = Math.ceil(filtered.length / PER_PAGE);
     const currentItems = filtered.slice((currentPage - 1) * PER_PAGE, currentPage * PER_PAGE);
 
-
     const handleCreateSuccess = () => {
-        Swal.fire({ title: "เพิ่มสำเร็จ!", icon: "success", confirmButtonColor: "var(--color-green)" });
+        Swal.fire({ title: "เพิ่มสำเร็จ!", icon: "success", confirmButtonColor: "var(--color-blue)" });
         fetchActivities();
     };
 
     const handleUpdateSuccess = () => {
-        Swal.fire({ title: "แก้ไขสำเร็จ!", icon: "success", confirmButtonColor: "var(--color-green)" });
+        Swal.fire({ title: "แก้ไขสำเร็จ!", icon: "success", confirmButtonColor: "var(--color-blue)" });
         fetchActivities();
     };
 
     const handleError = (message) => {
         Swal.fire({ title: "เกิดข้อผิดพลาด", text: message, icon: "error", confirmButtonColor: "var(--color-error)" });
     };
-
 
     const handleDelete = (activity) => {
         Swal.fire({
@@ -73,14 +69,14 @@ export default function ActivityPage() {
             icon: 'warning',
             showCancelButton: true,
             confirmButtonColor: 'var(--color-error)',
-            cancelButtonColor: 'var(--color-green)',
+            cancelButtonColor: 'var(--color-blue)',
             confirmButtonText: 'ลบ',
             cancelButtonText: 'ยกเลิก',
         }).then(async (result) => {
             if (result.isConfirmed) {
                 try {
                     await api.delete(`/activity/${activity.docno}`);
-                    Swal.fire({ title: 'ลบสำเร็จ!', icon: 'success', confirmButtonColor: 'var(--color-green)' });
+                    Swal.fire({ title: 'ลบสำเร็จ!', icon: 'success', confirmButtonColor: 'var(--color-blue)' });
                     fetchActivities();
                 } catch (err) {
                     Swal.fire({ title: 'เกิดข้อผิดพลาด', text: err.message, icon: 'error' });
@@ -95,8 +91,8 @@ export default function ActivityPage() {
             {/* PAGE HEADER */}
             <div className="flex justify-between items-center mb-6 gap-4">
                 <div>
-                    <h1 className="text-3xl font-bold text-[var(--color-forest-green)] tracking-tight flex items-center gap-2">
-                        <CalendarDays className="w-8 h-8 text-[var(--color-green)]" />
+                    <h1 className="text-3xl font-bold text-[var(--color-forest-blue)] tracking-tight flex items-center gap-2">
+                        <CalendarDays className="w-8 h-8 text-[var(--color-blue)]" />
                         <span>{typeName || 'กำลังโหลด...'}</span>
                     </h1>
                     <p className="text-base text-[var(--color-muted-text)] mt-0.5 font-medium">
@@ -105,7 +101,7 @@ export default function ActivityPage() {
                 </div>
                 <button
                     onClick={() => { setEditData(null); setModalOpen(true); }}
-                    className="px-5 py-2.5 bg-[var(--color-green)] text-white text-base font-bold rounded-xl shadow-md hover:bg-[var(--color-forest-green)] transition-all duration-200 flex items-center gap-1.5 cursor-pointer shrink-0"
+                    className="px-5 py-2.5 bg-[var(--color-blue)] text-white text-base font-bold rounded-xl shadow-md hover:bg-[var(--color-forest-blue)] transition-all duration-200 flex items-center gap-1.5 cursor-pointer shrink-0"
                 >
                     <Plus className="w-5 h-5 stroke-[2.5]" />
                     <span>เพิ่ม{typeName}</span>
@@ -119,7 +115,7 @@ export default function ActivityPage() {
                     placeholder="ค้นหาด้วยชื่อหรือรหัส..."
                     value={searchTerm}
                     onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(1); }}
-                    className="w-full px-4 py-2 border border-[var(--color-border)] rounded-xl text-base focus:outline-none focus:border-[var(--color-border-focus)] focus:ring-2 focus:ring-[var(--color-green-light)]/50 transition-all bg-[var(--color-surface)]/20 text-[var(--color-deep-text)] placeholder:text-[var(--color-placeholder)]"
+                    className="w-full px-4 py-2 border border-[var(--color-border)] rounded-xl text-base focus:outline-none focus:border-[var(--color-border-focus)] focus:ring-2 focus:ring-[var(--color-blue-light)]/50 transition-all bg-[var(--color-surface)]/20 text-[var(--color-deep-text)] placeholder:text-[var(--color-placeholder)]"
                 />
             </div>
 
@@ -128,7 +124,7 @@ export default function ActivityPage() {
                 <div className="overflow-x-auto">
                     <table className="w-full text-left border-collapse">
                         <thead>
-                            <tr className="bg-[var(--color-surface-2)] border-b border-[var(--color-surface-3)] text-[var(--color-forest-green)] text-base">
+                            <tr className="bg-[var(--color-forest-blue)] text-white text-base">
                                 <th className="px-5 py-3.5 font-bold w-36 text-center">รหัส</th>
                                 <th className="px-5 py-3.5 font-bold">ชื่อกิจกรรม</th>
                                 <th className="px-5 py-3.5 font-bold w-44">วันที่จัดกิจกรรม</th>
@@ -149,7 +145,7 @@ export default function ActivityPage() {
                                         key={row.docno}
                                         className={`hover:bg-[var(--color-surface-2)]/30 transition-colors ${idx % 2 === 0 ? "bg-white" : "bg-[var(--color-surface)]/20"}`}
                                     >
-                                        <td className="px-5 py-3.5 font-bold text-[var(--color-green)] text-center font-mono">
+                                        <td className="px-5 py-3.5 font-bold text-[var(--color-blue)] text-center font-mono">
                                             {row.docno}
                                         </td>
                                         <td className="px-5 py-3.5 font-semibold text-[var(--color-deep-text)] min-w-[280px]">
@@ -180,7 +176,7 @@ export default function ActivityPage() {
                                             <div className="flex justify-center gap-1.5">
                                                 <button
                                                     onClick={() => { setEditData(row); setModalOpen(true); }}
-                                                    className="p-1.5 rounded-lg bg-[var(--color-surface-2)] text-[var(--color-green)] hover:bg-[var(--color-green)] hover:text-white transition-all duration-150 cursor-pointer"
+                                                    className="p-1.5 rounded-lg bg-[var(--color-surface-2)] text-[var(--color-blue)] hover:bg-[var(--color-blue)] hover:text-white transition-all duration-150 cursor-pointer"
                                                     title="แก้ไข"
                                                 >
                                                     <Pencil className="w-4 h-4" />
@@ -234,7 +230,7 @@ export default function ActivityPage() {
                                 key={p}
                                 onClick={() => setCurrentPage(p)}
                                 className={`w-8 h-8 font-bold rounded-lg transition-colors cursor-pointer ${currentPage === p
-                                    ? "bg-[var(--color-green)] text-white shadow-sm"
+                                    ? "bg-[var(--color-blue)] text-white shadow-sm"
                                     : "border border-[var(--color-border)] bg-white text-[var(--color-muted-text)] hover:bg-[var(--color-surface-2)]"
                                     }`}
                             >
@@ -255,6 +251,7 @@ export default function ActivityPage() {
             <p className="text-center text-sm text-[var(--color-disabled)] mt-6 font-medium">
                 Copyright © 2026 สถาบันเศรษฐกิจพอเพียง
             </p>
+
             <ActivityModal
                 open={modalOpen}
                 onClose={() => setModalOpen(false)}
