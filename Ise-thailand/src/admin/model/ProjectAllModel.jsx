@@ -236,7 +236,7 @@ export default function ProjectAllModel({ isOpen, onClose, projectData, mode, on
 
         {/* RIGHT MAIN CONTENT */}
         <main className="flex-1 overflow-y-auto bg-[var(--color-surface)]">
-          <form onSubmit={handleSubmit} className="p-6 space-y-5 max-w-4xl">
+          <form onSubmit={handleSubmit} className="p-6 space-y-5">
 
             {/* ข้อมูลโครงการพื้นฐาน */}
             <div className="bg-white border border-[var(--color-border)] rounded-2xl p-5">
