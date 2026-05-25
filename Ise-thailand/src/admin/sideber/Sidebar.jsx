@@ -88,13 +88,14 @@ export default function Sidebar({ open }) {
   };
 
   return (
-    <aside
-      className={`${open ? "w-64" : "w-20"} transition-all duration-300 bg-white border-r border-[var(--color-border)] flex flex-col shrink-0 shadow-sm z-20 font-sans antialiased text-[var(--color-deep-text)] h-screen justify-between`}
-    >
+    // ✅ แก้แล้ว
+      <aside
+        className={`${open ? "w-64" : "w-20"} transition-all duration-300 bg-white border-r border-[var(--color-border)] flex flex-col shrink-0 shadow-sm z-20 font-sans antialiased text-[var(--color-deep-text)] h-full justify-between`}
+      >
       <div>
         {/* Logo Section */}
         <div className="flex items-center gap-3 px-4 py-4 border-b border-[var(--color-surface-3)]">
-          <img width={40} src="data:image/png;base64,iVBORw0KGgoAAA0KGgoAAA0KGgoAAAANSUhEUgAAAOEAAADhCAMAAAAJbSPIIAAABIFBMVEXjAAv///8AAAD/7QDkAAvdAAv/8AD/8wD/+AD/7wD/9QD/9gD/+QDp6en09PTY2Njxlgf4wgWtra1vb2+YmJiioqJ5eXnv7+/Ozs7l5eVeXl44ODjBwcGDg4O0tLT0qAb5zATl1QAjIyPc3NxQUFCLi4tGRkaZmZnpWQnsAAv94gIUFBRAQEAyMjLWAArteAjyngfugQjoSwqekwDUxQD71QO3qgBwaAD2uQXv3gDmNwrwkAfpVQnqYgm9AAn1sAZiWwCNgwDZygAXFQCsoABKRQDJuwB+dQDsbgkxAAImAALEAAmTAAeGAAYSEQAsKQBzawBNSAA8OAAhHwDmPAp7AAYXAAGfAAhlAAVGAAT7AAyuAAhcAAQpJgAdHR1AOwDZrmFvAAARxklEQVR4nO1caVvbSBI2MtEJBpvLGBtjBwM24TC2uQm2QwyZZHJnJnPm//+Llfpud7XU7O48+4jV+yFPsEqtfruqq6pLrc5ZTx25/3UH/nH8fzA8fPZUcUgYPpt9qnjGGOaeJjKG6UfGram..." alt="IMG" />
+          <img width={40} src="../../logo.jpg" alt="IMG" />
           {open && (
             <div>
               <h2 className="text-sm font-extrabold text-[var(--color-forest-green)] tracking-tight leading-tight">ระบบสารสนเทศ</h2>
