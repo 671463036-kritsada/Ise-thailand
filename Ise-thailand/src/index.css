@@ -101,3 +101,12 @@
     line-height: var(--line-height-normal);
   }
 }
+
+
+@layer base {
+  html,
+  body,
+  * {
+    font-family: "Prompt", sans-serif;
+  }
+}

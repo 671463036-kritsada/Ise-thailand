@@ -30,7 +30,6 @@ function AdminShell() {
   return (
     <div
       className="flex h-screen bg-slate-50 overflow-hidden"
-      style={{ fontFamily: "'DM Sans', 'Segoe UI', sans-serif" }}
     >
       <Sidebar open={sidebarOpen} />
 
