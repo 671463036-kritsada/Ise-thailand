@@ -3,8 +3,6 @@ import { Pencil, Trash2, Plus, FileText } from "lucide-react";
 import Swal from "sweetalert2";
 import ProjectAllModel from "../model/ProjectAllModel";
 import api from "../../api/axios";
-
-
 import { useAuth } from "../../hook/useAuth";
 
 const PER_PAGE = 10;
@@ -122,58 +120,58 @@ export default function ProjectAll() {
   };
 
   return (
-    <div className="p-6 bg-[var(--color-surface)] min-h-screen font-sans antialiased text-[var(--color-deep-text)]">
+    <div className="p-3 sm:p-6 bg-[var(--color-surface)] min-h-screen font-sans antialiased text-[var(--color-deep-text)]">
 
-      {/* PAGE HEADER */}
-      <div className="flex justify-between items-center mb-6 gap-4">
+      {/* ── PAGE HEADER & ADD BUTTON (Responsive Wrap) ── */}
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-[var(--color-forest-green)] tracking-tight flex items-center gap-2">
-            <FileText className="w-8 h-8 text-[var(--color-green)]" />
+          <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-[var(--color-forest-green)] tracking-tight flex items-center gap-2">
+            <FileText className="w-6 h-6 sm:w-7 sm:h-7 lg:w-8 lg:h-8 text-[var(--color-green)]" />
             <span>โครงการ / งานวิจัยสถาบัน</span>
           </h1>
-          <p className="text-base text-[var(--color-muted-text)] mt-0.5 font-medium">
+          <p className="text-xs sm:text-sm lg:text-base text-[var(--color-muted-text)] mt-0.5 font-medium leading-relaxed">
             ระบบจัดการและติดตามสถานะงานวิจัยและโครงการของสถาบันเศรษฐกิจสร้างสรรค์
           </p>
         </div>
         <button
           onClick={handleOpenAddModal}
           disabled={saving}
-          className="px-5 py-2.5 bg-[var(--color-green)] text-white text-base font-bold rounded-xl shadow-md hover:bg-[var(--color-forest-green)] transition-all duration-200 flex items-center gap-1.5 cursor-pointer shrink-0 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="w-full sm:w-auto px-5 py-2.5 bg-[var(--color-green)] text-white text-sm sm:text-base font-bold rounded-xl shadow-md hover:bg-[var(--color-forest-green)] transition-all duration-200 flex items-center justify-center gap-1.5 cursor-pointer shrink-0 disabled:opacity-50 disabled:cursor-not-allowed active:scale-95"
         >
           <Plus className="w-5 h-5 stroke-[2.5]" />
-          <span>เพิ่มโครงการวิจัย</span>
+          <span>เพิ่ม...โครงการวิจัย</span>
         </button>
       </div>
 
-      {/* SEARCH */}
-      <div className="bg-white p-5 rounded-xl border border-[var(--color-border)] shadow-sm mb-6">
+      {/* ── SEARCH BAR ── */}
+      <div className="bg-white p-3 sm:p-5 rounded-xl border border-[var(--color-border)] shadow-sm mb-6">
         <input
           type="text"
           placeholder="ค้นหาด้วยชื่อโครงการ หรือรหัสงานวิจัย..."
           value={searchTerm}
           onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(1); }}
-          className="w-full px-4 py-2 border border-[var(--color-border)] rounded-xl text-base focus:outline-none focus:border-[var(--color-border-focus)] focus:ring-2 focus:ring-[var(--color-green-light)]/50 transition-all bg-[var(--color-surface)]/20 text-[var(--color-deep-text)] placeholder:text-[var(--color-placeholder)]"
+          className="w-full px-3 py-2 border border-[var(--color-border)] rounded-xl text-sm sm:text-base focus:outline-none focus:border-[var(--color-border-focus)] focus:ring-2 focus:ring-[var(--color-green-light)]/50 transition-all bg-[var(--color-surface)]/20 text-[var(--color-deep-text)] placeholder:text-[var(--color-placeholder)]"
         />
       </div>
 
-      {/* TABLE */}
+      {/* ── DATA TABLE CARD ── */}
       <div className="bg-white rounded-xl border border-[var(--color-border)] shadow-sm overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse">
+        <div className="overflow-x-auto w-full custom-horizontal-scrollbar">
+          <table className="w-full text-left border-collapse min-w-[55rem]">
             <thead>
-              <tr className="bg-[var(--color-surface-2)] border-b border-[var(--color-surface-3)] text-[var(--color-forest-green)] text-base">
-                <th className="px-5 py-3.5 font-bold w-36 text-center">รหัสโครงการ</th>
-                <th className="px-5 py-3.5 font-bold">ชื่อโครงการ</th>
-                <th className="px-5 py-3.5 font-bold w-56 text-center">ประเภทโครงการ</th>
-                <th className="px-5 py-3.5 font-bold w-36 text-center">สถานะ</th>
-                <th className="px-5 py-3.5 font-bold w-28 text-center">จัดการ</th>
+              <tr className="bg-[var(--color-surface-2)] border-b border-[var(--color-surface-3)] text-[var(--color-forest-green)] text-xs sm:text-sm lg:text-base">
+                <th className="px-4 sm:px-5 py-3 font-bold w-32 text-center whitespace-nowrap">รหัสโครงการ</th>
+                <th className="px-4 sm:px-5 py-3 font-bold min-w-[18rem]">ชื่อโครงการ</th>
+                <th className="px-4 sm:px-5 py-3 font-bold w-48 text-center whitespace-nowrap">ประเภทโครงการ</th>
+                <th className="px-4 sm:px-5 py-3 font-bold w-32 text-center whitespace-nowrap">สถานะ</th>
+                <th className="px-4 sm:px-5 py-3 font-bold w-24 text-center whitespace-nowrap">จัดการ</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-[var(--color-surface-3)] text-base">
+            <tbody className="divide-y divide-[var(--color-surface-3)] text-xs sm:text-sm lg:text-base">
               {loading ? (
                 <tr>
-                  <td colSpan="5" className="px-5 py-10 text-center text-[var(--color-muted-text)]">
-                    กำลังโหลด...
+                  <td colSpan="5" className="px-5 py-10 text-center text-[var(--color-muted-text)] font-semibold">
+                    กำลังโหลดข้อมูล...
                   </td>
                 </tr>
               ) : currentItems.length > 0 ? (
@@ -182,44 +180,44 @@ export default function ProjectAll() {
                     key={row.project_id}
                     className={`hover:bg-[var(--color-surface-2)]/30 transition-colors ${idx % 2 === 0 ? "bg-white" : "bg-[var(--color-surface)]/20"}`}
                   >
-                    <td className="px-5 py-3.5 font-bold text-[var(--color-green)] text-center font-mono">
+                    <td className="px-4 sm:px-5 py-3.5 font-bold text-[var(--color-green)] text-center font-mono whitespace-nowrap">
                       {row.project_id}
                     </td>
-                    <td className="px-5 py-3.5 font-semibold text-[var(--color-deep-text)] min-w-[320px]">
-                      <div className="line-clamp-2">{row.name_thai}</div>
+                    <td className="px-4 sm:px-5 py-3.5 font-semibold text-[var(--color-deep-text)]">
+                      <div className="line-clamp-2 leading-relaxed text-xs sm:text-sm">{row.name_thai}</div>
                       {row.name_eng && row.name_eng !== "-" && (
-                        <div className="text-xs text-[var(--color-muted-text)] line-clamp-1 mt-0.5">
+                        <div className="text-[10px] sm:text-xs text-[var(--color-muted-text)] line-clamp-1 mt-0.5 font-medium">
                           {row.name_eng}
                         </div>
                       )}
                     </td>
-                    <td className="px-5 py-3.5 text-center">
-                      <span className="inline-block px-3.5 py-1 rounded-2xl font-semibold bg-indigo-50/60 text-indigo-700 border border-indigo-100 text-sm">
+                    <td className="px-4 sm:px-5 py-3.5 text-center whitespace-nowrap">
+                      <span className="inline-block px-3 py-1 rounded-2xl font-semibold bg-indigo-50/60 text-indigo-700 border border-indigo-100 text-xs sm:text-sm">
                         {row.type_name}
                       </span>
                     </td>
-                    <td className="px-5 py-3.5 text-center whitespace-nowrap">
-                      <span className={`inline-flex items-center px-3 py-1 font-bold text-sm rounded-full border ${getStatusStyle(row.status_name)}`}>
+                    <td className="px-4 sm:px-5 py-3.5 text-center whitespace-nowrap">
+                      <span className={`inline-flex items-center px-2.5 py-0.5 sm:px-3 sm:py-1 font-bold text-xs sm:text-sm rounded-full border ${getStatusStyle(row.status_name)}`}>
                         {row.status_name}
                       </span>
                     </td>
-                    <td className="px-5 py-3.5 text-center whitespace-nowrap">
+                    <td className="px-4 sm:px-5 py-3.5 text-center whitespace-nowrap">
                       <div className="flex justify-center gap-1.5">
                         <button
                           onClick={() => handleOpenEditModal(row)}
                           disabled={saving}
-                          className="p-1.5 rounded-lg bg-[var(--color-surface-2)] text-[var(--color-green)] hover:bg-[var(--color-green)] hover:text-white transition-all duration-150 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                          className="p-1.5 rounded-lg bg-[var(--color-surface-2)] text-[var(--color-green)] hover:bg-[var(--color-green)] hover:text-white transition-all duration-150 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed active:scale-90"
                           title="แก้ไข"
                         >
-                          <Pencil className="w-4 h-4" />
+                          <Pencil className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                         </button>
                         <button
                           onClick={() => handleOpenDeleteModal(row)}
                           disabled={saving}
-                          className="p-1.5 rounded-lg bg-[var(--color-error)]/10 text-[var(--color-error)] hover:bg-[var(--color-error)] hover:text-white transition-all duration-150 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                          className="p-1.5 rounded-lg bg-[var(--color-error)]/10 text-[var(--color-error)] hover:bg-[var(--color-error)] hover:text-white transition-all duration-150 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed active:scale-90"
                           title="ลบ"
                         >
-                          <Trash2 className="w-4 h-4" />
+                          <Trash2 className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                         </button>
                       </div>
                     </td>
@@ -236,35 +234,39 @@ export default function ProjectAll() {
           </table>
         </div>
 
-        {/* PAGINATION */}
-        <div className="px-5 py-3 border-t border-[var(--color-surface-3)] flex flex-col sm:flex-row justify-between items-center gap-3 bg-[var(--color-surface)]/10 text-xs">
-          <p className="font-medium text-[var(--color-muted-text)]">
+        {/* ── PAGINATION BAR (Responsive Pagination Block) ── */}
+        <div className="px-4 sm:px-5 py-3 border-t border-[var(--color-surface-3)] flex flex-col sm:flex-row justify-between items-center gap-3 bg-[var(--color-surface)]/10 text-[11px] sm:text-xs">
+          <p className="font-medium text-[var(--color-muted-text)] text-center sm:text-left">
             แสดง {currentItems.length} จาก {filteredProjects.length} โครงการ
           </p>
-          <div className="flex items-center gap-1.5">
+          <div className="flex flex-wrap items-center justify-center gap-1.5 w-full sm:w-auto">
             <button
               onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
               disabled={currentPage === 1}
-              className="px-3 py-1.5 font-semibold rounded-lg border border-[var(--color-border)] bg-white text-[var(--color-muted-text)] hover:bg-[var(--color-surface-2)] disabled:opacity-40 disabled:cursor-not-allowed transition-colors cursor-pointer shadow-sm"
+              className="px-2.5 py-1.5 font-semibold rounded-lg border border-[var(--color-border)] bg-white text-[var(--color-muted-text)] hover:bg-[var(--color-surface-2)] disabled:opacity-40 disabled:cursor-not-allowed transition-colors cursor-pointer shadow-3xs"
             >
               ย้อนกลับ
             </button>
-            {getPageNumbers().map(p => (
-              <button
-                key={p}
-                onClick={() => setCurrentPage(p)}
-                className={`w-8 h-8 font-bold rounded-lg transition-colors cursor-pointer ${currentPage === p
-                  ? "bg-[var(--color-green)] text-white shadow-sm"
-                  : "border border-[var(--color-border)] bg-white text-[var(--color-muted-text)] hover:bg-[var(--color-surface-2)]"
-                  }`}
-              >
-                {p}
-              </button>
-            ))}
+            
+            <div className="flex items-center gap-1 max-w-[12rem] sm:max-w-none overflow-x-auto custom-horizontal-scrollbar py-0.5">
+              {getPageNumbers().map(p => (
+                <button
+                  key={p}
+                  onClick={() => setCurrentPage(p)}
+                  className={`w-7 h-7 sm:w-8 sm:h-8 shrink-0 font-bold rounded-lg transition-colors cursor-pointer text-[11px] sm:text-xs ${currentPage === p
+                    ? "bg-[var(--color-green)] text-white shadow-3xs"
+                    : "border border-[var(--color-border)] bg-white text-[var(--color-muted-text)] hover:bg-[var(--color-surface-2)]"
+                    }`}
+                >
+                  {p}
+                </button>
+              ))}
+            </div>
+
             <button
               onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
               disabled={currentPage === totalPages || totalPages === 0}
-              className="px-3 py-1.5 font-semibold rounded-lg border border-[var(--color-border)] bg-white text-[var(--color-muted-text)] hover:bg-[var(--color-surface-2)] disabled:opacity-40 disabled:cursor-not-allowed transition-colors shadow-sm cursor-pointer"
+              className="px-2.5 py-1.5 font-semibold rounded-lg border border-[var(--color-border)] bg-white text-[var(--color-muted-text)] hover:bg-[var(--color-surface-2)] disabled:opacity-40 disabled:cursor-not-allowed transition-colors shadow-3xs cursor-pointer"
             >
               ถัดไป
             </button>
@@ -272,7 +274,7 @@ export default function ProjectAll() {
         </div>
       </div>
 
-      <p className="text-center text-sm text-[var(--color-disabled)] mt-6 font-medium">
+      <p className="text-center text-xs sm:text-sm text-[var(--color-disabled)] mt-6 font-medium">
         Copyright © 2026 สถาบันเศรษฐกิจพอเพียง
       </p>
 
@@ -284,6 +286,23 @@ export default function ProjectAll() {
         onSave={handleSaveProject}
         saving={saving}
       />
+
+      {/* แถบจัดแต่ง Scrollbar แนวนอนของตารางบนจอมือถือ */}
+      <style jsx global>{`
+        .custom-horizontal-scrollbar::-webkit-scrollbar {
+          height: 4px;
+        }
+        .custom-horizontal-scrollbar::-webkit-scrollbar-track {
+          background: transparent;
+        }
+        .custom-horizontal-scrollbar::-webkit-scrollbar-thumb {
+          background: var(--color-surface-3);
+          border-radius: 999px;
+        }
+        .custom-horizontal-scrollbar::-webkit-scrollbar-thumb:hover {
+          background: var(--color-disabled);
+        }
+      `}</style>
     </div>
   );
 }

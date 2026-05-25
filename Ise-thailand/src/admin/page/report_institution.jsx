@@ -149,9 +149,10 @@ export default function ReportInstitution() {
               ))}
             </select>
           </div>
+          {/* เปลี่ยนสีปุ่มประมวลผลเป็นสีเขียวแบรนด์หลัก */}
           <button
             type="submit"
-            className="px-4 py-2 mt-6 bg-slate-600 text-white text-sm font-semibold rounded-lg hover:bg-slate-700 transition-colors cursor-pointer shadow-xs flex items-center gap-1.5"
+            className="px-4 py-2 mt-6 bg-[var(--color-green)] text-white text-sm font-semibold rounded-lg hover:bg-[var(--color-forest-green)] transition-colors cursor-pointer shadow-xs flex items-center gap-1.5"
           >
             <RefreshCw className="w-4 h-4" />
             <span>ประมวลผล</span>
@@ -184,12 +185,13 @@ export default function ReportInstitution() {
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="bg-[#2B6CB0] border-b border-slate-300 text-white text-sm print:bg-white print:text-black">
-                <th className="px-4 py-3 font-bold w-16 text-center border-r border-blue-500/30 print:text-black">ลำดับที่</th>
-                <th className="px-4 py-3 font-bold border-r border-blue-500/30 print:text-black">ชื่อโครงการ</th>
-                <th className="px-4 py-3 font-bold w-44 border-r border-blue-500/30 print:text-black">ชื่อหัวหน้าโครงการ</th>
-                <th className="px-4 py-3 font-bold w-40 text-right border-r border-blue-500/30 print:text-black">งบประมาณ</th>
-                <th className="px-4 py-3 font-bold w-32 text-center border-r border-blue-500/30 print:text-black">วันที่ทำสัญญา</th>
+              {/* เปลี่ยนสีหัวตารางจากระบบสีเดิมเป็นสีเขียวป่าไม้ (Forest Green) */}
+              <tr className="bg-[var(--color-surface-2)] border-b border-slate-300 text-black text-sm print:bg-white print:text-black">
+                <th className="px-4 py-3 font-bold w-16 text-center border-r border-[var(--color-green-light)]/30 print:text-black">ลำดับที่</th>
+                <th className="px-4 py-3 font-bold border-r border-[var(--color-green-light)]/30 print:text-black">ชื่อโครงการ</th>
+                <th className="px-4 py-3 font-bold w-44 border-r border-[var(--color-green-light)]/30 print:text-black">ชื่อหัวหน้าโครงการ</th>
+                <th className="px-4 py-3 font-bold w-40 text-right border-r border-[var(--color-green-light)]/30 print:text-black">งบประมาณ</th>
+                <th className="px-4 py-3 font-bold w-32 text-center border-r border-[var(--color-green-light)]/30 print:text-black">วันที่ทำสัญญา</th>
                 <th className="px-4 py-3 font-bold w-32 text-center print:text-black">วันที่สิ้นสุดสัญญา</th>
               </tr>
             </thead>
@@ -208,7 +210,8 @@ export default function ReportInstitution() {
                     <td className="px-4 py-3.5 text-slate-600 font-medium border-r border-slate-100 print:text-black">
                       {row.researcher_name || "ไม่ระบุ"}
                     </td>
-                    <td className="px-4 py-3.5 text-right font-mono font-semibold text-slate-700 border-r border-slate-100 print:text-black">
+                    {/* เปลี่ยนตัวหนังสือมูลค่างบประมาณให้แมตช์เข้ากับสีเขียวป่าไม้ */}
+                    <td className="px-4 py-3.5 text-right font-mono font-semibold text-[var(--color-forest-green)] border-r border-slate-100 print:text-black">
                       {formatMoney(row.cost)}
                     </td>
                     <td className="px-4 py-3.5 text-center font-mono text-slate-500 border-r border-slate-100 print:text-black">
@@ -236,8 +239,9 @@ export default function ReportInstitution() {
               Previous
             </button>
             {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
+              /* ปรับเปลี่ยนสีปุ่มตัวเลขระบุหน้า (Pagination) หน้าปัจจุบันให้แสดงเป็นสีเขียวแบรนด์หลัก */
               <button key={p} onClick={() => setCurrentPage(p)}
-                className={`w-8 h-8 font-extrabold rounded-lg transition-all cursor-pointer ${currentPage === p ? "bg-slate-200 text-slate-700 border border-slate-300 shadow-inner" : "border border-slate-200 bg-white text-slate-500 hover:bg-slate-100"}`}>
+                className={`w-8 h-8 font-extrabold rounded-lg transition-all cursor-pointer ${currentPage === p ? "bg-[var(--color-green)] text-white border border-[var(--color-forest-green)] shadow-inner" : "border border-slate-200 bg-white text-slate-500 hover:bg-slate-100"}`}>
                 {p}
               </button>
             ))}
