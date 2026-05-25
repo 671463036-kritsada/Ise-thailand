@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState , useEffect} from "react";
 import { Outlet, Routes, Route, Navigate } from "react-router-dom";
 import Sidebar from "./sideber/Sidebar";
 import Topbar from "./topbar/Topbar";
@@ -26,6 +26,20 @@ import ActivityPage from "./page/activity_page";
 
 function AdminShell() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
+
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth < 768) {
+        setSidebarOpen(false);
+      } else {
+        setSidebarOpen(true);
+      }
+    };
+
+    handleResize(); // เรียกครั้งแรกตอน mount
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   return (
     <div
