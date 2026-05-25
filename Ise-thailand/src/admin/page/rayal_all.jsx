@@ -92,7 +92,6 @@ export default function RoyalAll() {
   };
 
   // ── SAVE (CREATE / UPDATE / DELETE) ──
-  // ── SAVE (CREATE / UPDATE / DELETE) ──
   const handleSaveProject = async ({ formValues, fileValues }) => {
     try {
       if (modalMode === "delete") {
@@ -102,12 +101,12 @@ export default function RoyalAll() {
       } else if (modalMode === "edit") {
         const payload = new FormData();
 
-        // 1. ส่งข้อมูล text/string ทั่วไปเข้า payload
+        // ส่งข้อมูล text/string ทั่วไปเข้า payload
         Object.entries(formValues).forEach(([key, val]) => {
           if (val !== undefined && val !== null) payload.append(key, val);
         });
 
-        // 🔄 [เพิ่มจุดนี้] ดักส่งชื่อไฟล์ภาพเก่าที่มีอยู่ก่อนแก้ไข เพื่อให้ Backend เอาไปสั่งลบในโฟลเดอร์ uploads
+        // ดักส่งชื่อไฟล์ภาพเก่าที่มีอยู่ก่อนแก้ไข เพื่อให้ Backend เอาไปสั่งลบในโฟลเดอร์ uploads
         const imageFields = ["img_banner", "img_1", "img_2", "img_3", "img_4", "img_5", "infographic"];
         imageFields.forEach((field) => {
           // ดึงชื่อไฟล์เดิมที่เคยมีอยู่ใน database (จากตัวแปร selectedData ที่ใช้เปิดแก้ไข)
@@ -128,7 +127,7 @@ export default function RoyalAll() {
         Swal.fire({ title: "บันทึกสำเร็จ!", text: "ปรับปรุงข้อมูลโครงการแล้ว", icon: "success", confirmButtonColor: "var(--color-green)" });
 
       } else {
-        // โหมด "add" (เพิ่มรูปภาพใหม่) ปล่อยไว้ตามเดิมได้เลยครับ ไม่ต้องแก้ไขอะไร
+        // โหมด "add" (เพิ่มรูปภาพใหม่)
         const payload = new FormData();
         Object.entries(formValues).forEach(([key, val]) => {
           if (val !== undefined && val !== null) payload.append(key, val);

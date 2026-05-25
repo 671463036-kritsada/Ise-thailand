@@ -3,15 +3,19 @@ import { X, Upload, ImageIcon } from "lucide-react";
 import Swal from "sweetalert2";
 import api from "../../api/axios";
 
+import { UPLOADS_URL } from "../../constants/uploads_url";
+
+
 // ── helper: สร้าง input file + preview ──
 function ImageUploadField({ label, fieldName, currentFileName, fileValue, onChange, onClear, disabled, required }) {
   const inputRef = useRef(null);
 
   // ตรวจสอบ URL สำหรับแสดงภาพตัวอย่าง
-  const previewUrl = fileValue
+
+      const previewUrl = fileValue
     ? URL.createObjectURL(fileValue)
     : currentFileName
-      ? `/uploads/${currentFileName}` // ปรับ base path ให้ตรงกับ server
+      ? `${UPLOADS_URL}${currentFileName}` // ปรับ base path ให้ตรงกับ server
       : null;
 
   return (
@@ -187,7 +191,7 @@ export default function RoyalModel({ isOpen, onClose, projectData, mode, onSave 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // 🔄 ถ้าปุ่มโดนบล็อกอยู่จากซับมิตก่อนหน้า ไม่ให้ทำซ้ำอีก
+    // ถ้าปุ่มโดนบล็อกอยู่จากซับมิตก่อนหน้า ไม่ให้ทำซ้ำอีก
     if (isSubmitting) return;
 
     if (isDeleteMode) {
@@ -206,7 +210,7 @@ export default function RoyalModel({ isOpen, onClose, projectData, mode, onSave 
     }
 
     try {
-      setIsSubmitting(true); // 🔄 บล็อกการคลิกเพิ่มเติมทันทีหลังกดปุ่ม
+      setIsSubmitting(true); // บล็อกการคลิกเพิ่มเติมทันทีหลังกดปุ่ม
       
       // ส่งออกทั้ง formValues และ fileValues ให้ parent จัดการ FormData
       // เติมคำสั่ง await เพื่อให้กระบวนการฝั่ง parent ทำเสร็จสิ้นก่อนล้างสเตท
@@ -214,7 +218,7 @@ export default function RoyalModel({ isOpen, onClose, projectData, mode, onSave 
       
     } catch (error) {
       console.error("เกิดข้อผิดพลาดตอนบันทึกข้อมูล:", error);
-      setIsSubmitting(false); // 🔄 ปลดล็อกปุ่มให้กดใหม่ได้หากเกิด Error ระหว่างทาง
+      setIsSubmitting(false); //  ปลดล็อกปุ่มให้กดใหม่ได้หากเกิด Error ระหว่างทาง
     }
   };
 
