@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { X } from "lucide-react";
+import { X, BookOpen, CircleAlert } from "lucide-react";
 import Swal from "sweetalert2";
 
 export default function PlanAllModel({ isOpen, onClose, planData, mode, onSave }) {
@@ -21,7 +21,6 @@ export default function PlanAllModel({ isOpen, onClose, planData, mode, onSave }
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     if (isDeleteMode) {
       const result = await Swal.fire({
         title: "ยืนยันการลบแผนงาน?",
@@ -41,88 +40,88 @@ export default function PlanAllModel({ isOpen, onClose, planData, mode, onSave }
         return;
       }
     }
-
     onSave(formValues);
   };
 
+  const inputClass = "w-full px-3 py-2 border border-[var(--color-border)] rounded-xl text-sm bg-white text-[var(--color-deep-text)] focus:outline-none focus:border-[var(--color-border-focus)] focus:ring-2 focus:ring-[var(--color-green-light)]/40 transition-all resize-none placeholder:text-[var(--color-muted-text)] disabled:bg-[var(--color-surface-2)] disabled:text-[var(--color-disabled)]";
+  const labelClass = "block text-xs font-bold text-[var(--color-muted-text)] uppercase tracking-wide mb-1.5";
+
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 font-sans antialiased text-[var(--color-deep-text)]">
-      <div className={`bg-white rounded-2xl shadow-2xl border w-full max-w-lg overflow-hidden ${isDeleteMode ? "border-[var(--color-error)]/30" : "border-[var(--color-border)]"}`}>
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/30 backdrop-blur-sm font-sans antialiased">
+      <div className="bg-white rounded-3xl shadow-2xl w-full max-w-lg overflow-hidden">
 
-        <header className="flex items-center justify-between px-6 py-4 bg-white border-b border-[var(--color-surface-3)]">
-          <h2 className={`text-2xl font-bold ${isDeleteMode ? "text-[var(--color-error)]" : "text-[var(--color-forest-green)]"}`}>
-            {isDeleteMode ? "ยืนยันการลบแผนงาน" : planData ? "แก้ไขข้อมูลแผนงาน" : "เพิ่มแผนงานใหม่"}
-          </h2>
-          <button onClick={onClose} className="p-1.5 rounded-lg text-[var(--color-disabled)] hover:bg-[var(--color-surface-2)] hover:text-[var(--color-deep-text)] transition-colors cursor-pointer">
-            <X className="w-6 h-6" />
+        {/* HEADER */}
+        <div className="flex items-center justify-between px-6 py-4 border-b border-[var(--color-surface-3)]">
+          <div className="flex items-center gap-3">
+            <div className={`w-9 h-9 rounded-xl flex items-center justify-center ${isDeleteMode ? "bg-red-50" : "bg-[var(--color-green-light)]/20"}`}>
+              <BookOpen className={`w-4 h-4 ${isDeleteMode ? "text-red-400" : "text-[var(--color-green)]"}`} />
+            </div>
+            <div>
+              <h2 className={`text-base font-extrabold ${isDeleteMode ? "text-red-500" : "text-[var(--color-deep-text)]"}`}>
+                {isDeleteMode ? "ยืนยันการลบแผนงาน" : planData ? "แก้ไขข้อมูลแผนงาน" : "เพิ่มแผนงานใหม่"}
+              </h2>
+              <p className="text-xs text-[var(--color-muted-text)] mt-0.5">
+                {isDeleteMode ? "โปรดตรวจสอบข้อมูลก่อนยืนยัน" : "กรอกชื่อแผนงานวิจัย"}
+              </p>
+            </div>
+          </div>
+          <button onClick={onClose} className="p-2 rounded-xl hover:bg-[var(--color-surface-2)] text-[var(--color-muted-text)] transition-colors cursor-pointer">
+            <X className="w-4 h-4" />
           </button>
-        </header>
+        </div>
 
+        {/* BODY */}
         <form onSubmit={handleSubmit}>
-          <div className={`p-6 space-y-5 ${isDeleteMode ? "bg-[var(--color-error)]/5" : "bg-white"}`}>
+          <div className="px-6 py-5 space-y-4">
 
             {formValues.plan_id && (
-              <div className="flex flex-col gap-1.5">
-                <label className="text-base font-bold text-slate-700">รหัสประจำแผนงาน</label>
-                <input
-                  type="text"
-                  disabled
-                  value={String(formValues.plan_id).padStart(2, "0")}
-                  className="w-full px-4 py-2.5 border border-[var(--color-border)] rounded-xl text-lg bg-[var(--color-surface-2)] text-[var(--color-muted-text)] font-mono font-bold cursor-not-allowed"
-                />
+              <div>
+                <label className={labelClass}>รหัสแผนงาน</label>
+                <input type="text" disabled value={String(formValues.plan_id).padStart(2, "0")}
+                  className={`${inputClass} font-mono font-bold cursor-not-allowed`} />
               </div>
             )}
 
-            {/* ชื่อแผนงาน (ภาษาไทย) */}
-            <div className="flex flex-col gap-1.5">
-              <label className="text-base font-bold text-slate-700">
-                ชื่อแผนงานวิจัย <span className="text-[var(--color-error)]">*</span>
-              </label>
-              <textarea
-                name="plan_name"
-                rows="3"
-                placeholder="กรอกชื่อแผนงานภาษาไทย..."
-                disabled={isDeleteMode}
-                value={formValues.plan_name}
-                onChange={handleChange}
-                className="w-full px-4 py-3 border border-[var(--color-border)] rounded-xl text-base focus:outline-none focus:border-[var(--color-border-focus)] focus:ring-2 focus:ring-[var(--color-green-light)]/50 transition-all resize-none bg-white disabled:bg-[var(--color-surface-2)] disabled:text-[var(--color-disabled)]"
-              />
+            <div>
+              <label className={labelClass}>ชื่อแผนงานวิจัย <span className="text-red-400 normal-case tracking-normal">*</span></label>
+              <textarea name="plan_name" rows={3} placeholder="กรอกชื่อแผนงานภาษาไทย..."
+                disabled={isDeleteMode} value={formValues.plan_name} onChange={handleChange}
+                className={inputClass} />
             </div>
 
-            {/* ชื่อแผนงาน (ภาษาอังกฤษ) */}
-            <div className="flex flex-col gap-1.5">
-              <label className="text-base font-bold text-slate-700">
-                ชื่อแผนงานวิจัย (ภาษาอังกฤษ)
-              </label>
-              <textarea
-                name="plan_name_eng"
-                rows="3"
-                placeholder="กรอกชื่อแผนงานภาษาอังกฤษ... (ไม่บังคับ)"
-                disabled={isDeleteMode}
-                value={formValues.plan_name_eng ?? ""}
-                onChange={handleChange}
-                className="w-full px-4 py-3 border border-[var(--color-border)] rounded-xl text-base focus:outline-none focus:border-[var(--color-border-focus)] focus:ring-2 focus:ring-[var(--color-green-light)]/50 transition-all resize-none bg-white disabled:bg-[var(--color-surface-2)] disabled:text-[var(--color-disabled)]"
-              />
+            <div>
+              <label className={labelClass}>ชื่อแผนงานวิจัย (English)</label>
+              <textarea name="plan_name_eng" rows={3} placeholder="กรอกชื่อแผนงานภาษาอังกฤษ..."
+                disabled={isDeleteMode} value={formValues.plan_name_eng ?? ""} onChange={handleChange}
+                className={inputClass} />
             </div>
 
             {isDeleteMode && (
-              <p className="text-sm font-medium text-[var(--color-error)] bg-red-50 p-3 rounded-lg border border-red-100">
-                ⚠️ คำเตือน: การลบแผนงานจะส่งผลให้ข้อมูลแผนงานนี้หายไปจากระบบอย่างถาวร
-              </p>
+              <div className="flex items-center gap-2 p-3 bg-red-50 border border-red-100 rounded-xl">
+                <span className="text-red-400 text-sm mt-0.5"><CircleAlert /></span>
+                <p className="text-xs font-medium text-red-500">การลบแผนงานจะส่งผลให้ข้อมูลหายไปจากระบบอย่างถาวร</p>
+              </div>
             )}
           </div>
 
-          <footer className="px-6 py-4 border-t border-[var(--color-surface-3)] bg-[var(--color-surface)]/20 flex items-center justify-end gap-3">
-            <button type="button" onClick={onClose}
-              className="px-5 py-2 text-base font-semibold text-[var(--color-muted-text)] border border-[var(--color-border)] hover:bg-white bg-[var(--color-surface)]/40 rounded-xl transition-colors cursor-pointer">
-              ยกเลิก
-            </button>
-            <button type="submit"
-              className={`px-6 py-2 text-base font-bold text-white rounded-xl transition-all shadow-sm active:scale-95 cursor-pointer ${isDeleteMode ? "bg-[var(--color-error)] hover:bg-[var(--color-error)]/90" : "bg-[var(--color-green)] hover:bg-[var(--color-forest-green)]"}`}>
-              {isDeleteMode ? "ยืนยันการลบ" : "บันทึกข้อมูล"}
-            </button>
-          </footer>
+          {/* FOOTER */}
+          <div className="px-6 py-4 border-t border-[var(--color-surface-3)] flex items-center justify-between bg-[var(--color-surface)]/50">
+            <p className="text-xs text-[var(--color-muted-text)]">
+              {!isDeleteMode && <><span className="text-red-400">*</span> จำเป็นต้องกรอก</>}
+            </p>
+            <div className="flex gap-2">
+              <button type="button" onClick={onClose}
+                className="px-5 py-2.5 text-sm font-bold text-[var(--color-muted-text)] border border-[var(--color-border)] hover:bg-[var(--color-surface-2)] rounded-xl transition-colors cursor-pointer">
+                ยกเลิก
+              </button>
+              <button type="submit"
+                className={`px-5 py-2.5 text-sm font-bold text-white rounded-xl transition-colors cursor-pointer ${isDeleteMode ? "bg-red-500 hover:bg-red-600" : "bg-[var(--color-green)] hover:bg-[var(--color-forest-green)]"}`}>
+                {isDeleteMode ? "ยืนยันการลบ" : "บันทึกข้อมูล"}
+              </button>
+            </div>
+          </div>
         </form>
+
       </div>
     </div>
   );
