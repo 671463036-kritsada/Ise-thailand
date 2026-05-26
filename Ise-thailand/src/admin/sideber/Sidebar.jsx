@@ -1,19 +1,32 @@
 import { useState, useEffect } from "react";
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import { LayoutDashboard, Boxes, Folder, BarChart3, LogOut, ChevronDown } from "lucide-react";
-import { useAuth } from '../../hook/useAuth'  // เพิ่ม s
+import { useAuth } from '../../hook/useAuth'
 import api from '../../api/axios'
-
 import Swal from 'sweetalert2'
 
-export default function Sidebar({ open }) {
+export default function Sidebar() {
   const location = useLocation()
   const navigator = useNavigate()
   const { user } = useAuth()
   const [assetTypes, setAssetTypes] = useState([])
   const [activityTypes, setActivityTypes] = useState([])
-
   const [openDropdown, setOpenDropdown] = useState("")
+  const [hovered, setHovered] = useState(false)
+
+  // บน mobile ถ้าจอเล็กกว่า md ให้ซ่อน sidebar ไว้ก่อน
+  const [isMobile, setIsMobile] = useState(false)
+  const [mobileOpen, setMobileOpen] = useState(false)
+
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth < 768)
+    check()
+    window.addEventListener('resize', check)
+    return () => window.removeEventListener('resize', check)
+  }, [])
+
+  // expanded = เปิดเต็ม label หรือเปล่า
+  const expanded = isMobile ? mobileOpen : hovered
 
   useEffect(() => {
     api.get('/asset/count')
@@ -26,7 +39,7 @@ export default function Sidebar({ open }) {
       .then(res => setActivityTypes(res.data.data || []))
       .catch(err => console.error(err))
   }, [])
-  // navItems เปลี่ยนมาเป็น function เพื่อรับ assetTypes
+
   const navItems = [
     { icon: LayoutDashboard, label: "ภาพรวม", href: "/admin/dashboard" },
     {
@@ -43,7 +56,6 @@ export default function Sidebar({ open }) {
       label: "งานสถาบันเศรษฐกิจฯ",
       children: [
         { label: "โครงการ/งานวิจัย", href: "/admin/project_all" },
-        // loop จาก API
         ...assetTypes.map(type => ({
           label: `${type.assettype_name} (${type.total})`,
           href: `/admin/asset/${type.assettype_id}`
@@ -56,7 +68,6 @@ export default function Sidebar({ open }) {
         { label: "แผน", href: "/admin/plans" },
         { label: "แผนย่อย", href: "/admin/sub-plans" },
         { label: "จัดการวีดีโอหน้าแรก", href: "/admin/video-landing" },
-        // { label: 'ตรวจสอบรูปภาพ Royal', href: '/admin/royal-images-check' }
       ]
     },
     {
@@ -70,151 +81,181 @@ export default function Sidebar({ open }) {
     }
   ]
 
-  // ส่วนที่เหลือเหมือนเดิมทุกอย่าง
-
   useEffect(() => {
     navItems.forEach((item) => {
       if (item.children) {
-        const isChildActive = item.children.some(child => location.pathname === child.href);
-        if (isChildActive) {
-          setOpenDropdown(item.label);
-        }
+        const isChildActive = item.children.some(child => location.pathname === child.href)
+        if (isChildActive) setOpenDropdown(item.label)
       }
-    });
-  }, [location.pathname]);
+    })
+  }, [location.pathname])
 
   const toggleDropdown = (label) => {
-    setOpenDropdown(openDropdown === label ? "" : label);
-  };
+    setOpenDropdown(openDropdown === label ? "" : label)
+  }
+
+  const handleLogout = async () => {
+    const result = await Swal.fire({
+      title: 'ออกจากระบบ?',
+      text: 'คุณต้องการออกจากระบบใช่หรือไม่?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'ออกจากระบบ',
+      cancelButtonText: 'ยกเลิก',
+      confirmButtonColor: '#b85c4a',
+      cancelButtonColor: '#404e3b',
+    })
+    if (result.isConfirmed) {
+      localStorage.removeItem('token')
+      navigator('/login')
+    }
+  }
 
   return (
-    // ✅ แก้แล้ว
-      <aside
-        className={`${open ? "w-64" : "w-20"} transition-all duration-300 bg-white border-r border-[var(--color-border)] flex flex-col shrink-0 shadow-sm z-20 font-sans antialiased text-[var(--color-deep-text)] h-full justify-between`}
-      >
-      <div>
-        {/* Logo Section */}
-        <div className="flex items-center gap-3 px-4 py-4 border-b border-[var(--color-surface-3)]">
-          <img width={40} src="../../logo.jpg" alt="IMG" />
-          {open && (
-            <div>
-              <h2 className="text-sm font-extrabold text-[var(--color-forest-green)] tracking-tight leading-tight">ระบบสารสนเทศ</h2>
-              <p className="text-[9px] text-[var(--color-muted-text)] font-bold tracking-wider uppercase leading-tight">สถาบันเศรษฐกิจพอเพียง</p>
-            </div>
-          )}
-        </div>
+    <>
+      {/* Mobile overlay */}
+      {isMobile && mobileOpen && (
+        <div
+          className="fixed inset-0 bg-black/30 z-10"
+          onClick={() => setMobileOpen(false)}
+        />
+      )}
 
-        {/* Navigation Area */}
-        <nav className="py-3 overflow-y-auto max-h-[calc(100vh-140px)] custom-scrollbar">
-          {open && (
-            <p className="px-4 pb-1 text-[11px] font-bold uppercase tracking-widest text-[var(--color-muted-text)]">
-              Main Navigation
-            </p>
-          )}
-          <ul className="space-y-0.5 px-2">
-            {navItems.map((item) => {
-              const hasChildren = !!item.children;
-              const isChildActive = hasChildren && item.children.some(child => location.pathname === child.href);
-              const isDropdownOpen = openDropdown === item.label;
-              const IconComponent = item.icon;
-
-              if (hasChildren) {
-                return (
-                  <li key={item.label} className="flex flex-col">
-                    <button
-                      onClick={() => toggleDropdown(item.label)}
-                      className={`flex items-center justify-between w-full px-3 py-2 rounded-xl text-sm font-bold transition-all duration-150 group cursor-pointer
-                        ${isChildActive
-                          ? "bg-[var(--color-surface-2)] text-[var(--color-green)] shadow-sm"
-                          : "text-[var(--color-muted-text)] hover:bg-[var(--color-surface)]/40 hover:text-[var(--color-deep-text)]"
-                        }`}
-                    >
-                      <div className="flex items-center gap-2.5">
-                        <IconComponent className={`w-4 h-4 shrink-0 transition-colors ${isChildActive ? "text-[var(--color-green)]" : "text-[var(--color-muted-text)] group-hover:text-[var(--color-deep-text)]"}`} />
-                        {open && <span>{item.label}</span>}
-                      </div>
-                      {open && (
-                        <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-200 text-[var(--color-muted-text)] ${isDropdownOpen ? "rotate-180" : ""}`} />
-                      )}
-                    </button>
-
-                    {/* รายการเมนูลูกย่อย - กระชับขนาดตัวอักษรลงมาอยู่ที่ระดับ text-xs */}
-                    {isDropdownOpen && open && (
-                      <ul className="mt-0.5 ml-4 border-l-2 border-[var(--color-surface-3)] pl-2 space-y-0.5 animate-in fade-in duration-150">
-                        {item.children.map((child) => (
-                          <li key={child.label}>
-                            <NavLink
-                              to={child.href}
-                              className={({ isActive }) => `
-                                block flex items-center px-3 py-1.5 rounded-lg text-xs font-semibold transition-all duration-150
-                                ${isActive
-                                  ? "text-[var(--color-green)] font-bold bg-[var(--color-surface-2)]"
-                                  : "text-[var(--color-muted-text)] hover:text-[var(--color-deep-text)] hover:bg-[var(--color-surface)]/30"
-                                }
-                              `}
-                            >
-                              {child.label}
-                            </NavLink>
-                          </li>
-                        ))}
-                      </ul>
-                    )}
-                  </li>
-                );
-              }
-
-              return (
-                <li key={item.label}>
-                  <NavLink
-                    to={item.href}
-                    className={({ isActive }) => `
-                      flex items-center gap-2.5 px-3 py-2 rounded-xl text-sm font-bold transition-all duration-150 group
-                      ${isActive
-                        ? "bg-[var(--color-surface-2)] text-[var(--color-green)] shadow-sm"
-                        : "text-[var(--color-muted-text)] hover:bg-[var(--color-surface)]/40 hover:text-[var(--color-deep-text)]"
-                      }
-                    `}
-                  >
-                    {({ isActive }) => (
-                      <>
-                        <IconComponent className={`w-4 h-4 shrink-0 transition-colors ${isActive ? "text-[var(--color-green)]" : "text-[var(--color-muted-text)] group-hover:text-[var(--color-deep-text)]"}`} />
-                        {open && <span>{item.label}</span>}
-                      </>
-                    )}
-                  </NavLink>
-                </li>
-              );
-            })}
-          </ul>
-        </nav>
-      </div>
-
-
-      <div className="p-3 border-t border-[var(--color-surface-3)] bg-[var(--color-surface)]/10">
+      {/* Mobile hamburger button */}
+      {isMobile && (
         <button
-          onClick={async () => {
-            const result = await Swal.fire({
-              title: 'ออกจากระบบ?',
-              text: 'คุณต้องการออกจากระบบใช่หรือไม่?',
-              icon: 'warning',
-              showCancelButton: true,
-              confirmButtonText: 'ออกจากระบบ',
-              cancelButtonText: 'ยกเลิก',
-              confirmButtonColor: '#b85c4a',
-              cancelButtonColor: '#404e3b',
-            })
-            if (result.isConfirmed) {
-              localStorage.removeItem('token')
-              navigator('/login')
-            }
-          }}
-          className={`flex items-center justify-center rounded-xl bg-rose-50 text-rose-600 hover:bg-rose-100 transition-all duration-200 group font-bold text-xs cursor-pointer
-    ${open ? "w-full px-3 py-2 gap-2 shadow-sm shadow-rose-100" : "w-8 h-8"}`}
+          onClick={() => setMobileOpen(v => !v)}
+          className="fixed top-3.5 left-4 z-40 w-8 h-8 rounded-lg bg-white border border-[var(--color-border)] shadow flex items-center justify-center text-[var(--color-muted-text)]"
         >
-          <LogOut className="w-3.5 h-3.5 shrink-0 group-hover:scale-105 transition-transform" />
-          {open && <span>ออกจากระบบ</span>}
+          <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+            <path d="M3 12h18M3 6h18M3 18h18" />
+          </svg>
         </button>
-      </div>
-    </aside>
-  );
+      )}
+
+      <aside
+        onMouseEnter={() => !isMobile && setHovered(true)}
+        onMouseLeave={() => !isMobile && setHovered(false)}
+        className={`
+          ${isMobile
+            ? `fixed top-0 left-0 h-full z-20 w-64 transition-transform duration-300 ${mobileOpen ? 'translate-x-0' : '-translate-x-full'}`
+            : `relative h-full z-20 transition-all duration-300 ${hovered ? 'w-64' : 'w-[68px]'}`
+          }
+          bg-white border-r border-[var(--color-border)] flex flex-col shrink-0 shadow-sm font-sans antialiased text-[var(--color-deep-text)]
+        `}
+      >
+        <div className="flex flex-col h-full justify-between overflow-hidden">
+          <div>
+            {/* Logo */}
+            <div className="flex items-center gap-3 px-4 py-4 border-b border-[var(--color-surface-3)]">
+              <img width={40} className="shrink-0" src="../../logo.jpg" alt="IMG" />
+              {expanded && (
+                <div className="whitespace-nowrap overflow-hidden">
+                  <h2 className="text-sm font-extrabold text-[var(--color-forest-green)] tracking-tight leading-tight">ระบบสารสนเทศ</h2>
+                  <p className="text-[9px] text-[var(--color-muted-text)] font-bold tracking-wider uppercase leading-tight">สถาบันเศรษฐกิจพอเพียง</p>
+                </div>
+              )}
+            </div>
+
+            {/* Nav */}
+            <nav className="py-3 overflow-y-auto max-h-[calc(100vh-140px)] custom-scrollbar">
+              {expanded && (
+                <p className="px-4 pb-1 text-[11px] font-bold uppercase tracking-widest text-[var(--color-muted-text)] whitespace-nowrap">
+                  Main Navigation
+                </p>
+              )}
+              <ul className="space-y-0.5 px-2">
+                {navItems.map((item) => {
+                  const hasChildren = !!item.children
+                  const isChildActive = hasChildren && item.children.some(child => location.pathname === child.href)
+                  const isDropdownOpen = openDropdown === item.label
+                  const IconComponent = item.icon
+
+                  if (hasChildren) {
+                    return (
+                      <li key={item.label} className="flex flex-col">
+                        <button
+                          onClick={() => expanded && toggleDropdown(item.label)}
+                          className={`flex items-center justify-between w-full px-3 py-2 rounded-xl text-sm font-bold transition-all duration-150 group cursor-pointer
+                            ${isChildActive
+                              ? "bg-[var(--color-surface-2)] text-[var(--color-green)] shadow-sm"
+                              : "text-[var(--color-muted-text)] hover:bg-[var(--color-surface)]/40 hover:text-[var(--color-deep-text)]"
+                            }`}
+                        >
+                          <div className="flex items-center gap-2.5">
+                            <IconComponent className={`w-4 h-4 shrink-0 transition-colors ${isChildActive ? "text-[var(--color-green)]" : "text-[var(--color-muted-text)] group-hover:text-[var(--color-deep-text)]"}`} />
+                            {expanded && <span className="whitespace-nowrap">{item.label}</span>}
+                          </div>
+                          {expanded && (
+                            <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-200 text-[var(--color-muted-text)] ${isDropdownOpen ? "rotate-180" : ""}`} />
+                          )}
+                        </button>
+
+                        {isDropdownOpen && expanded && (
+                          <ul className="mt-0.5 ml-4 border-l-2 border-[var(--color-surface-3)] pl-2 space-y-0.5 animate-in fade-in duration-150">
+                            {item.children.map((child) => (
+                              <li key={child.label}>
+                                <NavLink
+                                  to={child.href}
+                                  onClick={() => isMobile && setMobileOpen(false)}
+                                  className={({ isActive }) => `
+                                    block px-3 py-1.5 rounded-lg text-xs font-semibold transition-all duration-150 whitespace-nowrap
+                                    ${isActive
+                                      ? "text-[var(--color-green)] font-bold bg-[var(--color-surface-2)]"
+                                      : "text-[var(--color-muted-text)] hover:text-[var(--color-deep-text)] hover:bg-[var(--color-surface)]/30"
+                                    }
+                                  `}
+                                >
+                                  {child.label}
+                                </NavLink>
+                              </li>
+                            ))}
+                          </ul>
+                        )}
+                      </li>
+                    )
+                  }
+
+                  return (
+                    <li key={item.label}>
+                      <NavLink
+                        to={item.href}
+                        onClick={() => isMobile && setMobileOpen(false)}
+                        className={({ isActive }) => `
+                          flex items-center gap-2.5 px-3 py-2 rounded-xl text-sm font-bold transition-all duration-150 group
+                          ${isActive
+                            ? "bg-[var(--color-surface-2)] text-[var(--color-green)] shadow-sm"
+                            : "text-[var(--color-muted-text)] hover:bg-[var(--color-surface)]/40 hover:text-[var(--color-deep-text)]"
+                          }
+                        `}
+                      >
+                        {({ isActive }) => (
+                          <>
+                            <IconComponent className={`w-4 h-4 shrink-0 ${isActive ? "text-[var(--color-green)]" : "text-[var(--color-muted-text)] group-hover:text-[var(--color-deep-text)]"}`} />
+                            {expanded && <span className="whitespace-nowrap">{item.label}</span>}
+                          </>
+                        )}
+                      </NavLink>
+                    </li>
+                  )
+                })}
+              </ul>
+            </nav>
+          </div>
+
+          {/* Logout */}
+          <div className="p-3 border-t border-[var(--color-surface-3)] bg-[var(--color-surface)]/10">
+            <button
+              onClick={handleLogout}
+              className={`flex items-center justify-center rounded-xl bg-rose-50 text-rose-600 hover:bg-rose-100 transition-all duration-200 group font-bold text-xs cursor-pointer
+                ${expanded ? "w-full px-3 py-2 gap-2 shadow-sm shadow-rose-100" : "w-8 h-8"}`}
+            >
+              <LogOut className="w-3.5 h-3.5 shrink-0 group-hover:scale-105 transition-transform" />
+              {expanded && <span className="whitespace-nowrap">ออกจากระบบ</span>}
+            </button>
+          </div>
+        </div>
+      </aside>
+    </>
+  )
 }

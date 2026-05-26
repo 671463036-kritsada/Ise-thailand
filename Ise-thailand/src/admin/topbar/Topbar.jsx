@@ -3,7 +3,7 @@ import { useAuth } from "../../hook/useAuth";
 
 const profileLinks = ["Home", "Inbox", "Chat", "Activity", "Account Settings"];
 
-export default function Topbar({ onToggleSidebar }) {
+export default function Topbar() {
   const [showProfile, setShowProfile] = useState(false);
   const { user } = useAuth();
 
@@ -20,16 +20,8 @@ export default function Topbar({ onToggleSidebar }) {
       <header className="h-14 bg-white border-b border-[var(--color-border)] flex items-center justify-between px-5 shrink-0 shadow-sm z-30 relative text-[var(--color-deep-text)]">
         {/* Left */}
         <div className="flex items-center gap-3">
-          <button
-            onClick={onToggleSidebar}
-            className="w-8 h-8 rounded-lg bg-[var(--color-surface-2)] border border-[var(--color-border)] flex items-center justify-center text-[var(--color-muted-text)] hover:bg-[var(--color-surface-3)] transition-colors cursor-pointer"
-          >
-            <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-              <path d="M3 12h18M3 6h18M3 18h18" />
-            </svg>
-          </button>
           <div className="flex items-center gap-1.5 text-xs text-[var(--color-muted-text)] font-medium">
-            <span>สถาบันเศรษฐกิจพอเพียง</span>
+            <span className="pl-10 md:pl-0">สถาบันเศรษฐกิจพอเพียง</span> 
           </div>
         </div>
 
@@ -53,8 +45,8 @@ export default function Topbar({ onToggleSidebar }) {
                   </p>
                 </div>
                 {profileLinks.map((l) => (
-                  <a
-                    key={l}
+
+                  <a key={l}
                     href="#"
                     className="block px-4 py-2 text-xs text-[var(--color-deep-text)] hover:bg-[var(--color-surface-2)] hover:text-[var(--color-forest-green)] transition-colors"
                   >
