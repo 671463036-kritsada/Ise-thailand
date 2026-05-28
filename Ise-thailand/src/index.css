@@ -110,3 +110,41 @@
     font-family: "Prompt", sans-serif;
   }
 }
+
+
+@media print {
+    body * {
+        visibility: hidden;
+    }
+
+    #print-content,
+    #print-content * {
+        visibility: visible;
+    }
+
+    #print-content {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+    }
+
+    .print-hide {
+        display: none !important;
+    }
+
+    p, h1, h2, h3, h4, img {
+        break-inside: avoid;
+        page-break-inside: avoid;
+    }
+
+    .references-box {
+        break-inside: avoid;
+        page-break-inside: avoid;
+    }
+
+    @page {
+        size: A4;
+        margin: 15mm;
+    }
+}
