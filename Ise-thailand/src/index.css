@@ -29,7 +29,7 @@
   /* font family */
   --font-sans: "Prompt", sans-serif;
 
-  /* ===== Core Brand Colors (ไม่เปลี่ยน) ===== */
+  /* ===== Core Brand Colors ===== */
   --color-forest-green: #404e3b;
   --color-green: #7b9669;
   --color-green-light: #bac8b1;
@@ -37,27 +37,27 @@
   --color-gold-hover: #b8923e;
   --color-white: #ffffff;
 
-  /* ===== เพิ่ม: Tonal Layers (จาก forest green เจือจาง) ===== */
-  --color-surface: #f5f7f4; /* bg หลัก — เขียวอ่อนมากๆ ไม่ขาวตาย */
-  --color-surface-2: #eaefe7; /* card bg, input bg — มีน้ำหนักขึ้นมาอีก step */
+  /* ===== Tonal Layers ===== */
+  --color-surface: #f5f7f4;
+  --color-surface-2: #eaefe7;
   --color-surface-3: #dce4d8; /* hover state, divider bg */
 
-  /* ===== เพิ่ม: Accent Gold ที่ใช้งานได้จริง ===== */
+  /* ===== Accent Gold ===== */
   --color-gold-subtle: #fdf6e3; /* gold tint bg — ใช้ใน badge, highlight */
   --color-gold-border: #e8d5a3; /* border สำหรับ gold element */
 
-  /* ===== เพิ่ม: Semantic Status ===== */
+  /* ===== Semantic Status ===== */
   --color-success: #5a8a5a; /* success state */
   --color-warning: #c9a84c; /* = gold */
   --color-error: #b85c4a; /* error — warm red ไม่หลุด palette */
 
-  /* ===== Text (ชัดขึ้นกว่าเดิม) ===== */
-  --color-deep-text: #2d3829; /* เข้มกว่า forest green เล็กน้อย */
-  --color-muted-text: #5a7065; /* ปรับให้เขียวน้อยลง อ่านง่ายขึ้น */
+  /* ===== Text ===== */
+  --color-deep-text: #2d3829;
+  --color-muted-text: #5a7065;
   --color-placeholder: #94a89e; /* สำหรับ input placeholder โดยเฉพาะ */
   --color-disabled: #b8c4b4; /* disabled state */
 
-  /* ===== Shadow (เพิ่ม levels) ===== */
+  /* ===== Shadow ===== */
   --color-shadow: rgba(40, 56, 36, 0.07);
   --color-shadow-md: rgba(40, 56, 36, 0.13);
   --color-shadow-lg: rgba(40, 56, 36, 0.2);
@@ -66,16 +66,14 @@
   --color-border: #cdd8c8; /* border ทั่วไป */
   --color-border-focus: #7b9669; /* = green เมื่อ focus */
 
-  /* --color-primary-light ถูกแทนด้วย --color-green-light */
-
-  /* ===== Typography (เหมือนเดิม) ===== */
-  --font-size-xs: 0.75rem;
-  --font-size-sm: 0.875rem;
-  --font-size-base: 1rem;
-  --font-size-lg: 1.125rem;
-  --font-size-xl: 1.25rem;
-  --font-size-2xl: 1.5rem;
-  --font-size-3xl: 1.875rem;
+  /* ===== Typography ===== */
+  --font-size-xs: 1rem;
+  --font-size-sm: 1.125rem;
+  --font-size-base: 1.25rem;
+  --font-size-lg: 1.5rem;
+  --font-size-xl: 1.875rem;
+  --font-size-2xl: 2.25rem;
+  --font-size-3xl: 3rem;
   --font-weight-normal: 400;
   --font-weight-medium: 500;
   --font-weight-semibold: 600;
@@ -84,7 +82,7 @@
   --line-height-normal: 1.5;
   --line-height-relaxed: 1.75;
 
-  /* ===== Radius (เหมือนเดิม) ===== */
+  /* ===== Radius ===== */
   --radius-sm: 0.5rem;
   --radius-md: 1rem;
   --radius-lg: 1.5rem;
@@ -102,7 +100,6 @@
   }
 }
 
-
 @layer base {
   html,
   body,
@@ -111,40 +108,52 @@
   }
 }
 
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
 
 @media print {
-    body * {
-        visibility: hidden;
-    }
+  body * {
+    visibility: hidden;
+  }
 
-    #print-content,
-    #print-content * {
-        visibility: visible;
-    }
+  #print-content,
+  #print-content * {
+    visibility: visible;
+  }
 
-    #print-content {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-    }
+  #print-content {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+  }
 
-    .print-hide {
-        display: none !important;
-    }
+  .print-hide {
+    display: none !important;
+  }
 
-    p, h1, h2, h3, h4, img {
-        break-inside: avoid;
-        page-break-inside: avoid;
-    }
+  p,
+  h1,
+  h2,
+  h3,
+  h4,
+  img {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
 
-    .references-box {
-        break-inside: avoid;
-        page-break-inside: avoid;
-    }
+  .references-box {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
 
-    @page {
-        size: A4;
-        margin: 15mm;
-    }
+  @page {
+    size: A4;
+    margin: 15mm;
+  }
 }

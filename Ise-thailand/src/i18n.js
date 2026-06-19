@@ -57,6 +57,7 @@ const resources = {
       project_not_found: "ไม่พบโครงการที่ค้นหา",
 
       view_details: "ดูรายละเอียด",
+      GoToPage : "ไปหน้าที่",
 
       // end project page
 
@@ -273,6 +274,7 @@ const resources = {
       project_not_found: "No matching projects found",
 
       view_details: "View Details",
+      GoToPage : "Go to page",
       // end project page
 
       // project detail

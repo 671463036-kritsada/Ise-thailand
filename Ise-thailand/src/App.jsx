@@ -13,6 +13,8 @@ import ProjectDetailPage from './pages/projectDetail/index'
 import AdminLayout from './admin/admin'
 import ProtectedRoute from './components/ProtectedRoute'
 
+import AIChatButton from './components/AIChatButton';
+
 import './App.css'
 
 function App() {
@@ -38,6 +40,7 @@ function App() {
                     <Route path="/projects/:id" element={<ProjectDetailPage />} />
                   </Routes>
                 </main>
+                <AIChatButton />
                 <Footer />
               </>
             }

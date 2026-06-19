@@ -8,8 +8,6 @@ import { UPLOADS_URL } from '../../constants/uploads_url'
 import { motion, AnimatePresence } from 'framer-motion'
 import heroImg from "/images/heroImage.png"
 import VideoCard from '../../components/itemCard/card'
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Cell, ResponsiveContainer, PieChart, Pie } from 'recharts'
-
 import { useNavigate } from 'react-router-dom'
 
 async function fetcher(endpoint) {
@@ -60,29 +58,6 @@ function useActivity() {
     return { news, activities, loading, error }
 }
 
-function useEbookData() {
-    const [data, setData] = useState([])
-    const [loading, setLoading] = useState(true)
-    const [error, setError] = useState(null)
-    useEffect(() => {
-        const colorPalette = ['#10B981', '#3B82F6', '#F59E0B', '#EF4444']
-        fetcher('/Asset/count')
-            .then((res) => {
-                const rawArray = res.data?.data || res.data || []
-                setData(rawArray.map((item, index) => ({
-                    id: item.assettype_id,
-                    name: item.assettype_name,
-                    name_eng: item.assettype_name_eng,
-                    value: Number(item.total) || 0,
-                    color: colorPalette[index % colorPalette.length]
-                })))
-            })
-            .catch(setError)
-            .finally(() => setLoading(false))
-    }, [])
-    return { data, loading, error }
-}
-
 function useVrItems() {
     const [data, setData] = useState([])
     const [loading, setLoading] = useState(true)
@@ -112,17 +87,15 @@ function useProjectData() {
             .then(([typesRes, projectsRes]) => {
                 const types = typesRes.data || []
                 const projects = projectsRes.data || []
-                const colors = ['#404E3B', '#7B9669', '#6C8480', '#BAC8B1', '#2D3B28', '#5C7A50', '#8FA882', '#3D5C38', '#9DB090', '#4A6644']
                 const countMap = projects.reduce((acc, item) => {
                     const id = item.type_id || '00'
                     acc[id] = (acc[id] || 0) + 1
                     return acc
                 }, {})
-                setData(types.map((type, i) => ({
+                setData(types.map((type) => ({
                     name: type.type_name,
                     name_eng: type.type_name_eng,
                     value: countMap[type.type_id] || 0,
-                    color: colors[i % colors.length]
                 })))
             })
             .catch(setError)
@@ -140,12 +113,10 @@ function useRoyalProjects() {
         fetcher('/royal/').then((res) => {
             const all = res.data || []
             setAllData(all)
-            // random ครั้งแรก
             setData([...all].sort(() => Math.random() - 0.5).slice(0, 4))
         }).catch(console.error).finally(() => setLoading(false))
     }, [])
 
-    // random ใหม่ทุก 5 วิ
     useEffect(() => {
         if (allData.length === 0) return
         const timer = setInterval(() => {
@@ -157,9 +128,7 @@ function useRoyalProjects() {
     return { data, loading }
 }
 
-
-
-// ──  activity slider function ──
+// ── Activity Slider ──────────────────────────────────────────────────────────
 
 function ActivitySlider({ news, activities, loading, lang, onSelect }) {
     const [current, setCurrent] = useState(0)
@@ -168,36 +137,32 @@ function ActivitySlider({ news, activities, loading, lang, onSelect }) {
 
     useEffect(() => {
         if (combined.length === 0) return
-        const timer = setInterval(() => {
-            setCurrent(i => (i + 1) % combined.length)
-        }, 5000)
+        const timer = setInterval(() => setCurrent(i => (i + 1) % combined.length), 5000)
         return () => clearInterval(timer)
     }, [combined.length])
 
     if (loading) return (
-        <div className="rounded-3xl bg-white border border-green-light/30 h-72 flex items-center justify-center">
-            <div className="w-8 h-8 border-2 border-green border-t-transparent rounded-full animate-spin" />
+        <div className="rounded-3xl bg-white border border-green-light/20 h-72 flex items-center justify-center">
+            <div className="w-6 h-6 border-2 border-green border-t-transparent rounded-full animate-spin" />
         </div>
     )
 
     if (combined.length === 0) return null
-
     const item = combined[current]
 
     return (
-        <div className="relative rounded-3xl overflow-hidden bg-white border border-green-light/30 shadow-sm">
-            {/* Slide content */}
+        <div className="relative rounded-3xl overflow-hidden shadow-md border border-green-light/20 bg-white">
             <AnimatePresence mode="wait">
                 <motion.div
                     key={current}
-                    initial={{ opacity: 0, x: 30 }}
+                    initial={{ opacity: 0, x: 24 }}
                     animate={{ opacity: 1, x: 0 }}
-                    exit={{ opacity: 0, x: -30 }}
-                    transition={{ duration: 0.4, ease: 'easeOut' }}
-                    className="grid grid-cols-1 md:grid-cols-2 gap-0"
+                    exit={{ opacity: 0, x: -24 }}
+                    transition={{ duration: 0.38, ease: 'easeOut' }}
+                    className="grid grid-cols-1 md:grid-cols-2"
                 >
-                    {/* รูปซ้าย */}
-                    <div className="relative overflow-hidden h-64 md:h-80">
+                    {/* Image */}
+                    <div className="relative overflow-hidden h-64 md:h-96">
                         {item.img_file ? (
                             <img
                                 src={`${UPLOADS_URL}${item.img_file}`}
@@ -206,48 +171,55 @@ function ActivitySlider({ news, activities, loading, lang, onSelect }) {
                             />
                         ) : (
                             <div className="w-full h-full bg-surface-2 flex items-center justify-center">
-                                <svg className="w-12 h-12 text-green-light" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <svg className="w-10 h-10 text-green-light/40" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                                 </svg>
                             </div>
                         )}
-                        {/* Badge ประเภท */}
-                        <div className="absolute top-3 left-3">
-                            <span className="text-xs font-semibold px-2.5 py-1 rounded-full"
+                        {/* Gradient overlay */}
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
+                        {/* Badge */}
+                        <div className="absolute top-4 left-4">
+                            <span className="text-xs font-semibold px-3 py-1.5 rounded-full backdrop-blur-sm"
                                 style={{
-                                    background: item.typeact_id === '01' ? 'rgba(123,150,105,0.9)' : 'rgba(64,78,59,0.9)',
+                                    background: item.typeact_id === '01'
+                                        ? 'rgba(123,150,105,0.85)'
+                                        : 'rgba(40,60,35,0.85)',
                                     color: '#fff',
-                                    backdropFilter: 'blur(4px)',
+                                    letterSpacing: '0.03em',
                                 }}>
                                 {lang === 'TH' ? item.typeact_name : item.typeact_name_eng}
                             </span>
                         </div>
                     </div>
 
-                    {/* เนื้อหาขวา */}
-                    <div className="flex flex-col justify-between p-7">
-                        <div>
+                    {/* Content */}
+                    <div className="flex flex-col justify-between p-8 md:p-10 bg-white">
+                        <div className="space-y-4">
                             {item.activity_date && (
-                                <p className="text-xs text-muted-text mb-2">
-                                    {new Date(item.activity_date).toLocaleDateString(
-                                        lang === 'EN' ? 'en-EN' : 'th-TH',
-                                        { year: 'numeric', month: 'long', day: 'numeric' }
-                                    )}
-                                </p>
+                                <div className="flex items-center gap-2">
+                                    <div className="w-4 h-px bg-green/40" />
+                                    <p className="text-xs tracking-wide text-muted-text">
+                                        {new Date(item.activity_date).toLocaleDateString(
+                                            lang === 'EN' ? 'en-EN' : 'th-TH',
+                                            { year: 'numeric', month: 'long', day: 'numeric' }
+                                        )}
+                                    </p>
+                                </div>
                             )}
-                            <h3 className="text-base font-bold text-deep-text leading-relaxed mb-3 line-clamp-3">
+                            <h3 className="text-lg font-bold text-deep-text leading-relaxed line-clamp-3">
                                 {lang === 'TH' ? item.title : item.title_eng}
                             </h3>
-                            <p className="text-sm text-muted-text leading-relaxed line-clamp-4">
+                            <p className="text-sm text-muted-text leading-relaxed line-clamp-5">
                                 {lang === 'TH' ? item.detail : item.detail_eng}
                             </p>
                         </div>
                         <button
                             onClick={() => onSelect(item)}
-                            className="mt-5 self-start flex items-center gap-2 text-sm font-semibold text-green hover:opacity-75 transition-opacity"
+                            className="mt-8 self-start flex items-center gap-2.5 text-sm font-semibold text-green hover:gap-4 transition-all duration-200 group"
                         >
                             {t('Read_more_details')}
-                            <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                            <svg className="w-4 h-4 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
                             </svg>
                         </button>
@@ -255,29 +227,25 @@ function ActivitySlider({ news, activities, loading, lang, onSelect }) {
                 </motion.div>
             </AnimatePresence>
 
-            {/* Dots + Arrows */}
-            <div className="absolute bottom-4 left-0 right-0 flex items-center justify-center gap-2">
+            {/* Dots */}
+            <div className="absolute bottom-5 left-0 right-0 flex items-center justify-center gap-1.5 md:hidden">
                 {combined.map((_, i) => (
-                    <button
-                        key={i}
-                        onClick={() => setCurrent(i)}
+                    <button key={i} onClick={() => setCurrent(i)}
                         className="transition-all duration-300 rounded-full"
                         style={{
-                            width: i === current ? 20 : 6,
-                            height: 6,
+                            width: i === current ? 22 : 6, height: 6,
                             background: i === current ? 'var(--color-green)' : 'var(--color-green-light)',
-                            opacity: i === current ? 1 : 0.5,
-                        }}
-                    />
+                            opacity: i === current ? 1 : 0.4,
+                        }} />
                 ))}
             </div>
 
-            {/* Prev / Next */}
+            {/* Prev/Next */}
             {combined.length > 1 && (
                 <>
                     <button
                         onClick={() => setCurrent(i => (i - 1 + combined.length) % combined.length)}
-                        className="absolute left-3 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-white/80 border border-green-light/30 flex items-center justify-center hover:bg-white transition-colors shadow-sm"
+                        className="absolute left-4 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-white/90 border border-green-light/30 flex items-center justify-center hover:bg-white hover:shadow-md transition-all"
                     >
                         <svg className="w-4 h-4 text-deep-text" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
@@ -285,7 +253,7 @@ function ActivitySlider({ news, activities, loading, lang, onSelect }) {
                     </button>
                     <button
                         onClick={() => setCurrent(i => (i + 1) % combined.length)}
-                        className="absolute right-3 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-white/80 border border-green-light/30 flex items-center justify-center hover:bg-white transition-colors shadow-sm"
+                        className="absolute right-4 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-white/90 border border-green-light/30 flex items-center justify-center hover:bg-white hover:shadow-md transition-all"
                     >
                         <svg className="w-4 h-4 text-deep-text" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
@@ -293,94 +261,140 @@ function ActivitySlider({ news, activities, loading, lang, onSelect }) {
                     </button>
                 </>
             )}
+
+            {/* Slide counter — desktop right side */}
+            <div className="hidden md:flex absolute bottom-5 right-6 items-center gap-2">
+                {combined.map((_, i) => (
+                    <button key={i} onClick={() => setCurrent(i)}
+                        className="transition-all duration-300 rounded-full"
+                        style={{
+                            width: i === current ? 22 : 6, height: 6,
+                            background: i === current ? 'var(--color-green)' : 'var(--color-green-light)',
+                            opacity: i === current ? 1 : 0.35,
+                        }} />
+                ))}
+            </div>
         </div>
     )
 }
 
+// ── Featured Projects ─────────────────────────────────────────────────────────
 
-
-// ── project slider function ──
-function FeaturedProjects({ data, loading, lang }) {
+function FeaturedProjects({ lang }) {
     const navigate = useNavigate()
     const { t } = useTranslation()
+    const [allProjects, setAllProjects] = useState([])
+    const [typeProject, setTypeProject] = useState([])
+    const [loading, setLoading] = useState(true)
+
+    useEffect(() => {
+        Promise.all([
+            api.get('/royal/').then(r => r.data.data || []),
+            api.get('/royal/types').then(r => r.data.data || []),
+        ]).then(([projects, types]) => {
+            setAllProjects(projects)
+            setTypeProject(types)
+        }).catch(console.error).finally(() => setLoading(false))
+    }, [])
+
+    if (loading) return (
+        <div className="h-40 flex items-center justify-center">
+            <div className="w-6 h-6 border-2 border-green border-t-transparent rounded-full animate-spin" />
+        </div>
+    )
 
     return (
-        <div>
-            <SectionLabel text={t('Project_Introduction')} />
-            <div className="flex items-end justify-between mb-6">
-                <h2 className="text-2xl font-bold text-deep-text leading-tight">
-                    {lang === 'TH' ? 'แนะนำโครงการพระราชดำริ' : 'Featured Royal Projects'}
-                </h2>
-                <button
-                    onClick={() => navigate('/projects')}
-                    className="flex items-center gap-2 text-xs font-semibold px-4 py-2 rounded-full transition-all duration-200"
-                    style={{ background: 'var(--color-forest-green)', color: '#fff' }}
-                >
-                    {t('nav_royal_all')}
-                    <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                    </svg>
-                </button>
-            </div>
-
-            {loading ? (
-                <div className="h-40 flex items-center justify-center">
-                    <div className="w-8 h-8 border-2 border-green border-t-transparent rounded-full animate-spin" />
-                </div>
-            ) : (
-                <AnimatePresence mode="wait">
-                    <motion.div
-                        key={data.map(d => d.royal_id).join(',')}
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -10 }}
-                        transition={{ duration: 0.4 }}
-                        className="grid grid-cols-2 md:grid-cols-4 gap-4"
-                    >
-                        {data.map((item) => (
-                            <motion.button
-                                key={item.royal_id}
-                                whileHover={{ y: -4 }}
-                                whileTap={{ scale: 0.98 }}
-                                onClick={() => navigate(`/projects/${item.royal_id}`)}
-                                className="text-left rounded-2xl overflow-hidden border border-green-light/30 bg-white hover:border-green/40 hover:shadow-lg transition-all duration-200 group"
+        <div className="space-y-14">
+            {typeProject.map((type) => {
+                const allOfType = allProjects.filter(p => p.type_id === type.type_id)
+                if (allOfType.length === 0) return null
+                return (
+                    <div key={type.type_id}>
+                        {/* Header */}
+                        <div className="flex items-center gap-3 mb-5">
+                            <div className="w-1 h-7 rounded-full" style={{ background: 'var(--color-forest-green)' }} />
+                            <h3 className="text-sm font-bold tracking-wide" style={{ color: 'var(--color-forest-green)' }}>
+                                {lang === 'TH' ? type.type_name : type.type_name_eng}
+                            </h3>
+                            <span className="text-xs px-2.5 py-0.5 rounded-full font-medium"
+                                style={{ background: 'var(--color-surface-2)', color: 'var(--color-muted-text)' }}>
+                                {allOfType.length} {t('royal_project_unit')}
+                            </span>
+                            <div className="flex-1 h-px" style={{ background: 'var(--color-border)' }} />
+                            <button
+                                onClick={() => navigate(`/projects?typeId=${type.type_id}`)}
+                                className="text-xs flex items-center gap-1 font-semibold transition-all hover:gap-2 duration-200 group"
+                                style={{ color: 'var(--color-green)' }}
                             >
-                                <div className="relative aspect-video overflow-hidden bg-surface-2">
-                                    {item.img_1 ? (
-                                        <img
-                                            src={`${UPLOADS_URL}${item.img_1}`}
-                                            alt={item.royal_name}
-                                            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                                        />
-                                    ) : (
-                                        <div className="w-full h-full flex items-center justify-center">
-                                            <svg className="w-8 h-8 text-green-light" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                                            </svg>
+                                {t('nav_royal_all')}
+                                <svg className="w-3 h-3 transition-transform group-hover:translate-x-0.5" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                                </svg>
+                            </button>
+                        </div>
+
+                        {/* Horizontal scroll cards */}
+                        <div className="overflow-x-auto pb-3 scrollbar-hide" style={{ scrollSnapType: 'x mandatory' }}>
+                            <div className="flex gap-5" style={{ width: 'max-content' }}>
+                                {allOfType.map((item) => (
+                                    <motion.button
+                                        key={item.royal_id}
+                                        whileHover={{ y: -5 }}
+                                        whileTap={{ scale: 0.985 }}
+                                        onClick={() => navigate(`/projects/${item.royal_id}`)}
+                                        className="text-left rounded-2xl overflow-hidden bg-white transition-all duration-200 group flex-shrink-0"
+                                        style={{
+                                            border: '1px solid var(--color-border)',
+                                            width: 380,
+                                            scrollSnapAlign: 'start',
+                                            boxShadow: '0 1px 4px rgba(0,0,0,0.04)',
+                                        }}
+                                    >
+                                        <div className="relative overflow-hidden"
+                                            style={{ aspectRatio: '16/9', background: 'var(--color-surface-2)' }}>
+                                            {item.img_banner || item.img_1 ? (
+                                                <img
+                                                    src={`${UPLOADS_URL}${item.img_banner || item.img_1}`}
+                                                    alt={lang === 'TH' ? item.royal_name : item.royal_name_eng}
+                                                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                                                />
+                                            ) : (
+                                                <div className="w-full h-full flex items-center justify-center">
+                                                    <svg className="w-8 h-8" style={{ color: 'var(--color-disabled)' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                                    </svg>
+                                                </div>
+                                            )}
+                                            {/* Hover overlay */}
+                                            <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300" />
                                         </div>
-                                    )}
-                                </div>
-                                <div className="p-4">
-                                    <p className="text-sm font-bold text-deep-text leading-snug mb-1.5 line-clamp-2 group-hover:text-green transition-colors">
-                                        {lang === 'TH' ? item.royal_name : item.royal_name_eng}
-                                    </p>
-                                    <p className="text-xs text-muted-text leading-relaxed line-clamp-2">
-                                        {lang === 'TH' ? item.detail_1 : item.detail_1_eng}
-                                    </p>
-                                </div>
-                            </motion.button>
-                        ))}
-                    </motion.div>
-                </AnimatePresence>
-            )}
+                                        <div className="p-4">
+                                            <p className="text-sm font-semibold leading-snug line-clamp-2 transition-colors group-hover:text-green"
+                                                style={{ color: 'var(--color-deep-text)' }}>
+                                                {lang === 'TH' ? item.royal_name : item.royal_name_eng}
+                                            </p>
+                                            {(item.detail_1 || item.detail_1_eng) && (
+                                                <p className="text-xs mt-2 line-clamp-2 leading-relaxed"
+                                                    style={{ color: 'var(--color-muted-text)' }}>
+                                                    {lang === 'TH' ? item.detail_1 : item.detail_1_eng}
+                                                </p>
+                                            )}
+                                        </div>
+                                    </motion.button>
+                                ))}
+                            </div>
+                        </div>
+                    </div>
+                )
+            })}
         </div>
     )
 }
 
-// ─── UI Primitives ───────────────────────────────────────────────────────────
+// ── Primitives ────────────────────────────────────────────────────────────────
 
 const fadeUp = {
-    hidden: { opacity: 0, y: 20 },
+    hidden: { opacity: 0, y: 18 },
     visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: 'easeOut' } }
 }
 
@@ -389,7 +403,7 @@ const Reveal = ({ children, delay = 0 }) => (
         variants={fadeUp}
         initial="hidden"
         whileInView="visible"
-        viewport={{ once: true, margin: '-60px' }}
+        viewport={{ once: true, margin: '-50px' }}
         transition={{ delay }}
     >
         {children}
@@ -398,18 +412,21 @@ const Reveal = ({ children, delay = 0 }) => (
 
 function SectionLabel({ text }) {
     return (
-        <p className="text-xs font-semibold tracking-widest uppercase text-green mb-2">
-            {text}
-        </p>
+        <div className="flex items-center gap-2 mb-2">
+            <div className="w-5 h-px bg-green/50" />
+            <p className="text-xs font-semibold tracking-widest uppercase text-green">
+                {text}
+            </p>
+        </div>
     )
 }
 
 function SectionTitle({ title, badge }) {
     return (
-        <div className="flex items-end justify-between mb-6">
-            <h2 className="text-2xl font-bold text-deep-text leading-tight">{title}</h2>
+        <div className="flex items-end justify-between mb-7">
+            <h2 className="text-xl font-bold text-deep-text leading-tight">{title}</h2>
             {badge && (
-                <span className="text-xs font-medium text-muted-text bg-green-light/20 px-3 py-1 rounded-full">
+                <span className="text-xs font-medium text-muted-text bg-surface-2 px-3 py-1 rounded-full">
                     {badge}
                 </span>
             )}
@@ -418,25 +435,11 @@ function SectionTitle({ title, badge }) {
 }
 
 function Divider() {
-    return <div className="w-full h-px bg-green-light/20 my-2" />
-}
-
-// ─── Stat Cards ──────────────────────────────────────────────────────────────
-
-function StatCard({ label, value, unit, accent = false }) {
     return (
-        <div className={`rounded-2xl p-6 flex flex-col gap-3 ${accent ? 'bg-forest-green text-white' : 'bg-white border border-green-light/40'}`}>
-            <p className={`text-xs font-medium tracking-wide uppercase ${accent ? 'text-white/50' : 'text-muted-text'}`}>
-                {label}
-            </p>
-            <div>
-                <p className={`text-5xl font-bold leading-none ${accent ? 'text-white' : 'text-deep-text'}`}>
-                    {value}
-                </p>
-                <p className={`text-xs mt-2 font-medium ${accent ? 'text-white/40' : 'text-green'}`}>
-                    {unit}
-                </p>
-            </div>
+        <div className="flex items-center gap-4 my-2">
+            <div className="flex-1 h-px bg-green-light/15" />
+            <div className="w-1.5 h-1.5 rounded-full bg-green-light/30" />
+            <div className="flex-1 h-px bg-green-light/15" />
         </div>
     )
 }
@@ -445,25 +448,54 @@ function ActionCard({ label, description, icon, onClick }) {
     return (
         <motion.button
             whileHover={{ y: -3 }}
-            whileTap={{ scale: 0.98 }}
+            whileTap={{ scale: 0.97 }}
             onClick={onClick}
-            className="rounded-2xl p-6 bg-white border border-green-light/40 text-left flex flex-col gap-4 hover:border-green/40 hover:shadow-lg transition-all duration-200 group"
+            className="rounded-2xl p-6 bg-white border border-green-light/30 text-left flex flex-col gap-4 hover:border-green/40 hover:shadow-lg transition-all duration-200 group"
         >
-            <div className="w-10 h-10 rounded-xl bg-green/10 flex items-center justify-center group-hover:bg-green/20 transition-colors">
+            <div className="w-11 h-11 rounded-xl bg-green/8 flex items-center justify-center group-hover:bg-green/15 transition-colors">
                 {icon}
             </div>
             <div>
                 <p className="font-bold text-deep-text text-sm">{label}</p>
                 {description && <p className="text-xs text-muted-text mt-0.5">{description}</p>}
             </div>
-            <svg className="w-4 h-4 text-green-light group-hover:text-green transition-colors mt-auto" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+            <svg className="w-4 h-4 text-green-light group-hover:text-green transition-all mt-auto group-hover:translate-x-1 duration-200" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
             </svg>
         </motion.button>
     )
 }
 
-// ─── Main Page ────────────────────────────────────────────────────────────────
+// ── VR List Item ──────────────────────────────────────────────────────────────
+
+function VrListItem({ item, index, lang, onClick }) {
+    return (
+        <motion.button
+            whileHover={{ backgroundColor: 'rgba(123,150,105,0.05)' }}
+            whileTap={{ scale: 0.99 }}
+            onClick={onClick}
+            className="w-full flex items-center gap-4 px-5 py-4 text-left transition-colors group"
+        >
+            <span className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 transition-colors"
+                style={{
+                    background: 'var(--color-forest-green)',
+                    color: '#fff',
+                }}>
+                {index + 1}
+            </span>
+            <p className="flex-1 text-sm text-deep-text leading-snug group-hover:text-green transition-colors">
+                {lang === 'TH' ? item.meta_name : item.name_eng}
+            </p>
+            <div className="w-7 h-7 rounded-full border border-green-light/30 flex items-center justify-center flex-shrink-0 group-hover:border-green/40 group-hover:bg-green/5 transition-all">
+                <svg className="w-3.5 h-3.5 text-green-light group-hover:text-green transition-colors" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M8 5v14l11-7z" />
+                </svg>
+            </div>
+        </motion.button>
+    )
+}
+
+// ── Main Page ─────────────────────────────────────────────────────────────────
 
 function HomePage() {
     const [selectedActivity, setSelectedActivity] = useState(null)
@@ -472,42 +504,29 @@ function HomePage() {
     const [selectedVr, setSelectedVr] = useState(null)
 
     const royalProjects = useRoyalProjects()
-
     const { lang } = useLang()
     const { t } = useTranslation()
-
     const navigate = useNavigate()
 
     const activity = useActivity()
-    const { data: ebookData, loading: ebookLoading } = useEbookData()
     const vr = useVrItems()
     const videoList = useVideoList()
-    const royalData = useRoyalData()
-    const researcherData = useResearcherData()
     const projectData = useProjectData()
 
     const introVideo = videoList.data.find(v => !v.video_url.includes('youtube'))
     const youtubeVideos = videoList.data.filter(v => v.video_url.includes('youtube'))
-    const totalProjects = projectData.data.reduce((s, d) => s + d.value, 0)
 
     const [heroIndex, setHeroIndex] = useState(0)
 
-    // auto slide ทุก 4 วิ เมื่อ royalProjects.data เปลี่ยน
     useEffect(() => {
         const banners = royalProjects.data.filter(p => p.img_banner)
         if (banners.length === 0) return
-        const timer = setInterval(() => {
-            setHeroIndex(i => (i + 1) % banners.length)
-        }, 8000)
+        const timer = setInterval(() => setHeroIndex(i => (i + 1) % banners.length), 8000)
         return () => clearInterval(timer)
     }, [royalProjects.data])
 
-
-
-
     return (
-        <div className=" space-y-16">
-
+        <div className="space-y-16 pb-16">
 
             {/* ── Hero ── */}
             <Reveal>
@@ -516,12 +535,8 @@ function HomePage() {
                     if (royalProjects.loading || banners.length === 0) {
                         return (
                             <div className="relative rounded-3xl overflow-hidden">
-                                <img
-                                    src={heroImg}
-                                    alt="Hero"
-                                    className="w-full object-cover max-h-[480px]"
-                                />
-                                <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
+                                <img src={heroImg} alt="Hero" className="w-full object-cover max-h-[500px]" />
+                                <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
                             </div>
                         )
                     }
@@ -529,70 +544,70 @@ function HomePage() {
                     const current = banners[heroIndex % banners.length]
 
                     return (
-                        <div className="relative rounded-3xl overflow-hidden" style={{ height: 480 }}>
-
-                            {/* Slides */}
+                        <div className="relative rounded-3xl overflow-hidden" style={{ height: 500 }}>
                             <AnimatePresence mode="wait">
                                 <motion.img
                                     key={current.royal_id}
                                     src={`${UPLOADS_URL}${current.img_banner}`}
                                     alt={lang === 'TH' ? current.royal_name : current.royal_name_eng}
-                                    initial={{ opacity: 0, scale: 1.03 }}
+                                    initial={{ opacity: 0, scale: 1.04 }}
                                     animate={{ opacity: 1, scale: 1 }}
                                     exit={{ opacity: 0 }}
-                                    transition={{ duration: 0.6 }}
+                                    transition={{ duration: 0.7 }}
                                     className="absolute inset-0 w-full h-full object-cover"
                                 />
                             </AnimatePresence>
 
-                            {/* Gradient */}
-                            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent" />
+                            {/* Multi-stop gradient — richer depth */}
+                            <div className="absolute inset-0"
+                                style={{ background: 'linear-gradient(to top, rgba(0,0,0,0.72) 0%, rgba(0,0,0,0.15) 50%, transparent 100%)' }} />
 
-                            {/* ชื่อโครงการ */}
+                            {/* Text */}
                             <AnimatePresence mode="wait">
                                 <motion.div
                                     key={current.royal_id + '_text'}
-                                    initial={{ opacity: 0, y: 16 }}
+                                    initial={{ opacity: 0, y: 18 }}
                                     animate={{ opacity: 1, y: 0 }}
-                                    exit={{ opacity: 0, y: -8 }}
-                                    transition={{ duration: 0.5, delay: 0.2 }}
-                                    className="absolute bottom-0 left-0 right-0 p-8"
+                                    exit={{ opacity: 0, y: -10 }}
+                                    transition={{ duration: 0.5, delay: 0.15 }}
+                                    className="absolute bottom-0 left-0 right-0 p-8 md:p-12"
                                 >
-                                    <p className="text-xs font-semibold tracking-widest uppercase mb-2"
-                                        style={{ color: 'var(--color-gold)' }}>
-                                        {lang === 'TH' ? current.type_name : current.type_name_eng}
-                                    </p>
-                                    <h2 className="text-xl font-bold text-white leading-relaxed line-clamp-2 drop-shadow-md">
+                                    <div className="flex items-center gap-2 mb-3">
+                                        <div className="w-4 h-px" style={{ background: 'var(--color-gold)' }} />
+                                        <p className="text-xs font-semibold tracking-widest uppercase"
+                                            style={{ color: 'var(--color-gold)' }}>
+                                            {lang === 'TH' ? current.type_name : current.type_name_eng}
+                                        </p>
+                                    </div>
+                                    <h2 className="text-2xl md:text-3xl font-bold text-white leading-relaxed line-clamp-2 drop-shadow-lg max-w-2xl">
                                         {lang === 'TH' ? current.royal_name : current.royal_name_eng}
                                     </h2>
                                 </motion.div>
                             </AnimatePresence>
 
                             {/* Dots */}
-                            <div className="absolute bottom-4 right-6 flex gap-1.5">
+                            <div className="absolute bottom-6 right-8 flex gap-2">
                                 {banners.map((_, i) => (
                                     <button
                                         key={i}
                                         onClick={() => setHeroIndex(i)}
                                         className="transition-all duration-300 rounded-full"
                                         style={{
-                                            width: i === heroIndex % banners.length ? 20 : 6,
+                                            width: i === heroIndex % banners.length ? 24 : 6,
                                             height: 6,
                                             backgroundColor: i === heroIndex % banners.length
                                                 ? 'var(--color-gold)'
-                                                : 'rgba(255,255,255,0.4)',
+                                                : 'rgba(255,255,255,0.35)',
                                         }}
                                     />
                                 ))}
                             </div>
-
                         </div>
                     )
                 })()}
             </Reveal>
 
-
-            {/* -- activity slider  -- */}
+            {/* ── Activity Slider ── */}
             <Reveal>
                 <ActivitySlider
                     news={activity.news}
@@ -603,31 +618,15 @@ function HomePage() {
                 />
             </Reveal>
 
-
             {/* ── Featured Royal Projects ── */}
-            <Reveal delay={0.1}>
-                <FeaturedProjects
-                    data={royalProjects.data}
-                    loading={royalProjects.loading}
-                    lang={lang}
-                />
+            <Reveal delay={0.05}>
+                <FeaturedProjects lang={lang} />
             </Reveal>
 
-            {/* ── Stats ── */}
-            <Reveal delay={0.05}>
+            {/* ── Quick Action Cards ── */}
+            <Reveal>
                 <SectionLabel text={t('overview') || 'ภาพรวม'} />
-                <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-                    <StatCard
-                        label={t('researcher')}
-                        value={researcherData.loading ? '—' : researcherData.data}
-                        unit={t('researcher_unit')}
-                    />
-                    <StatCard
-                        label={t('royal_project')}
-                        value={royalData.loading ? '—' : royalData.data}
-                        unit={t('royal_project_unit')}
-                        accent
-                    />
+                <div className="grid grid-cols-2 gap-4">
                     <ActionCard
                         label={t('news')}
                         icon={
@@ -651,197 +650,73 @@ function HomePage() {
 
             <Divider />
 
-            {/* ── Video + Media ── */}
+            {/* ── Institute Video ── */}
             <Reveal>
                 <SectionLabel text={t('institute_video') || 'วิดีโอสถาบัน'} />
                 <SectionTitle title={t('institute_video')} />
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-
-                    {/* Video Player */}
-                    <div className="lg:col-span-2 rounded-2xl overflow-hidden border border-green-light/30 bg-neutral-100 aspect-video">
-                        {videoList.loading ? (
-                            <div className="w-full h-full flex items-center justify-center">
-                                <div className="w-8 h-8 border-2 border-green border-t-transparent rounded-full animate-spin" />
-                            </div>
-                        ) : introVideo ? (
-                            <VideoCard
-                                isYoutube={true}
-                                videoUrl={introVideo.video_url}
-                                title={lang === 'TH' ? introVideo.video_title : introVideo.video_title_eng}
-                            />
-                        ) : null}
-                    </div>
-
-                    {/* Media Pie */}
-                    <div className="rounded-2xl p-6 bg-white border border-green-light/30 flex flex-col">
-                        <p className="text-sm font-bold text-deep-text mb-5">{t('media')}</p>
-                        {ebookLoading ? (
-                            <div className="flex-1 flex items-center justify-center">
-                                <div className="w-6 h-6 border-2 border-green border-t-transparent rounded-full animate-spin" />
-                            </div>
-                        ) : (
-                            <>
-                                <div className="flex justify-center mb-5">
-                                    <PieChart width={150} height={150}>
-                                        <Pie data={ebookData} cx={75} cy={75} innerRadius={40} outerRadius={65} dataKey="value" strokeWidth={0}>
-                                            {ebookData.map((entry, i) => <Cell key={i} fill={entry.color} />)}
-                                        </Pie>
-                                    </PieChart>
-                                </div>
-                                <div className="space-y-3 mt-auto">
-                                    {ebookData.map((d, i) => (
-                                        <div key={i} className="flex items-center justify-between">
-                                            <div className="flex items-center gap-2">
-                                                <div className="w-2 h-2 rounded-full flex-shrink-0" style={{ backgroundColor: d.color }} />
-                                                <p className="text-xs text-muted-text">{lang === 'TH' ? d.name : d.name_eng}</p>
-                                            </div>
-                                            <p className="text-xs font-bold text-deep-text">{d.value} {t('media_unit')}</p>
-                                        </div>
-                                    ))}
-                                </div>
-                            </>
-                        )}
-                    </div>
+                <div className="rounded-2xl overflow-hidden border border-green-light/20 bg-neutral-100 aspect-video shadow-sm">
+                    {videoList.loading ? (
+                        <div className="w-full h-full flex items-center justify-center">
+                            <div className="w-6 h-6 border-2 border-green border-t-transparent rounded-full animate-spin" />
+                        </div>
+                    ) : introVideo ? (
+                        <VideoCard
+                            isYoutube={true}
+                            videoUrl={introVideo.video_url}
+                            title={lang === 'TH' ? introVideo.video_title : introVideo.video_title_eng}
+                        />
+                    ) : null}
                 </div>
             </Reveal>
 
             <Divider />
 
-            {/* ── Projects ── */}
+            {/* ── VR ── */}
             <Reveal>
-                <SectionLabel text={t('institute_projects') || 'โครงการ'} />
+                <SectionLabel text="VR" />
+                <SectionTitle title={t('vr_learning')} />
+                <div className="rounded-2xl border border-green-light/20 overflow-hidden bg-white divide-y divide-green-light/15 shadow-sm">
+                    {vr.loading ? (
+                        <div className="p-8 flex justify-center">
+                            <div className="w-6 h-6 border-2 border-green border-t-transparent rounded-full animate-spin" />
+                        </div>
+                    ) : vr.data.map((item, i) => (
+                        <VrListItem
+                            key={item.meta_id}
+                            item={item}
+                            index={i}
+                            lang={lang}
+                            onClick={() => setSelectedVr(item)}
+                        />
+                    ))}
+                </div>
+            </Reveal>
+
+            {/* ── YouTube Videos ── */}
+            <Reveal>
+                <SectionLabel text={t('project_videos') || 'วิดีโอโครงการ'} />
                 <SectionTitle
-                    title={t('institute_projects')}
-                    badge={projectData.loading ? '...' : `${totalProjects} ${t('project_unit')}`}
+                    title={t('project_videos')}
+                    badge={videoList.loading ? '...' : `${youtubeVideos.length} ${t('list_unit')}`}
                 />
-                {projectData.loading ? (
+                {videoList.loading ? (
                     <div className="h-40 flex items-center justify-center">
-                        <div className="w-8 h-8 border-2 border-green border-t-transparent rounded-full animate-spin" />
+                        <div className="w-6 h-6 border-2 border-green border-t-transparent rounded-full animate-spin" />
                     </div>
                 ) : (
-                    <div className="rounded-2xl bg-white border border-green-light/30 p-6">
-                        <ResponsiveContainer width="100%" height={projectData.data.filter(d => d.value > 0).length * 52 + 40}>
-                            <BarChart
-                                data={projectData.data.filter(d => d.value > 0)}
-                                layout="vertical"
-                                margin={{ left: 0, right: 32, top: 4, bottom: 4 }}
-                            >
-                                <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="#e5e7eb" opacity={0.6} />
-                                <XAxis
-                                    type="number"
-                                    axisLine={false}
-                                    tickLine={false}
-                                    tick={{ fill: '#5a7065', fontSize: 11 }}
-                                    allowDecimals={false}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {youtubeVideos.map((v) => (
+                            <div key={v.video_id} className="rounded-2xl overflow-hidden border border-green-light/20 shadow-sm">
+                                <VideoCard
+                                    isYoutube={true}
+                                    videoUrl={v.video_url}
+                                    detailLink={v.video_detail}
+                                    title={lang === 'TH' ? v.video_title : v.video_title_eng}
                                 />
-                                <YAxis
-                                    type="category"
-                                    dataKey={lang === 'TH' ? 'name' : 'name_eng'}
-                                    width={170}
-                                    axisLine={false}
-                                    tickLine={false}
-                                    tick={{ fill: '#5a7065', fontSize: 11 }}
-                                    tickFormatter={(val) => val.length > 20 ? val.slice(0, 20) + '…' : val}
-                                />
-                                <Tooltip
-                                    cursor={{ fill: 'rgba(186,200,177,0.1)' }}
-                                    formatter={(value, name, props) => [
-                                        `${value} ${t('royal_project_unit')}`,
-                                        lang === 'TH' ? props.payload.name : props.payload.name_eng
-                                    ]}
-                                    contentStyle={{
-                                        fontSize: 12,
-                                        borderRadius: 10,
-                                        border: '1px solid #BAC8B1',
-                                        boxShadow: '0 4px 12px rgba(0,0,0,0.08)'
-                                    }}
-                                />
-                                <Bar dataKey="value" radius={[0, 8, 8, 0]} barSize={24}>
-                                    {projectData.data.filter(d => d.value > 0).map((entry, index) => (
-                                        <Cell key={index} fill={entry.color} />
-                                    ))}
-                                </Bar>
-                            </BarChart>
-                        </ResponsiveContainer>
-
-                        {/* Legend chips */}
-                        <div className="flex flex-wrap gap-2 mt-6 pt-5 border-t border-green-light/20">
-                            {projectData.data.filter(d => d.value > 0).map((item, i) => (
-                                <div key={i} className="flex items-center gap-1.5 bg-green-light/10 rounded-full px-3 py-1">
-                                    <div className="w-2 h-2 rounded-full flex-shrink-0" style={{ backgroundColor: item.color }} />
-                                    <span className="text-xs text-muted-text">{lang === 'TH' ? item.name : item.name_eng}</span>
-                                    <span className="text-xs font-bold text-deep-text ml-1">{item.value}</span>
-                                </div>
-                            ))}
-                        </div>
+                            </div>
+                        ))}
                     </div>
                 )}
-            </Reveal>
-
-            <Divider />
-
-            {/* ── VR + Videos ── */}
-            <Reveal>
-                <div className="grid grid-cols-1 lg:grid-cols-1 gap-8">
-
-                    {/* VR */}
-                    <div>
-                        <SectionLabel text="VR" />
-                        <SectionTitle title={t('vr_learning')} />
-                        <div className="rounded-2xl border border-green-light/30 overflow-hidden bg-white divide-y divide-green-light/20">
-                            {vr.loading ? (
-                                <div className="p-8 flex justify-center">
-                                    <div className="w-6 h-6 border-2 border-green border-t-transparent rounded-full animate-spin" />
-                                </div>
-                            ) : vr.data.map((item, i) => (
-                                <motion.button
-                                    key={item.meta_id}
-                                    whileHover={{ backgroundColor: 'rgba(123,150,105,0.04)' }}
-                                    onClick={() => setSelectedVr(item)}
-                                    className="w-full flex items-center gap-3 px-5 py-4 text-left transition-colors"
-                                >
-                                    <span className="w-7 h-7 rounded-full bg-forest-green text-white flex items-center justify-center text-xs font-bold flex-shrink-0">
-                                        {i + 1}
-                                    </span>
-                                    <p className="flex-1 text-sm text-deep-text leading-snug">
-                                        {lang === 'TH' ? item.meta_name : item.name_eng}
-                                    </p>
-                                    <svg className="w-4 h-4 text-green-light flex-shrink-0" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-                                        <circle cx="12" cy="12" r="10" />
-                                        <path d="M10 8l6 4-6 4V8z" fill="currentColor" stroke="none" />
-                                    </svg>
-                                </motion.button>
-                            ))}
-                        </div>
-                    </div>
-
-                    {/* YouTube Videos */}
-                    <div className="lg:col-span-2">
-                        <SectionLabel text={t('project_videos') || 'วิดีโอโครงการ'} />
-                        <SectionTitle
-                            title={t('project_videos')}
-                            badge={videoList.loading ? '...' : `${youtubeVideos.length} ${t('list_unit')}`}
-                        />
-                        {videoList.loading ? (
-                            <div className="h-40 flex items-center justify-center">
-                                <div className="w-8 h-8 border-2 border-green border-t-transparent rounded-full animate-spin" />
-                            </div>
-                        ) : (
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                {youtubeVideos.map((v) => (
-                                    <div key={v.video_id} className="rounded-2xl overflow-hidden border border-green-light/30">
-                                        <VideoCard
-                                            isYoutube={true}
-                                            videoUrl={v.video_url}
-                                            detailLink={v.video_detail}
-                                            title={lang === 'TH' ? v.video_title : v.video_title_eng}
-                                        />
-                                    </div>
-                                ))}
-                            </div>
-                        )}
-                    </div>
-                </div>
             </Reveal>
 
             {/* ── Modals ── */}
@@ -881,94 +756,26 @@ function HomePage() {
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
-                        className="fixed inset-0 z-50 flex items-center justify-center p-4"
-                        style={{ backgroundColor: 'rgba(0,0,0,0.75)', backdropFilter: 'blur(6px)', WebkitBackdropFilter: 'blur(6px)' }}
+                        transition={{ duration: 0.25 }}
+                        className="fixed inset-0 z-50 flex items-end sm:items-center justify-center"
+                        style={{ backgroundColor: 'rgba(15,20,15,0.6)', backdropFilter: 'blur(16px)', WebkitBackdropFilter: 'blur(16px)' }}
                         onClick={() => setSelectedVr(null)}
                     >
                         <motion.div
-                            initial={{ scale: 0.95, opacity: 0, y: 16 }}
-                            animate={{ scale: 1, opacity: 1, y: 0 }}
-                            exit={{ scale: 0.95, opacity: 0, y: 16 }}
-                            transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
-                            className="w-full max-w-6xl overflow-hidden"
+                            initial={{ opacity: 0, y: 40, scale: 0.97 }}
+                            animate={{ opacity: 1, y: 0, scale: 1 }}
+                            exit={{ opacity: 0, y: 24, scale: 0.97 }}
+                            transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+                            className="w-full sm:max-w-2xl mx-4 mb-4 sm:mb-0 overflow-hidden"
                             style={{
-                                borderRadius: 20,
-                                background: 'linear-gradient(160deg, #1a2e1a 0%, #0f1f0f 100%)',
-                                border: '1px solid rgba(197,168,105,0.25)',
-                                boxShadow: '0 32px 80px rgba(0,0,0,0.6), 0 0 0 1px rgba(197,168,105,0.08)',
+                                borderRadius: 24,
+                                background: '#fff',
+                                boxShadow: '0 24px 80px rgba(0,0,0,0.18), 0 0 0 1px rgba(0,0,0,0.06)',
                             }}
                             onClick={e => e.stopPropagation()}
                         >
-                            {/* Gold shimmer line */}
-                            <div style={{
-                                height: 2,
-                                background: 'linear-gradient(90deg, transparent, rgba(197,168,105,0.5) 30%, rgba(220,190,120,0.9) 50%, rgba(197,168,105,0.5) 70%, transparent)',
-                            }} />
-
-                            {/* Header */}
-                            <div className="flex items-center justify-between px-5 py-4">
-                                {/* Left: icon + title */}
-                                <div className="flex items-center gap-3 min-w-0">
-                                    <div style={{
-                                        width: 34, height: 34, borderRadius: 10, flexShrink: 0,
-                                        background: 'rgba(197,168,105,0.12)',
-                                        border: '1px solid rgba(197,168,105,0.3)',
-                                        display: 'flex', alignItems: 'center', justifyContent: 'center',
-                                    }}>
-                                        <svg width="16" height="16" fill="none" stroke="rgba(197,168,105,0.9)" strokeWidth="1.5" viewBox="0 0 24 24">
-                                            <path strokeLinecap="round" strokeLinejoin="round" d="M15 10l4.553-2.069A1 1 0 0121 8.82v6.36a1 1 0 01-1.447.89L15 14M3 8a2 2 0 012-2h8a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2V8z" />
-                                        </svg>
-                                    </div>
-                                    <div className="min-w-0">
-                                        <p style={{
-                                            fontSize: '0.82rem',
-                                            fontWeight: 600,
-                                            color: 'rgba(255,255,255,0.92)',
-                                            overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
-                                            maxWidth: 420,
-                                        }}>
-                                            {lang === 'TH' ? selectedVr.meta_name : selectedVr.name_eng}
-                                        </p>
-                                        <p style={{ fontSize: '0.68rem', color: 'rgba(197,168,105,0.65)', marginTop: 1 }}>
-                                            {t('VR_Video_Click_empty_space_to_close')}
-                                        </p>
-                                    </div>
-                                </div>
-
-                                {/* Close */}
-                                <button
-                                    onClick={() => setSelectedVr(null)}
-                                    style={{
-                                        width: 32, height: 32, borderRadius: 8, flexShrink: 0,
-                                        background: 'rgba(255,255,255,0.06)',
-                                        border: '1px solid rgba(255,255,255,0.1)',
-                                        display: 'flex', alignItems: 'center', justifyContent: 'center',
-                                        cursor: 'pointer', transition: 'all 0.2s',
-                                        color: 'rgba(255,255,255,0.5)',
-                                    }}
-                                    onMouseEnter={e => {
-                                        e.currentTarget.style.background = 'rgba(239,68,68,0.15)'
-                                        e.currentTarget.style.borderColor = 'rgba(239,68,68,0.3)'
-                                        e.currentTarget.style.color = 'rgba(252,165,165,0.9)'
-                                    }}
-                                    onMouseLeave={e => {
-                                        e.currentTarget.style.background = 'rgba(255,255,255,0.06)'
-                                        e.currentTarget.style.borderColor = 'rgba(255,255,255,0.1)'
-                                        e.currentTarget.style.color = 'rgba(255,255,255,0.5)'
-                                    }}
-                                >
-                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-                                    </svg>
-                                </button>
-                            </div>
-
-                            {/* Separator */}
-                            <div style={{ height: 1, background: 'rgba(197,168,105,0.12)', margin: '0 20px' }} />
-
                             {/* Video */}
-                            <div style={{ position: 'relative', background: '#000', margin: '16px 20px 20px', borderRadius: 12, overflow: 'hidden' }}>
-                                {/* Aspect ratio box */}
+                            <div style={{ position: 'relative', background: '#000', borderRadius: '24px 24px 0 0', overflow: 'hidden' }}>
                                 <div style={{ paddingTop: '56.25%', position: 'relative' }}>
                                     <video
                                         key={selectedVr.meta_id}
@@ -981,25 +788,129 @@ function HomePage() {
                                     </video>
                                 </div>
 
-                                {/* Corner badge */}
+                                {/* VR badge */}
                                 <div style={{
-                                    position: 'absolute', top: 10, left: 10,
-                                    padding: '3px 8px', borderRadius: 6,
-                                    background: 'rgba(0,0,0,0.55)',
-                                    border: '1px solid rgba(197,168,105,0.3)',
-                                    fontSize: '0.62rem', fontWeight: 600, letterSpacing: '0.1em',
-                                    color: 'rgba(197,168,105,0.9)',
-                                    backdropFilter: 'blur(4px)',
+                                    position: 'absolute', top: 14, left: 14,
+                                    display: 'flex', alignItems: 'center', gap: 6,
+                                    padding: '5px 10px', borderRadius: 99,
+                                    background: 'rgba(255,255,255,0.12)',
+                                    backdropFilter: 'blur(8px)', WebkitBackdropFilter: 'blur(8px)',
+                                    border: '1px solid rgba(255,255,255,0.2)',
                                     pointerEvents: 'none',
                                 }}>
-                                    VR
+                                    <span style={{
+                                        width: 6, height: 6, borderRadius: '50%',
+                                        background: '#4ade80',
+                                        boxShadow: '0 0 6px #4ade80',
+                                        animation: 'vrpulse 2s ease-in-out infinite',
+                                        display: 'inline-block',
+                                    }} />
+                                    <span style={{ fontSize: '0.65rem', fontWeight: 700, letterSpacing: '0.1em', color: '#fff' }}>
+                                        VR 360°
+                                    </span>
+                                </div>
+
+                                {/* Close — top right */}
+                                <motion.button
+                                    whileHover={{ scale: 1.08 }}
+                                    whileTap={{ scale: 0.92 }}
+                                    onClick={() => setSelectedVr(null)}
+                                    style={{
+                                        position: 'absolute', top: 14, right: 14,
+                                        width: 34, height: 34, borderRadius: 99,
+                                        background: 'rgba(0,0,0,0.35)',
+                                        backdropFilter: 'blur(8px)', WebkitBackdropFilter: 'blur(8px)',
+                                        border: '1px solid rgba(255,255,255,0.15)',
+                                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                        cursor: 'pointer', color: '#fff',
+                                    }}
+                                >
+                                    <svg width="13" height="13" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                                    </svg>
+                                </motion.button>
+                            </div>
+
+                            {/* Info bar */}
+                            <div style={{ padding: '18px 22px 20px', background: '#fff' }}>
+                                <div className="flex items-start justify-between gap-4">
+                                    <div className="min-w-0">
+                                        {/* Label */}
+                                        <p style={{
+                                            fontSize: '0.65rem', fontWeight: 700, letterSpacing: '0.12em',
+                                            color: 'var(--color-green)', textTransform: 'uppercase', marginBottom: 5,
+                                        }}>
+                                            {t('vr_learning')}
+                                        </p>
+                                        {/* Title */}
+                                        <p style={{
+                                            fontSize: '0.95rem', fontWeight: 700,
+                                            color: 'var(--color-deep-text)', lineHeight: 1.45,
+                                        }}>
+                                            {lang === 'TH' ? selectedVr.meta_name : selectedVr.name_eng}
+                                        </p>
+                                    </div>
+
+                                    {/* Hint */}
+                                    <p style={{
+                                        fontSize: '0.65rem', color: 'var(--color-muted-text)',
+                                        whiteSpace: 'nowrap', flexShrink: 0, marginTop: 2,
+                                    }}>
+                                        {t('VR_Video_Click_empty_space_to_close')}
+                                    </p>
+                                </div>
+
+                                {/* Thin divider */}
+                                <div style={{ height: 1, background: 'var(--color-border)', margin: '14px 0' }} />
+
+                                {/* Bottom row */}
+                                <div className="flex items-center justify-between">
+                                    <div className="flex items-center gap-2">
+                                        <div style={{
+                                            width: 28, height: 28, borderRadius: 8,
+                                            background: 'var(--color-surface-2)',
+                                            display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                        }}>
+                                            <svg width="13" height="13" fill="none" stroke="var(--color-green)" strokeWidth="1.8" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" d="M15 10l4.553-2.069A1 1 0 0121 8.82v6.36a1 1 0 01-1.447.89L15 14M3 8a2 2 0 012-2h8a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2V8z" />
+                                            </svg>
+                                        </div>
+                                        <span style={{ fontSize: '0.72rem', color: 'var(--color-muted-text)', fontWeight: 500 }}>
+                                            Virtual Reality
+                                        </span>
+                                    </div>
+
+                                    <button
+                                        onClick={() => setSelectedVr(null)}
+                                        style={{
+                                            fontSize: '0.72rem', fontWeight: 600,
+                                            color: 'var(--color-muted-text)',
+                                            display: 'flex', alignItems: 'center', gap: 5,
+                                            cursor: 'pointer', border: 'none', background: 'none',
+                                            padding: '6px 12px', borderRadius: 8,
+                                            transition: 'background 0.15s',
+                                        }}
+                                        onMouseEnter={e => e.currentTarget.style.background = 'var(--color-surface-2)'}
+                                        onMouseLeave={e => e.currentTarget.style.background = 'none'}
+                                    >
+                                        <svg width="13" height="13" fill="none" stroke="currentColor" strokeWidth="2.2" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                                        </svg>
+                                        ปิด
+                                    </button>
                                 </div>
                             </div>
+
+                            <style>{`
+                @keyframes vrpulse {
+                    0%, 100% { opacity: 1; transform: scale(1); }
+                    50% { opacity: 0.3; transform: scale(0.65); }
+                }
+            `}</style>
                         </motion.div>
                     </motion.div>
                 )}
             </AnimatePresence>
-
         </div>
     )
 }
