@@ -75,7 +75,6 @@ function Navbar() {
             if (langRef.current && !langRef.current.contains(e.target)) {
                 setLangOpen(false)
             }
-            // ปิด pinned dropdown เมื่อคลิกนอก navbar
             if (mobileRef.current && !mobileRef.current.contains(e.target)) {
                 setPinnedDropdown('')
                 setActiveDropdown('')
@@ -85,7 +84,6 @@ function Navbar() {
         return () => document.removeEventListener('mousedown', handleClickOutside)
     }, [])
 
-    // ปิดด้วย Escape
     useEffect(() => {
         const handleKey = (e) => {
             if (e.key === 'Escape') {
@@ -137,21 +135,6 @@ function Navbar() {
                     className="flex items-center gap-2.5 flex-shrink-0 group"
                     style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}
                 >
-                    {/* <div style={{
-                        width: 30, height: 30,
-                        borderRadius: '8px',
-                        background: 'linear-gradient(135deg, rgba(197,168,105,0.25), rgba(197,168,105,0.08))',
-                        border: '1px solid rgba(197,168,105,0.4)',
-                        display: 'flex', alignItems: 'center', justifyContent: 'center',
-                        transition: 'all 0.3s',
-                        boxShadow: '0 0 12px rgba(197,168,105,0.1)',
-                    }}
-                        className="group-hover:border-[rgba(197,168,105,0.7)] group-hover:shadow-[0_0_18px_rgba(197,168,105,0.25)]"
-                    >
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
-                            <path d="M12 2L4 7v10l8 5 8-5V7L12 2z" stroke="rgba(197,168,105,0.9)" strokeWidth="1.5" strokeLinejoin="round" />
-                        </svg>
-                    </div> */}
                     <img className='w-10 h-10' src={imageLogo} alt="" />
                     <div className="flex flex-col leading-none">
                         <span style={{
@@ -167,7 +150,7 @@ function Navbar() {
                 </button>
 
                 {/* Desktop Menu */}
-                <div className="hidden lg:flex items-center gap-1 flex-1 justify-center">
+                <div className="hidden lg:flex items-center gap-0.5 flex-1 justify-center">
 
                     <PremiumNavLink onClick={() => navigate('/')}>{t('nav_home')}</PremiumNavLink>
 
@@ -222,6 +205,19 @@ function Navbar() {
                     <PremiumDivider />
 
                     <PremiumNavLink onClick={() => navigate('/institute')}>{t('nav_about')}</PremiumNavLink>
+
+                    {/* 🟢 เพิ่มปุ่ม Open Data ตรงนี้ */}
+                    <PremiumDivider />
+
+                    <PremiumNavLink onClick={() => navigate('/opendata')}>
+                        <span className="flex items-center gap-1">
+                            <svg className="w-3.5 h-3.5 opacity-80" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4" />
+                            </svg>
+                            ชุดข้อมูลและทรัพยากร
+                        </span>
+                    </PremiumNavLink>
+
                 </div>
 
                 {/* Right Section */}
@@ -294,7 +290,7 @@ function Navbar() {
                                     width: 24, height: 24, borderRadius: '50%',
                                     background: 'linear-gradient(135deg, rgba(197,168,105,0.4), rgba(197,168,105,0.15))',
                                     border: '1px solid rgba(197,168,105,0.5)',
-                                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                    display: 'flex', items: 'center', justifyContent: 'center',
                                     fontSize: '0.65rem', fontWeight: 700, color: 'rgba(220,190,120,1)',
                                 }}>
                                     {user.name?.charAt(0).toUpperCase()}
@@ -360,7 +356,7 @@ function Navbar() {
                                 width: 40, height: 40, borderRadius: '50%',
                                 background: 'linear-gradient(135deg, rgba(197,168,105,0.35), rgba(197,168,105,0.1))',
                                 border: '1.5px solid rgba(197,168,105,0.5)',
-                                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                display: 'flex', items: 'center', justifyContent: 'center',
                                 fontSize: '1rem', fontWeight: 700, color: 'rgba(220,190,120,1)',
                                 flexShrink: 0,
                             }}>
@@ -417,6 +413,13 @@ function Navbar() {
                         <MobileNavItem onClick={() => { navigate('/institute'); setMobileOpen(false) }} icon={
                             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                         }>สถาบันเศรษฐกิจพอเพียง</MobileNavItem>
+
+                        {/* 🟢 เพิ่มปุ่ม Open Data ฝั่ง Mobile Menu */}
+                        <MobileNavItem onClick={() => { navigate('/opendata'); setMobileOpen(false) }} icon={
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4" />
+                            </svg>
+                        }>ชุดข้อมูลเปิด (Open Data)</MobileNavItem>
 
                         {user?.role === 1 && (
                             <MobileNavItem onClick={() => { navigate('/admin'); setMobileOpen(false) }} icon={
@@ -529,7 +532,6 @@ function PremiumDropdown({ label, children, isOpen, isPinned, onOpen, onClose, o
                     cursor: 'pointer', transition: 'all 0.2s', whiteSpace: 'nowrap',
                 }}>
                 {label}
-                {/* Pin indicator dot */}
                 {isPinned && (
                     <span style={{
                         width: 4, height: 4, borderRadius: '50%',
@@ -558,7 +560,6 @@ function PremiumDropdown({ label, children, isOpen, isPinned, onOpen, onClose, o
                 transition: 'all 0.2s cubic-bezier(0.22, 1, 0.36, 1)',
                 pointerEvents: isOpen ? 'auto' : 'none',
             }}>
-                {/* Top accent — gold when pinned */}
                 <div style={{
                     height: 2,
                     background: isPinned

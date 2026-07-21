@@ -67,6 +67,29 @@ export default function ProjectDetailPage() {
             year: 'numeric'
         })
     }
+    // ฟังก์ชันสำหรับดาวน์โหลดข้อมูลโครงการเป็นไฟล์ .json
+    const handleDownloadJSON = () => {
+        if (!project) return;
+        
+        // จัดรูปแบบโครงสร้าง Open Data ที่ต้องการแจกจ่าย
+        const openData = {
+            project_id: id,
+            project_name_th: project.royal_name,
+            project_name_en: project.royal_name_eng,
+            references: references,
+            total_views: views,
+            last_updated: lastUpdated,
+            exported_at: new Date().toISOString()
+        };
+
+        const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(openData, null, 2));
+        const downloadAnchor = document.createElement('a');
+        downloadAnchor.setAttribute("href", dataStr);
+        downloadAnchor.setAttribute("download", `open-data-project-${id}.json`);
+        document.body.appendChild(downloadAnchor);
+        downloadAnchor.click();
+        downloadAnchor.remove();
+    };
 
     const handleExportPDF = () => {
         window.print()
@@ -108,8 +131,9 @@ export default function ProjectDetailPage() {
     return (
         <div className="min-h-screen" style={{ backgroundColor: 'var(--color-surface)' }}>
 
-            {/* Back + Export — ซ่อนตอน print */}
+            {/* Back + Open Data + Export — ซ่อนตอน print */}
             <div className="print-hide flex items-center justify-between mb-6">
+                {/* ปุ่มย้อนกลับ */}
                 <button
                     onClick={() => navigate(-1)}
                     className="flex items-center gap-2 text-sm transition-colors"
@@ -122,18 +146,45 @@ export default function ProjectDetailPage() {
                     {t('back')}
                 </button>
 
-                <button
-                    onClick={handleExportPDF}
-                    className="flex items-center gap-2 text-sm px-4 py-2 rounded-xl transition-all"
-                    style={{ backgroundColor: 'var(--color-forest-green)', color: '#fff' }}
-                    onMouseEnter={e => e.currentTarget.style.backgroundColor = 'var(--color-green)'}
-                    onMouseLeave={e => e.currentTarget.style.backgroundColor = 'var(--color-forest-green)'}>
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
-                            d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-                    </svg>
-                    {t('export_pdf') || 'Export PDF'}
-                </button>
+                {/* กลุ่มปุ่มดำเนินการ (Open Data + Export PDF) */}
+                <div className="flex items-center gap-3">
+                    {/*  ปุ่ม Open Data */}
+                    <button
+                        onClick={handleDownloadJSON}
+                        className="flex items-center gap-2 text-sm px-4 py-2 rounded-xl transition-all border"
+                        style={{ 
+                            borderColor: 'var(--color-forest-green)', 
+                            color: 'var(--color-forest-green)',
+                            backgroundColor: 'transparent' 
+                        }}
+                        onMouseEnter={e => {
+                            e.currentTarget.style.backgroundColor = 'var(--color-surface-2)'
+                        }}
+                        onMouseLeave={e => {
+                            e.currentTarget.style.backgroundColor = 'transparent'
+                        }}
+                        title="ดาวน์โหลดชุดข้อมูลเปิด (Open Data)">
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} 
+                                d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4" />
+                        </svg>
+                        <span>Open Data (JSON)</span>
+                    </button>
+
+                    {/* ปุ่ม Export PDF (เดิม) */}
+                    <button
+                        onClick={handleExportPDF}
+                        className="flex items-center gap-2 text-sm px-4 py-2 rounded-xl transition-all"
+                        style={{ backgroundColor: 'var(--color-forest-green)', color: '#fff' }}
+                        onMouseEnter={e => e.currentTarget.style.backgroundColor = 'var(--color-green)'}
+                        onMouseLeave={e => e.currentTarget.style.backgroundColor = 'var(--color-forest-green)'}>
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                                d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                        </svg>
+                        {t('export_pdf') || 'Export PDF'}
+                    </button>
+                </div>
             </div>
 
             {/* ── Content ที่จะ print ── */}
