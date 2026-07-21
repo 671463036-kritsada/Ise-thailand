@@ -24,4 +24,15 @@ api.interceptors.response.use(
   }
 )
 
+export const getProjectViews = async (projectId) => {
+  try {
+    const response = await api.get(`/views/${projectId}`)
+    return response.data
+  } catch (error) {
+    console.error('Error fetching project views:', error)
+    throw error
+  }
+}
+
+
 export default api

@@ -5,6 +5,9 @@ import { useLang } from '../../context/LanguageContext'
 import { useTranslation } from 'react-i18next'
 import { UPLOADS_URL } from '../../constants/uploads_url'
 
+//  1. นำเข้า Hook นับยอดวิวที่เราสร้างไว้
+import { useProjectViews } from '../../hook/useProjectViews'
+
 const isValidImg = (f) => f && f.trim() !== '' && f !== 'undefined' && f !== 'null'
 
 export default function ProjectDetailPage() {
@@ -17,6 +20,9 @@ export default function ProjectDetailPage() {
     const { lang } = useLang()
     const { t } = useTranslation()
     const contentRef = useRef(null)
+
+    //  2. เรียกใช้งาน hook นับยอดวิวโดยส่ง id ของโครงการเข้าไป
+    const { views, lastUpdated, loading: viewsLoading } = useProjectViews(id)
 
     useEffect(() => {
         const fetchAll = async () => {
@@ -50,6 +56,17 @@ export default function ProjectDetailPage() {
         }
         fetchAll()
     }, [id])
+
+    //  ฟังก์ชันแปลงวันที่เป็นรูปแบบภาษาไทย (เช่น 20 ธ.ค. 2567)
+    const formatDateTH = (dateString) => {
+        if (!dateString) return ''
+        const date = new Date(dateString)
+        return date.toLocaleDateString('th-TH', {
+            day: 'numeric',
+            month: 'short',
+            year: 'numeric'
+        })
+    }
 
     const handleExportPDF = () => {
         window.print()
@@ -237,6 +254,19 @@ export default function ProjectDetailPage() {
                         </div>
                     </div>
                 )}
+
+                {/*  3. ส่วนแสดงผล View Counter สไตล์เดียวกับรูปตัวอย่าง */}
+                <div className="mt-6 max-w-4xl mx-auto flex items-center justify-end gap-2 text-xs sm:text-sm font-medium"
+                    style={{ color: 'var(--color-muted-text)' }}>
+                    <span>
+                        Last updated: {viewsLoading ? '...' : formatDateTH(lastUpdated)}
+                    </span>
+                    <span>|</span>
+                    <span>
+                        {viewsLoading ? '...' : views.toLocaleString()} {t('views') || 'จำนวนผู้เข้าชม'}
+                    </span>
+                    <span>|</span>
+                </div>
 
             </div>
             {/* ── End print-content ── */}
