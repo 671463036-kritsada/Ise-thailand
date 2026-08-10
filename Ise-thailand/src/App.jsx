@@ -14,6 +14,7 @@ import AdminLayout from './admin/admin'
 import ProtectedRoute from './components/ProtectedRoute'
 
 import AIChatButton from './components/AIChatButton';
+import OpenDataPage from './pages/openData/index'; // Import the OpenDataPage component
 
 import './App.css'
 
@@ -38,6 +39,8 @@ function App() {
                     <Route path="/institute" element={<InstitutePage />} />
                     <Route path="/login" element={<LoginPage />} />
                     <Route path="/projects/:id" element={<ProjectDetailPage />} />
+                    {/* ── Open Data route ── */}
+                    <Route path="/opendata" element={<OpenDataPage />} />
                   </Routes>
                 </main>
                 <AIChatButton />
