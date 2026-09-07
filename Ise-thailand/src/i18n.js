@@ -57,7 +57,7 @@ const resources = {
       project_not_found: "ไม่พบโครงการที่ค้นหา",
 
       view_details: "ดูรายละเอียด",
-      GoToPage : "ไปหน้าที่",
+      GoToPage: "ไปหน้าที่",
 
       // end project page
 
@@ -193,7 +193,28 @@ const resources = {
       nav_admin: "Admin",
       nav_administrator: "Administrator",
       nav_user: "User",
+      nav_data_and_resource: "ชุดข้อมูลและทรัพยากร",
       // end navbar
+
+      // opendata page
+      opendata_title: "ชุดข้อมูลและทรัพยากร (Open Data)",
+      opendata_subtitle:
+        "ดาวน์โหลดข้อมูลโครงการ สื่อสิ่งพิมพ์ และทรัพยากรในรูปแบบไฟล์ CSV, JSON หรือ PDF",
+      opendata_tab_royal: "ศาสตร์ของพระราชา",
+      opendata_tab_institute: "งานภายใต้สถาบัน",
+      opendata_type_label: "ประเภท:",
+      opendata_resource_count: "ข้อมูลและทรัพยากร ({{count}})",
+      opendata_loading: "กำลังโหลดข้อมูล...",
+      opendata_no_data: "ไม่พบชุดข้อมูล",
+      opendata_no_name: "ไม่มีชื่อรายการ",
+      opendata_default_detail: "สื่อสิ่งพิมพ์ / เอกสารสถาบัน",
+      opendata_preview: "ดูตัวอย่าง",
+      opendata_download_csv: "CSV / Excel",
+      opendata_download_json: "JSON",
+      opendata_download_pdf: "PDF",
+      opendata_preview_title: "ตัวอย่างข้อมูล",
+      opendata_close: "ปิด",
+      // end opendata page
 
       // footer
       footer_brand: "สถาบันเศรษฐกิจพอเพียง",
@@ -212,15 +233,15 @@ const resources = {
         "©2022 Institute of Sufficiency Economy. All rights reserved.",
       footer_privacy: "นโยบายความเป็นส่วนตัว",
       footer_terms: "เงื่อนไขการใช้งาน",
+      footer_opendata: "ชุดข้อมูลเปิด (Open Data)",
       // end footer
-
 
       Read_more_details: "อ่านรายละเอียดเพิ่มเติม",
       Image_Gallery: "อัลบั้มรูปภาพ",
-      unit_image : "รูป",
-      image_at : "รูปที่",
-      Project_Introduction : "แนะนำโครงการ",
-      VR_Video_Click_empty_space_to_close : "วิดีโอ VR · กดพื้นที่ว่างเพื่อปิด"
+      unit_image: "รูป",
+      image_at: "รูปที่",
+      Project_Introduction: "แนะนำโครงการ",
+      VR_Video_Click_empty_space_to_close: "วิดีโอ VR · กดพื้นที่ว่างเพื่อปิด",
     },
   },
 
@@ -274,7 +295,7 @@ const resources = {
       project_not_found: "No matching projects found",
 
       view_details: "View Details",
-      GoToPage : "Go to page",
+      GoToPage: "Go to page",
       // end project page
 
       // project detail
@@ -410,7 +431,28 @@ const resources = {
       nav_admin: "Admin",
       nav_administrator: "Administrator",
       nav_user: "User",
+      nav_data_and_resource: "Data and Resources",
       // end navbar
+
+      // opendata page
+      opendata_title: "Data and Resources (Open Data)",
+      opendata_subtitle:
+        "Download project data, publications, and resources in CSV, JSON, or PDF format",
+      opendata_tab_royal: "Royal Projects",
+      opendata_tab_institute: "Work Under the Institute",
+      opendata_type_label: "Type:",
+      opendata_resource_count: "Data and Resources ({{count}})",
+      opendata_loading: "Loading data...",
+      opendata_no_data: "No data found",
+      opendata_no_name: "Untitled item",
+      opendata_default_detail: "Institute publication / document",
+      opendata_preview: "Preview",
+      opendata_download_csv: "CSV / Excel",
+      opendata_download_json: "JSON",
+      opendata_download_pdf: "PDF",
+      opendata_preview_title: "Data Preview",
+      opendata_close: "Close",
+      // end opendata page
 
       // footer
       footer_brand: "Sufficiency Economy Institute",
@@ -429,14 +471,16 @@ const resources = {
         "©2022 Institute of Sufficiency Economy. All rights reserved.",
       footer_privacy: "Privacy Policy",
       footer_terms: "Terms of Use",
+      footer_opendata: "Open Data",
       // end footer
 
-       Read_more_details: "Read more details",
-       Image_Gallery : "Image Gallery",
-       unit_image : "Image",
-       image_at : "Image",
-       Project_Introduction: "Project Introduction",
-       VR_Video_Click_empty_space_to_close : "VR Video · Click empty space to close"
+      Read_more_details: "Read more details",
+      Image_Gallery: "Image Gallery",
+      unit_image: "Image",
+      image_at: "Image",
+      Project_Introduction: "Project Introduction",
+      VR_Video_Click_empty_space_to_close:
+        "VR Video · Click empty space to close",
     },
   },
 };

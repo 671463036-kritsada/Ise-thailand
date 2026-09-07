@@ -45,10 +45,10 @@ function Navbar() {
             showCancelButton: true,
             confirmButtonText: 'ออกจากระบบ',
             cancelButtonText: 'ยกเลิก',
-            confirmButtonColor: '#b85c4a',
-            cancelButtonColor: '#404e3b',
-            background: '#1a2e1a',
-            color: '#ffffff',
+            confirmButtonColor: 'var(--color-error)',
+            cancelButtonColor: 'var(--color-forest-green)',
+            background: 'var(--color-forest-green)',
+            color: 'var(--color-white)',
         })
 
         if (result.isConfirmed) {
@@ -75,6 +75,7 @@ function Navbar() {
             if (langRef.current && !langRef.current.contains(e.target)) {
                 setLangOpen(false)
             }
+            // ปิด pinned dropdown เมื่อคลิกนอก navbar
             if (mobileRef.current && !mobileRef.current.contains(e.target)) {
                 setPinnedDropdown('')
                 setActiveDropdown('')
@@ -84,6 +85,7 @@ function Navbar() {
         return () => document.removeEventListener('mousedown', handleClickOutside)
     }, [])
 
+    // ปิดด้วย Escape
     useEffect(() => {
         const handleKey = (e) => {
             if (e.key === 'Escape') {
@@ -113,10 +115,10 @@ function Navbar() {
             className="w-full fixed top-0 left-0 z-50 transition-all duration-500"
             style={{
                 background: scrolled
-                    ? 'linear-gradient(135deg, rgba(30,42,28,0.98) 0%, rgba(50,66,44,0.98) 100%)'
-                    : 'linear-gradient(135deg, rgba(30,42,28,0.95) 0%, rgba(50,66,44,0.93) 100%)',
-                borderBottom: scrolled ? '1px solid rgba(197,168,105,0.3)' : '1px solid rgba(197,168,105,0.15)',
-                boxShadow: scrolled ? '0 4px 32px rgba(0,0,0,0.35), 0 1px 0 rgba(197,168,105,0.2)' : 'none',
+                    ? `linear-gradient(135deg, var(--color-deep-text) 0%, var(--color-forest-green) 100%)`
+                    : `linear-gradient(135deg, var(--color-deep-text) 0%, var(--color-forest-green) 100%)`,
+                borderBottom: scrolled ? '1px solid var(--color-gold-border)' : '1px solid var(--color-border)',
+                boxShadow: scrolled ? '0 4px 32px var(--color-shadow-lg)' : 'none',
                 backdropFilter: 'blur(20px)',
                 WebkitBackdropFilter: 'blur(20px)',
             }}
@@ -124,7 +126,7 @@ function Navbar() {
             {/* Gold shimmer top line */}
             <div style={{
                 height: '1.5px',
-                background: 'linear-gradient(90deg, transparent 0%, rgba(197,168,105,0.4) 20%, rgba(220,190,120,0.9) 50%, rgba(197,168,105,0.4) 80%, transparent 100%)',
+                background: `linear-gradient(90deg, transparent 0%, var(--color-gold) 20%, var(--color-gold-hover) 50%, var(--color-gold) 80%, transparent 100%)`,
             }} />
 
             <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between gap-8">
@@ -139,18 +141,18 @@ function Navbar() {
                     <div className="flex flex-col leading-none">
                         <span style={{
                             fontSize: '0.8rem', fontWeight: 700, letterSpacing: '0.12em',
-                            color: 'rgba(255,255,255,0.95)',
+                            color: 'var(--color-white)',
                             fontFamily: 'Georgia, serif',
                         }}>ISE</span>
                         <span style={{
                             fontSize: '0.55rem', letterSpacing: '0.2em',
-                            color: 'rgba(197,168,105,0.8)', fontWeight: 500,
+                            color: 'var(--color-gold)', fontWeight: 500,
                         }}>THAILAND</span>
                     </div>
                 </button>
 
                 {/* Desktop Menu */}
-                <div className="hidden lg:flex items-center gap-0.5 flex-1 justify-center">
+                <div className="hidden lg:flex items-center gap-1 flex-1 justify-center">
 
                     <PremiumNavLink onClick={() => navigate('/')}>{t('nav_home')}</PremiumNavLink>
 
@@ -206,18 +208,9 @@ function Navbar() {
 
                     <PremiumNavLink onClick={() => navigate('/institute')}>{t('nav_about')}</PremiumNavLink>
 
-                    {/* 🟢 เพิ่มปุ่ม Open Data ตรงนี้ */}
                     <PremiumDivider />
 
-                    <PremiumNavLink onClick={() => navigate('/opendata')}>
-                        <span className="flex items-center gap-1">
-                            <svg className="w-3.5 h-3.5 opacity-80" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4" />
-                            </svg>
-                            ชุดข้อมูลและทรัพยากร
-                        </span>
-                    </PremiumNavLink>
-
+                    <PremiumNavLink onClick={() => navigate('/opendata')}>{t('nav_data_and_resource')}</PremiumNavLink>
                 </div>
 
                 {/* Right Section */}
@@ -230,9 +223,9 @@ function Navbar() {
                             className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition-all duration-200"
                             style={{
                                 fontSize: '0.7rem', fontWeight: 600, letterSpacing: '0.08em',
-                                color: 'rgba(197,168,105,0.9)',
-                                border: '1px solid rgba(197,168,105,0.3)',
-                                background: langOpen ? 'rgba(197,168,105,0.12)' : 'rgba(197,168,105,0.06)',
+                                color: 'var(--color-gold)',
+                                border: '1px solid var(--color-gold-border)',
+                                background: langOpen ? 'var(--color-green)' : 'var(--color-forest-green)',
                                 cursor: 'pointer',
                             }}
                         >
@@ -248,22 +241,22 @@ function Navbar() {
                         {langOpen && (
                             <div className="absolute top-full right-0 mt-2 w-40 rounded-xl overflow-hidden z-50"
                                 style={{
-                                    background: 'linear-gradient(160deg, rgba(28,38,26,0.99), rgba(40,54,36,0.99))',
-                                    border: '1px solid rgba(197,168,105,0.25)',
-                                    boxShadow: '0 12px 40px rgba(0,0,0,0.5), 0 0 0 1px rgba(197,168,105,0.08)',
+                                    background: `linear-gradient(160deg, var(--color-deep-text), var(--color-forest-green))`,
+                                    border: '1px solid var(--color-gold-border)',
+                                    boxShadow: '0 12px 40px var(--color-shadow-lg)',
                                 }}>
-                                <div style={{ height: '1.5px', background: 'linear-gradient(90deg, transparent, rgba(197,168,105,0.7), transparent)' }} />
+                                <div style={{ height: '1.5px', background: `linear-gradient(90deg, transparent, var(--color-gold), transparent)` }} />
                                 {languages.map(l => (
                                     <button key={l.code}
                                         onClick={() => { setLang(l.code); setLangOpen(false) }}
                                         className="w-full flex items-center justify-between px-4 py-3 transition-all duration-150"
                                         style={{
-                                            background: lang === l.code ? 'rgba(197,168,105,0.1)' : 'transparent',
+                                            background: lang === l.code ? 'var(--color-green)' : 'transparent',
                                             border: 'none', cursor: 'pointer',
                                             fontSize: '0.75rem',
-                                            color: lang === l.code ? 'rgba(220,190,120,1)' : 'rgba(255,255,255,0.65)',
+                                            color: lang === l.code ? 'var(--color-gold-hover)' : 'var(--color-white)',
                                             fontWeight: lang === l.code ? 600 : 400,
-                                            borderBottom: '1px solid rgba(255,255,255,0.05)',
+                                            borderBottom: '1px solid var(--color-green)',
                                         }}
                                     >
                                         <span>{l.label}</span>
@@ -279,23 +272,23 @@ function Navbar() {
                     </div>
 
                     {/* Divider */}
-                    <div style={{ width: 1, height: 20, background: 'rgba(255,255,255,0.12)' }} />
+                    <div style={{ width: 1, height: 20, background: 'var(--color-green)' }} />
 
                     {/* User / Login */}
                     {user ? (
                         <div className="flex items-center gap-2">
                             <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg"
-                                style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)' }}>
+                                style={{ background: 'var(--color-forest-green)', border: '1px solid var(--color-green)' }}>
                                 <div style={{
                                     width: 24, height: 24, borderRadius: '50%',
-                                    background: 'linear-gradient(135deg, rgba(197,168,105,0.4), rgba(197,168,105,0.15))',
-                                    border: '1px solid rgba(197,168,105,0.5)',
-                                    display: 'flex', items: 'center', justifyContent: 'center',
-                                    fontSize: '0.65rem', fontWeight: 700, color: 'rgba(220,190,120,1)',
+                                    background: 'var(--color-gold)',
+                                    border: '1px solid var(--color-gold-border)',
+                                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                    fontSize: '0.65rem', fontWeight: 700, color: 'var(--color-gold-hover)',
                                 }}>
                                     {user.name?.charAt(0).toUpperCase()}
                                 </div>
-                                <span style={{ fontSize: '0.72rem', color: 'rgba(255,255,255,0.8)', fontWeight: 500, maxWidth: 90, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                                <span style={{ fontSize: '0.72rem', color: 'var(--color-white)', fontWeight: 500, maxWidth: 90, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                                     {user.name}
                                 </span>
                             </div>
@@ -314,24 +307,24 @@ function Navbar() {
                 <button
                     className="lg:hidden relative w-9 h-9 flex flex-col justify-center items-center gap-1.5 rounded-lg transition-all duration-200 cursor-pointer"
                     style={{
-                        background: mobileOpen ? 'rgba(197,168,105,0.15)' : 'rgba(255,255,255,0.06)',
-                        border: mobileOpen ? '1px solid rgba(197,168,105,0.4)' : '1px solid rgba(255,255,255,0.1)',
+                        background: mobileOpen ? 'var(--color-green)' : 'var(--color-forest-green)',
+                        border: mobileOpen ? '1px solid var(--color-gold-border)' : '1px solid var(--color-green)',
                     }}
                     onClick={() => setMobileOpen(!mobileOpen)}
                 >
                     <span className="block transition-all duration-300" style={{
                         width: 16, height: 1.5, borderRadius: 2,
-                        background: mobileOpen ? 'rgba(197,168,105,0.9)' : 'rgba(255,255,255,0.85)',
+                        background: mobileOpen ? 'var(--color-gold)' : 'var(--color-white)',
                         transform: mobileOpen ? 'rotate(45deg) translate(2px, 2px)' : 'none',
                     }} />
                     <span className="block transition-all duration-300" style={{
                         width: 16, height: 1.5, borderRadius: 2,
-                        background: mobileOpen ? 'rgba(197,168,105,0.9)' : 'rgba(255,255,255,0.85)',
+                        background: mobileOpen ? 'var(--color-gold)' : 'var(--color-white)',
                         opacity: mobileOpen ? 0 : 1,
                     }} />
                     <span className="block transition-all duration-300" style={{
                         width: 16, height: 1.5, borderRadius: 2,
-                        background: mobileOpen ? 'rgba(197,168,105,0.9)' : 'rgba(255,255,255,0.85)',
+                        background: mobileOpen ? 'var(--color-gold)' : 'var(--color-white)',
                         transform: mobileOpen ? 'rotate(-45deg) translate(2px, -2px)' : 'none',
                     }} />
                 </button>
@@ -340,38 +333,38 @@ function Navbar() {
             {/* Mobile Menu */}
             {mobileOpen && (
                 <div className="lg:hidden overflow-y-auto max-h-[85vh]" style={{
-                    background: 'linear-gradient(180deg, rgba(22,32,20,0.99) 0%, rgba(28,40,24,0.99) 100%)',
-                    borderTop: '1px solid rgba(197,168,105,0.15)',
-                    boxShadow: '0 20px 60px rgba(0,0,0,0.5)',
+                    background: `linear-gradient(180deg, var(--color-deep-text) 0%, var(--color-forest-green) 100%)`,
+                    borderTop: '1px solid var(--color-gold-border)',
+                    boxShadow: `0 20px 60px var(--color-shadow-lg)`,
                 }}>
-                    <div style={{ height: '1px', background: 'linear-gradient(90deg, transparent, rgba(197,168,105,0.5), transparent)' }} />
+                    <div style={{ height: '1px', background: `linear-gradient(90deg, transparent, var(--color-gold), transparent)` }} />
 
                     {/* User Block */}
                     {user && (
                         <div className="mx-4 mt-4 mb-2 p-4 rounded-2xl flex items-center gap-3" style={{
-                            background: 'linear-gradient(135deg, rgba(197,168,105,0.1), rgba(197,168,105,0.04))',
-                            border: '1px solid rgba(197,168,105,0.2)',
+                            background: 'var(--color-forest-green)',
+                            border: '1px solid var(--color-green)',
                         }}>
                             <div style={{
                                 width: 40, height: 40, borderRadius: '50%',
-                                background: 'linear-gradient(135deg, rgba(197,168,105,0.35), rgba(197,168,105,0.1))',
-                                border: '1.5px solid rgba(197,168,105,0.5)',
-                                display: 'flex', items: 'center', justifyContent: 'center',
-                                fontSize: '1rem', fontWeight: 700, color: 'rgba(220,190,120,1)',
+                                background: 'var(--color-gold)',
+                                border: '1.5px solid var(--color-gold-border)',
+                                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                fontSize: '1rem', fontWeight: 700, color: 'var(--color-deep-text)',
                                 flexShrink: 0,
                             }}>
                                 {user.name?.charAt(0).toUpperCase()}
                             </div>
                             <div className="flex-1 min-w-0">
-                                <p style={{ fontSize: '0.85rem', fontWeight: 600, color: 'rgba(255,255,255,0.92)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{user.name}</p>
-                                <p style={{ fontSize: '0.7rem', color: 'rgba(197,168,105,0.7)', marginTop: 1 }}>
+                                <p style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--color-white)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{user.name}</p>
+                                <p style={{ fontSize: '0.7rem', color: 'var(--color-gold)', marginTop: 1 }}>
                                     {user.role === 1 ? t('nav_administrator') : t('nav_user')}
                                 </p>
                             </div>
                             <div style={{
                                 width: 8, height: 8, borderRadius: '50%',
-                                background: '#4ade80',
-                                boxShadow: '0 0 8px rgba(74,222,128,0.6)',
+                                background: 'var(--color-success)',
+                                boxShadow: `0 0 8px var(--color-success)`,
                                 flexShrink: 0,
                             }} />
                         </div>
@@ -414,12 +407,11 @@ function Navbar() {
                             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                         }>สถาบันเศรษฐกิจพอเพียง</MobileNavItem>
 
-                        {/* 🟢 เพิ่มปุ่ม Open Data ฝั่ง Mobile Menu */}
                         <MobileNavItem onClick={() => { navigate('/opendata'); setMobileOpen(false) }} icon={
                             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4" />
                             </svg>
-                        }>ชุดข้อมูลเปิด (Open Data)</MobileNavItem>
+                        }>{t('nav_data_and_resource')}</MobileNavItem>
 
                         {user?.role === 1 && (
                             <MobileNavItem onClick={() => { navigate('/admin'); setMobileOpen(false) }} icon={
@@ -430,11 +422,11 @@ function Navbar() {
 
                     {/* Bottom bar: Language + Login */}
                     <div className="mx-4 mb-4 mt-1 p-3 rounded-2xl flex items-center justify-between gap-3" style={{
-                        background: 'rgba(255,255,255,0.03)',
-                        border: '1px solid rgba(255,255,255,0.08)',
+                        background: 'var(--color-forest-green)',
+                        border: '1px solid var(--color-green)',
                     }}>
                         <div className="flex items-center gap-1.5">
-                            <svg className="w-3.5 h-3.5 flex-shrink-0" style={{ color: 'rgba(197,168,105,0.6)' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg className="w-3.5 h-3.5 flex-shrink-0" style={{ color: 'var(--color-gold)' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129" />
                             </svg>
                             {languages.map(l => (
@@ -443,9 +435,9 @@ function Navbar() {
                                     style={{
                                         padding: '4px 10px', borderRadius: 8, fontSize: '0.68rem', fontWeight: 600,
                                         cursor: 'pointer', transition: 'all 0.2s', letterSpacing: '0.05em',
-                                        background: lang === l.code ? 'rgba(197,168,105,0.2)' : 'transparent',
-                                        border: lang === l.code ? '1px solid rgba(197,168,105,0.5)' : '1px solid rgba(255,255,255,0.1)',
-                                        color: lang === l.code ? 'rgba(220,190,120,1)' : 'rgba(255,255,255,0.5)',
+                                        background: lang === l.code ? 'var(--color-gold)' : 'transparent',
+                                        border: lang === l.code ? '1px solid var(--color-gold-border)' : '1px solid var(--color-green)',
+                                        color: lang === l.code ? 'var(--color-deep-text)' : 'var(--color-white)',
                                     }}>
                                     {l.short}
                                 </button>
@@ -456,9 +448,9 @@ function Navbar() {
                             <button onClick={handleLogoutRequest} style={{
                                 padding: '5px 14px', borderRadius: 8, fontSize: '0.72rem', fontWeight: 600,
                                 cursor: 'pointer', transition: 'all 0.2s',
-                                background: 'rgba(239,68,68,0.12)',
-                                border: '1px solid rgba(239,68,68,0.25)',
-                                color: 'rgba(252,165,165,0.9)',
+                                background: 'var(--color-error)',
+                                border: '1px solid var(--color-error)',
+                                color: 'var(--color-white)',
                             }}>
                                 {t('nav_logout')}
                             </button>
@@ -466,9 +458,9 @@ function Navbar() {
                             <button onClick={() => { navigate('/login'); setMobileOpen(false) }} style={{
                                 padding: '5px 14px', borderRadius: 8, fontSize: '0.72rem', fontWeight: 600,
                                 cursor: 'pointer', transition: 'all 0.2s',
-                                background: 'rgba(197,168,105,0.15)',
-                                border: '1px solid rgba(197,168,105,0.35)',
-                                color: 'rgba(220,190,120,0.95)',
+                                background: 'var(--color-gold)',
+                                border: '1px solid var(--color-gold-border)',
+                                color: 'var(--color-deep-text)',
                             }}>
                                 {t('nav_login')}
                             </button>
@@ -491,8 +483,8 @@ function PremiumNavLink({ onClick, children }) {
             style={{
                 padding: '6px 14px', borderRadius: 8,
                 fontSize: '0.72rem', fontWeight: 500, letterSpacing: '0.08em',
-                color: hovered ? 'rgba(255,255,255,0.95)' : 'rgba(255,255,255,0.7)',
-                background: hovered ? 'rgba(255,255,255,0.07)' : 'transparent',
+                color: 'var(--color-white)',
+                background: hovered ? 'var(--color-green)' : 'transparent',
                 border: 'none', cursor: 'pointer', transition: 'all 0.2s', whiteSpace: 'nowrap',
             }}>
             {children}
@@ -501,13 +493,13 @@ function PremiumNavLink({ onClick, children }) {
 }
 
 function PremiumDivider() {
-    return <div style={{ width: 1, height: 14, background: 'rgba(255,255,255,0.1)', flexShrink: 0 }} />
+    return <div style={{ width: 1, height: 14, background: 'var(--color-green)', flexShrink: 0 }} />
 }
 
 function DropdownHeader({ label }) {
     return (
-        <div style={{ padding: '12px 16px 8px', borderBottom: '1px solid rgba(0,0,0,0.06)' }}>
-            <p style={{ fontSize: '0.6rem', fontWeight: 700, letterSpacing: '0.15em', textTransform: 'uppercase', color: 'rgba(100,120,90,0.7)' }}>{label}</p>
+        <div style={{ padding: '12px 16px 8px', borderBottom: '1px solid var(--color-surface-3)' }}>
+            <p style={{ fontSize: '0.6rem', fontWeight: 700, letterSpacing: '0.15em', textTransform: 'uppercase', color: 'var(--color-muted-text)' }}>{label}</p>
         </div>
     )
 }
@@ -524,18 +516,19 @@ function PremiumDropdown({ label, children, isOpen, isPinned, onOpen, onClose, o
                 style={{
                     padding: '6px 14px', borderRadius: 8,
                     fontSize: '0.72rem', fontWeight: 500, letterSpacing: '0.08em',
-                    color: isOpen || hovered ? 'rgba(255,255,255,0.95)' : 'rgba(255,255,255,0.7)',
+                    color: 'var(--color-white)',
                     background: isPinned
-                        ? 'rgba(197,168,105,0.12)'
-                        : isOpen ? 'rgba(255,255,255,0.07)' : 'transparent',
-                    border: isPinned ? '1px solid rgba(197,168,105,0.3)' : '1px solid transparent',
+                        ? 'var(--color-green)'
+                        : isOpen ? 'var(--color-green)' : 'transparent',
+                    border: isPinned ? '1px solid var(--color-gold-border)' : '1px solid transparent',
                     cursor: 'pointer', transition: 'all 0.2s', whiteSpace: 'nowrap',
                 }}>
                 {label}
+                {/* Pin indicator dot */}
                 {isPinned && (
                     <span style={{
                         width: 4, height: 4, borderRadius: '50%',
-                        background: 'rgba(197,168,105,0.9)',
+                        background: 'var(--color-gold)',
                         display: 'inline-block', marginLeft: 2, flexShrink: 0,
                     }} />
                 )}
@@ -550,24 +543,25 @@ function PremiumDropdown({ label, children, isOpen, isPinned, onOpen, onClose, o
                 position: 'absolute', top: 'calc(100% + 8px)', left: '50%',
                 transform: isOpen ? 'translateX(-50%) translateY(0)' : 'translateX(-50%) translateY(6px)',
                 width: 240, borderRadius: 14, overflow: 'hidden', zIndex: 50,
-                background: 'linear-gradient(160deg, #ffffff 0%, #f8faf7 100%)',
-                border: isPinned ? '1px solid rgba(74,124,89,0.35)' : '1px solid rgba(180,200,170,0.4)',
+                background: `linear-gradient(160deg, var(--color-white) 0%, var(--color-surface) 100%)`,
+                border: isPinned ? '1px solid var(--color-green)' : '1px solid var(--color-border)',
                 boxShadow: isPinned
-                    ? '0 16px 48px rgba(0,0,0,0.18), 0 4px 12px rgba(0,0,0,0.08), 0 0 0 2px rgba(74,124,89,0.1)'
-                    : '0 16px 48px rgba(0,0,0,0.18), 0 4px 12px rgba(0,0,0,0.08)',
+                    ? '0 16px 48px var(--color-shadow-lg), 0 4px 12px var(--color-shadow-md)'
+                    : '0 16px 48px var(--color-shadow-lg), 0 4px 12px var(--color-shadow-md)',
                 opacity: isOpen ? 1 : 0,
                 visibility: isOpen ? 'visible' : 'hidden',
                 transition: 'all 0.2s cubic-bezier(0.22, 1, 0.36, 1)',
                 pointerEvents: isOpen ? 'auto' : 'none',
             }}>
+                {/* Top accent — gold when pinned */}
                 <div style={{
                     height: 2,
                     background: isPinned
-                        ? 'linear-gradient(90deg, rgba(197,168,105,0.8), rgba(220,190,120,1), rgba(197,168,105,0.8))'
-                        : 'linear-gradient(90deg, #4a7c59, #2d5a3d)',
+                        ? `linear-gradient(90deg, var(--color-gold), var(--color-gold-hover), var(--color-gold))`
+                        : `linear-gradient(90deg, var(--color-green), var(--color-forest-green))`,
                 }} />
                 {children}
-                <div style={{ height: 4, background: 'linear-gradient(180deg, transparent, rgba(0,0,0,0.02))' }} />
+                <div style={{ height: 4, background: 'var(--color-surface-2)' }} />
             </div>
         </div>
     )
@@ -584,10 +578,10 @@ function DropdownItemPremium({ onClick, children, isFeature }) {
                 padding: isFeature ? '11px 16px' : '9px 16px',
                 fontSize: '0.75rem',
                 fontWeight: isFeature ? 600 : 400,
-                color: hovered ? '#1a3a22' : isFeature ? '#2d5a3d' : '#4a6050',
-                background: hovered ? 'rgba(74,124,89,0.08)' : 'transparent',
+                color: hovered ? 'var(--color-deep-text)' : isFeature ? 'var(--color-forest-green)' : 'var(--color-muted-text)',
+                background: hovered ? 'var(--color-surface-2)' : 'transparent',
                 border: 'none', cursor: 'pointer', transition: 'all 0.15s',
-                borderBottom: isFeature ? '1px solid rgba(0,0,0,0.06)' : '1px solid rgba(0,0,0,0.03)',
+                borderBottom: '1px solid var(--color-surface-3)',
             }}>
             {children}
         </button>
@@ -598,19 +592,19 @@ function GoldButton({ onClick, children, variant = 'outline' }) {
     const [hovered, setHovered] = useState(false)
     const styles = {
         outline: {
-            background: hovered ? 'rgba(197,168,105,0.15)' : 'transparent',
-            border: '1px solid rgba(197,168,105,0.35)',
-            color: 'rgba(220,190,120,0.9)',
+            background: hovered ? 'var(--color-gold-subtle)' : 'transparent',
+            border: '1px solid var(--color-gold-border)',
+            color: 'var(--color-gold-hover)',
         },
         ghost: {
-            background: hovered ? 'rgba(239,68,68,0.1)' : 'transparent',
-            border: '1px solid rgba(239,68,68,0.2)',
-            color: hovered ? 'rgba(252,165,165,0.9)' : 'rgba(255,255,255,0.5)',
+            background: hovered ? 'var(--color-error)' : 'transparent',
+            border: '1px solid var(--color-error)',
+            color: 'var(--color-white)',
         },
         solid: {
-            background: hovered ? 'rgba(197,168,105,0.25)' : 'rgba(197,168,105,0.15)',
-            border: '1px solid rgba(197,168,105,0.5)',
-            color: 'rgba(220,190,120,1)',
+            background: hovered ? 'var(--color-gold-hover)' : 'var(--color-gold)',
+            border: '1px solid var(--color-gold-border)',
+            color: 'var(--color-deep-text)',
         },
     }
     return (
@@ -636,12 +630,12 @@ function MobileNavItem({ onClick, children, icon }) {
             onMouseLeave={() => setHovered(false)}
             className="w-full flex items-center gap-3 px-4 py-3 rounded-xl mb-0.5 transition-all duration-150 cursor-pointer"
             style={{
-                background: hovered ? 'rgba(255,255,255,0.06)' : 'transparent',
+                background: hovered ? 'var(--color-green)' : 'transparent',
                 border: 'none',
-                color: hovered ? 'rgba(255,255,255,0.95)' : 'rgba(255,255,255,0.7)',
+                color: 'var(--color-white)',
                 fontSize: '0.82rem', fontWeight: 500, textAlign: 'left',
             }}>
-            {icon && <span style={{ color: 'rgba(197,168,105,0.7)', flexShrink: 0 }}>{icon}</span>}
+            {icon && <span style={{ color: 'var(--color-gold)', flexShrink: 0 }}>{icon}</span>}
             {children}
         </button>
     )
@@ -653,12 +647,12 @@ function MobileDropdown({ label, isOpen, onToggle, children, icon }) {
             <button onClick={onToggle}
                 className="w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-150 cursor-pointer"
                 style={{
-                    background: isOpen ? 'rgba(197,168,105,0.08)' : 'transparent',
-                    border: isOpen ? '1px solid rgba(197,168,105,0.15)' : '1px solid transparent',
-                    color: isOpen ? 'rgba(220,190,120,0.9)' : 'rgba(255,255,255,0.7)',
+                    background: isOpen ? 'var(--color-green)' : 'transparent',
+                    border: isOpen ? '1px solid var(--color-gold-border)' : '1px solid transparent',
+                    color: isOpen ? 'var(--color-gold)' : 'var(--color-white)',
                     fontSize: '0.82rem', fontWeight: 500,
                 }}>
-                {icon && <span style={{ color: isOpen ? 'rgba(197,168,105,0.8)' : 'rgba(197,168,105,0.6)', flexShrink: 0 }}>{icon}</span>}
+                {icon && <span style={{ color: 'var(--color-gold)', flexShrink: 0 }}>{icon}</span>}
                 <span className="flex-1 text-left">{label}</span>
                 <svg className="w-4 h-4 transition-transform duration-200 flex-shrink-0"
                     style={{ transform: isOpen ? 'rotate(180deg)' : '' }}
@@ -668,9 +662,9 @@ function MobileDropdown({ label, isOpen, onToggle, children, icon }) {
             </button>
             {isOpen && (
                 <div className="ml-4 mt-1 rounded-xl overflow-hidden" style={{
-                    background: 'rgba(0,0,0,0.2)',
-                    border: '1px solid rgba(255,255,255,0.06)',
-                    borderLeft: '2px solid rgba(197,168,105,0.3)',
+                    background: 'var(--color-deep-text)',
+                    border: '1px solid var(--color-green)',
+                    borderLeft: '2px solid var(--color-gold)',
                 }}>
                     {children}
                 </div>
@@ -687,10 +681,10 @@ function MobileSubItem({ onClick, children, isFeature }) {
             onMouseLeave={() => setHovered(false)}
             className="w-full text-left px-4 py-2.5 transition-all duration-150 cursor-pointer"
             style={{
-                background: hovered ? 'rgba(255,255,255,0.05)' : 'transparent',
+                background: hovered ? 'var(--color-forest-green)' : 'transparent',
                 border: 'none',
-                borderBottom: '1px solid rgba(255,255,255,0.04)',
-                color: isFeature ? 'rgba(197,168,105,0.85)' : 'rgba(255,255,255,0.55)',
+                borderBottom: '1px solid var(--color-green)',
+                color: isFeature ? 'var(--color-gold)' : 'var(--color-white)',
                 fontSize: '0.75rem',
                 fontWeight: isFeature ? 600 : 400,
             }}>

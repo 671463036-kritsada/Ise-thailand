@@ -29,42 +29,45 @@
   /* font family */
   --font-sans: "Prompt", sans-serif;
 
+  
   /* ===== Core Brand Colors ===== */
-  --color-forest-green: #404e3b;
-  --color-green: #7b9669;
-  --color-green-light: #bac8b1;
-  --color-gold: #c9a84c;
-  --color-gold-hover: #b8923e;
-  --color-white: #ffffff;
+  --color-forest-green: #192a1d;     /* Footer: เขียวป่าลึก ปรับสว่างขึ้นเล็กน้อย */
+  --color-deep-green: #223828;       /* Navbar: เขียวเข้มพรีเมียม นุ่มตา */
+  --color-green: #356745;            /* Button Primary: เขียวใบชา ปรับสว่างขึ้น 10% */
+  --color-green-light: #448058;      /* Hover State ปุ่มหลัก */
+  --color-gold: #b38b24;             /* Button Secondary: ทองบรอนซ์สว่างนวล */
+  --color-gold-hover: #96731b;       /* Hover State ปุ่มรอง */
+  --color-white: #ffffff;            /* สีขาวบริสุทธิ์สำหรับ Card/Text */
 
-  /* ===== Tonal Layers ===== */
-  --color-surface: #f5f7f4;
-  --color-surface-2: #eaefe7;
-  --color-surface-3: #dce4d8; /* hover state, divider bg */
+  /* ===== Tonal Layers (สว่างขึ้น 10% แต่ไม่จ้าเกินไป) ===== */
+  --color-surface: #edf1ee;          /* Background หลัก: เทาอมเขียวสว่างนวลตา ถนอมสายตา */
+  --color-surface-2: #fafcfb;        /* พื้นหลังการ์ด (Card BG): ขาวนวลสะอาดตา */
+  --color-surface-3: #dae1dc;        /* พื้นหลังส่วนสลับโทน / Active State */
 
   /* ===== Accent Gold ===== */
-  --color-gold-subtle: #fdf6e3; /* gold tint bg — ใช้ใน badge, highlight */
-  --color-gold-border: #e8d5a3; /* border สำหรับ gold element */
+  --color-gold-subtle: #f4efe1;      /* ทองอ่อนสำหรับ Highlight / Callout */
+  --color-gold-border: #caa33b;      /* เส้นขอบทองนุ่มนวล */
 
   /* ===== Semantic Status ===== */
-  --color-success: #5a8a5a; /* success state */
-  --color-warning: #c9a84c; /* = gold */
-  --color-error: #b85c4a; /* error — warm red ไม่หลุด palette */
+  --color-success: #326641;          /* สำเร็จ: เขียวธรรมชาติ */
+  --color-warning: #b38b24;          /* เตือน: ทองบรอนซ์สว่าง */
+  --color-error: #aa392e;            /* ข้อผิดพลาด: แดงอิฐนุ่มตา */
 
-  /* ===== Text ===== */
-  --color-deep-text: #2d3829;
-  --color-muted-text: #5a7065;
-  --color-placeholder: #94a89e; /* สำหรับ input placeholder โดยเฉพาะ */
-  --color-disabled: #b8c4b4; /* disabled state */
+  /* ===== Text (เน้น Contrast ชัดเจน อ่านง่าย) ===== */
+  --color-deep-text: #172118;        /* ข้อความหลัก: สีเขียวเข้มจัด อ่านง่ายมากบนการ์ด */
+  --color-muted-text: #48564a;       /* ข้อความรอง: เทาเข้มอมเขียว */
+  --color-placeholder: #79897c;     /* ข้อความสีกระดาษเปล่า */
+  --color-disabled: #b1beb3;        /* ข้อความสถานะปิดการใช้งาน */
+  --color-light-text: #f3f7f4;       /* ข้อความสำหรับใช้บน Navbar / Footer โทนเข้ม */
 
-  /* ===== Shadow ===== */
-  --color-shadow: rgba(40, 56, 36, 0.07);
-  --color-shadow-md: rgba(40, 56, 36, 0.13);
-  --color-shadow-lg: rgba(40, 56, 36, 0.2);
+  /* ===== Shadow & Border ===== */
+  --color-shadow: rgba(23, 33, 24, 0.05);
+  --color-shadow-md: 0 6px 16px rgba(23, 33, 24, 0.08);  /* เงาการ์ดนุ่มนวล */
+  --color-shadow-lg: 0 10px 24px rgba(23, 33, 24, 0.12);
 
-  /* ===== Border ===== */
-  --color-border: #cdd8c8; /* border ทั่วไป */
-  --color-border-focus: #7b9669; /* = green เมื่อ focus */
+  --color-border: #d4dcd5;           /* เส้นขอบการ์ดสว่างขึ้น ตัดขอบนุ่มนวล */
+  --color-border-focus: #356745;     /* เส้นขอบเมื่อโฟกัสอินพุต */
+
 
   /* ===== Typography ===== */
   --font-size-xs: 1rem;

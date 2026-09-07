@@ -172,7 +172,7 @@ export default function LoginPage() {
                     </div>
 
                     {/* Social Login */}
-                    <div className="flex gap-3 mb-5">
+                    {/* <div className="flex gap-3 mb-5">
                         <button className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl border border-gray-200 text-xs font-semibold text-gray-600 hover:border-gray-300 hover:bg-gray-50 transition-all">
                             <GoogleIcon /> {t('login_google')}
                         </button>
@@ -185,7 +185,7 @@ export default function LoginPage() {
                         <div className="flex-1 h-px bg-gray-100" />
                         <span className="text-xs text-muted-text">{t('login_or_email')}</span>
                         <div className="flex-1 h-px bg-gray-100" />
-                    </div>
+                    </div> */}
 
                     {/* Form */}
                     <div className="space-y-3">
