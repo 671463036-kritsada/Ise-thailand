@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
-import { LayoutDashboard, Boxes, Folder, BarChart3, LogOut, ChevronDown } from "lucide-react";
+import { LayoutDashboard, Boxes, Folder, BarChart3, LogOut, ChevronDown, Mail } from "lucide-react";
 import { useAuth } from '../../hook/useAuth'
 import api from '../../api/axios'
 import Swal from 'sweetalert2'
@@ -78,7 +78,8 @@ export default function Sidebar() {
         { label: "เงื่อนไขตามพื้นที่ภาค", href: "/admin/report-region" },
         { label: "เงื่อนไขตามจังหวัด", href: "/admin/report-province" },
       ]
-    }
+    },
+    { icon: Mail, label: "ติดต่อเรา", href: "/admin/contact" },
   ]
 
   useEffect(() => {
