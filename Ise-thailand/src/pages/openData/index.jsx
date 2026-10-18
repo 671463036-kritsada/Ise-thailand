@@ -155,80 +155,85 @@ export default function OpenDataPage() {
     }
 
     // ─── ฟังก์ชันดาวน์โหลด PDF ที่แก้ไขแล้ว ─────────────────────────────
-const downloadPDF = (item) => {
-    setDownloadDropdownOpen(null)
+    const downloadPDF = (item) => {
+        setDownloadDropdownOpen(null)
 
-    // กรณีที่ 1: ถ้าเป็นสื่อฝั่งสถาบันที่มีไฟล์ pdf_file ในเซิร์ฟเวอร์
-    if (item.pdf_file) {
-        window.open(`${UPLOADS_URL}${item.pdf_file}`, '_blank')
-        return
+        // กรณีที่ 1: ถ้าเป็นสื่อฝั่งสถาบันที่มีไฟล์ pdf_file ในเซิร์ฟเวอร์
+        if (item.pdf_file) {
+            window.open(`${UPLOADS_URL}${item.pdf_file}`, '_blank')
+            return
+        }
+
+        // กรณีที่ 2: ถ้าเป็นโครงการที่มี royal_id ให้ลิงก์ไปยังหน้ารายละเอียดโครงการ
+        if (item.royal_id) {
+            // เปิดหน้า ProjectDetail ของโครงการนั้นในแท็บใหม่ เพื่อกด Export PDF ได้สมบูรณ์
+            window.open(`/projects/${item.royal_id}`, '_blank')
+            return
+        }
+
+        // กรณีที่ 3: ถ้าไม่มีไฟล์และไม่มีหน้ารายละเอียด ให้สร้างไฟล์ข้อความสรุปรายละเอียดโครงการให้ดาวน์โหลด
+        const content = `=== ชุดข้อมูลโครงการ (Open Data) ===\n\n` +
+            `ชื่อโครงการ (TH): ${item.royal_name || item.asset_name || '-'}\n` +
+            `ชื่อโครงการ (EN): ${item.royal_name_eng || item.asset_name_eng || '-'}\n\n` +
+            `รายละเอียด:\n${item.detail_1 || item.description || '-'}\n\n` +
+            `อ้างอิง:\n${item.reference || '-'}\n\n` +
+            `ส่งออกจากระบบเมื่อ: ${new Date().toLocaleString('th-TH')}`
+
+        const blob = new Blob([content], { type: 'text/plain;charset=utf-8' })
+        const link = document.createElement('a')
+        link.href = URL.createObjectURL(blob)
+        link.download = `open-data-${item.royal_id || item.asset_id || 'detail'}.txt`
+        link.click()
     }
-
-    // กรณีที่ 2: ถ้าเป็นโครงการที่มี royal_id ให้ลิงก์ไปยังหน้ารายละเอียดโครงการ
-    if (item.royal_id) {
-        // เปิดหน้า ProjectDetail ของโครงการนั้นในแท็บใหม่ เพื่อกด Export PDF ได้สมบูรณ์
-        window.open(`/projects/${item.royal_id}`, '_blank')
-        return
-    }
-
-    // กรณีที่ 3: ถ้าไม่มีไฟล์และไม่มีหน้ารายละเอียด ให้สร้างไฟล์ข้อความสรุปรายละเอียดโครงการให้ดาวน์โหลด
-    const content = `=== ชุดข้อมูลโครงการ (Open Data) ===\n\n` +
-        `ชื่อโครงการ (TH): ${item.royal_name || item.asset_name || '-'}\n` +
-        `ชื่อโครงการ (EN): ${item.royal_name_eng || item.asset_name_eng || '-'}\n\n` +
-        `รายละเอียด:\n${item.detail_1 || item.description || '-'}\n\n` +
-        `อ้างอิง:\n${item.reference || '-'}\n\n` +
-        `ส่งออกจากระบบเมื่อ: ${new Date().toLocaleString('th-TH')}`
-
-    const blob = new Blob([content], { type: 'text/plain;charset=utf-8' })
-    const link = document.createElement('a')
-    link.href = URL.createObjectURL(blob)
-    link.download = `open-data-${item.royal_id || item.asset_id || 'detail'}.txt`
-    link.click()
-}
 
     return (
-        <div className="min-h-screen py-10 px-4 max-w-5xl mx-auto pt-24" style={{ backgroundColor: 'var(--color-surface, #f9fafb)' }}>
+        <div className="min-h-screen py-10 px-4 max-w-5xl mx-auto pt-24" style={{ backgroundColor: 'var(--color-surface)' }}>
             
             {/* หัวข้อหน้า */}
             <div className="mb-8">
-                <h1 className="text-xl sm:text-2xl font-bold mb-2" style={{ color: 'var(--color-deep-text, #111827)' }}>
-                    ชุดข้อมูลและทรัพยากร (Open Data)
+                <h1 className="text-xl sm:text-2xl font-bold mb-2" style={{ color: 'var(--color-deep-text)' }}>
+                    {t('opendata_title')}
                 </h1>
-                <p className="text-xs sm:text-sm text-gray-500">
-                    ดาวน์โหลดข้อมูลโครงการ สื่อสิ่งพิมพ์ และทรัพยากรในรูปแบบไฟล์ CSV, JSON หรือ PDF
+                <p className="text-xs sm:text-sm" style={{ color: 'var(--color-muted-text)' }}>
+                    {t('opendata_subtitle')}
                 </p>
             </div>
 
             {/* แท็บเลือกหมวดหลัก */}
-            <div className="flex gap-2 mb-4 border-b border-gray-200 pb-3">
+            <div className="flex gap-2 mb-4 pb-3" style={{ borderBottom: '1px solid var(--color-border)' }}>
                 <button
                     onClick={() => setMainCategory('royal')}
-                    className={`px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold transition-all cursor-pointer ${
-                        mainCategory === 'royal' 
-                            ? 'bg-[#2d5a3d] text-white shadow-sm' 
-                            : 'bg-white border border-gray-200 text-gray-600 hover:bg-gray-50'
-                    }`}>
-                    ศาสตร์ของพระราชา
+                    className="px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold transition-all cursor-pointer"
+                    style={mainCategory === 'royal'
+                        ? { background: 'var(--color-forest-green)', color: 'var(--color-white)', boxShadow: '0 1px 2px var(--color-shadow)' }
+                        : { background: 'var(--color-white)', border: '1px solid var(--color-border)', color: 'var(--color-muted-text)' }
+                    }>
+                    {t('opendata_tab_royal')}
                 </button>
                 <button
                     onClick={() => setMainCategory('institute')}
-                    className={`px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold transition-all cursor-pointer ${
-                        mainCategory === 'institute' 
-                            ? 'bg-[#2d5a3d] text-white shadow-sm' 
-                            : 'bg-white border border-gray-200 text-gray-600 hover:bg-gray-50'
-                    }`}>
-                    งานภายใต้สถาบัน
+                    className="px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold transition-all cursor-pointer"
+                    style={mainCategory === 'institute'
+                        ? { background: 'var(--color-forest-green)', color: 'var(--color-white)', boxShadow: '0 1px 2px var(--color-shadow)' }
+                        : { background: 'var(--color-white)', border: '1px solid var(--color-border)', color: 'var(--color-muted-text)' }
+                    }>
+                    {t('opendata_tab_institute')}
                 </button>
             </div>
 
             {/* ตัวกรองหมวดย่อย */}
-            <div className="flex items-center justify-between bg-white p-3 rounded-xl border border-gray-200 mb-6 shadow-sm">
-                <span className="text-xs sm:text-sm font-medium text-gray-600">ประเภท:</span>
+            <div className="flex items-center justify-between p-3 rounded-xl mb-6" style={{
+                background: 'var(--color-white)',
+                border: '1px solid var(--color-border)',
+                boxShadow: '0 1px 2px var(--color-shadow)',
+            }}>
+                <span className="text-xs sm:text-sm font-medium" style={{ color: 'var(--color-muted-text)' }}>{t('opendata_type_label')}</span>
                 <select
                     value={selectedTypeId}
                     onChange={(e) => setSelectedTypeId(e.target.value)}
-                    className="border border-gray-300 rounded-lg px-3 py-1.5 text-xs sm:text-sm focus:outline-none">
-                    {mainCategory === 'royal' && <option value="all">ทั้งหมด</option>}
+                    className="rounded-lg px-3 py-1.5 text-xs sm:text-sm focus:outline-none"
+                    style={{ border: '1px solid var(--color-border)', color: 'var(--color-deep-text)', background: 'var(--color-white)' }}>
+                    {mainCategory === 'royal' && <option value="all">{t('all')}</option>}
                     {subTypes.map((type) => (
                         <option key={type.type_id || type.assettype_id} value={type.type_id || type.assettype_id}>
                             {lang === 'TH' ? (type.type_name || type.assettype_name) : (type.type_name_eng || type.assettype_name_eng)}
@@ -238,34 +243,42 @@ const downloadPDF = (item) => {
             </div>
 
             {/* ── กล่องรวมทรัพยากรข้อมูล ── */}
-            <div className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm">
-                <h2 className="text-sm font-bold text-gray-700 mb-4 border-b border-gray-100 pb-2">
-                    ข้อมูลและทรัพยากร ({dataList.length})
+            <div className="rounded-2xl p-6" style={{
+                background: 'var(--color-white)',
+                border: '1px solid var(--color-border)',
+                boxShadow: '0 1px 2px var(--color-shadow)',
+            }}>
+                <h2 className="text-sm font-bold mb-4 pb-2" style={{ color: 'var(--color-deep-text)', borderBottom: '1px solid var(--color-surface-3)' }}>
+                    {t('opendata_resource_count', { count: dataList.length })}
                 </h2>
 
                 {loading ? (
-                    <div className="text-center py-8 text-xs text-gray-400">กำลังโหลดข้อมูล...</div>
+                    <div className="text-center py-8 text-xs" style={{ color: 'var(--color-placeholder)' }}>{t('opendata_loading')}</div>
                 ) : dataList.length === 0 ? (
-                    <div className="text-center py-8 text-xs text-gray-400">ไม่พบชุดข้อมูล</div>
+                    <div className="text-center py-8 text-xs" style={{ color: 'var(--color-placeholder)' }}>{t('opendata_no_data')}</div>
                 ) : (
-                    <div className="divide-y divide-gray-100">
+                    <div className="divide-y" style={{ borderColor: 'var(--color-surface-3)' }}>
                         {dataList.map((item, idx) => {
                             const name = lang === 'TH' 
                                 ? (item.royal_name || item.asset_name) 
                                 : (item.royal_name_eng || item.asset_name_eng)
                             
                             const detail = lang === 'TH' 
-                                ? (item.detail_1 || item.asset_name || 'สื่อสิ่งพิมพ์ / เอกสารสถาบัน') 
-                                : (item.detail_1_eng || item.asset_name_eng || 'Institute Resources')
+                                ? (item.detail_1 || item.asset_name || t('opendata_default_detail')) 
+                                : (item.detail_1_eng || item.asset_name_eng || t('opendata_default_detail'))
                             
                             const itemId = item.royal_id || item.asset_id || idx
 
                             return (
-                                <div key={itemId} className="py-4 first:pt-0 last:pb-0 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                                <div key={itemId} className="py-4 first:pt-0 last:pb-0 flex flex-col sm:flex-row sm:items-center justify-between gap-4" style={{ borderColor: 'var(--color-surface-3)' }}>
                                     
                                     {/* ฝั่งซ้าย: ไอคอน + ชื่อ + รายละเอียด */}
                                     <div className="flex items-start gap-3 flex-1 min-w-0">
-                                        <div className="w-9 h-9 rounded-lg bg-emerald-600 text-white flex flex-col items-center justify-center font-bold text-[9px] flex-shrink-0 shadow-sm mt-0.5">
+                                        <div className="w-9 h-9 rounded-lg flex flex-col items-center justify-center font-bold text-[9px] flex-shrink-0 mt-0.5" style={{
+                                            background: 'var(--color-forest-green)',
+                                            color: 'var(--color-white)',
+                                            boxShadow: '0 1px 2px var(--color-shadow)',
+                                        }}>
                                             <svg className="w-4 h-4 mb-[1px]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                                             </svg>
@@ -273,10 +286,10 @@ const downloadPDF = (item) => {
                                         </div>
 
                                         <div className="min-w-0 flex-1">
-                                            <h3 className="font-bold text-gray-800 text-sm leading-snug truncate">
-                                                {name || 'ไม่มีชื่อรายการ'}
+                                            <h3 className="font-bold text-sm leading-snug truncate" style={{ color: 'var(--color-deep-text)' }}>
+                                                {name || t('opendata_no_name')}
                                             </h3>
-                                            <p className="text-xs text-gray-500 line-clamp-1 mt-0.5">
+                                            <p className="text-xs line-clamp-1 mt-0.5" style={{ color: 'var(--color-muted-text)' }}>
                                                 {detail}
                                             </p>
                                         </div>
@@ -288,42 +301,61 @@ const downloadPDF = (item) => {
                                         {/* ปุ่มดูตัวอย่าง */}
                                         <button
                                             onClick={() => setPreviewItem(item)}
-                                            className="px-3 py-1.5 text-xs border border-gray-300 hover:bg-gray-50 text-gray-700 font-medium rounded-lg transition-all flex items-center gap-1 cursor-pointer">
-                                            <svg className="w-3.5 h-3.5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            className="px-3 py-1.5 text-xs font-medium rounded-lg transition-all flex items-center gap-1 cursor-pointer"
+                                            style={{ border: '1px solid var(--color-border)', color: 'var(--color-deep-text)', background: 'var(--color-white)' }}
+                                            onMouseEnter={(e) => e.currentTarget.style.background = 'var(--color-surface)'}
+                                            onMouseLeave={(e) => e.currentTarget.style.background = 'var(--color-white)'}>
+                                            <svg className="w-3.5 h-3.5" style={{ color: 'var(--color-muted-text)' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                                             </svg>
-                                            ดูตัวอย่าง
+                                            {t('opendata_preview')}
                                         </button>
 
                                         {/* ปุ่มดาวน์โหลด (Dropdown) */}
                                         <div className="relative">
                                             <button
                                                 onClick={() => setDownloadDropdownOpen(downloadDropdownOpen === itemId ? null : itemId)}
-                                                className="px-3 py-1.5 text-xs bg-[#1f2937] hover:bg-black text-white font-medium rounded-lg transition-all flex items-center gap-1.5 cursor-pointer shadow-sm">
+                                                className="px-3 py-1.5 text-xs font-medium rounded-lg transition-all flex items-center gap-1.5 cursor-pointer"
+                                                style={{ background: 'var(--color-forest-green)', color: 'var(--color-white)', boxShadow: '0 1px 2px var(--color-shadow)' }}
+                                                onMouseEnter={(e) => e.currentTarget.style.background = 'var(--color-deep-text)'}
+                                                onMouseLeave={(e) => e.currentTarget.style.background = 'var(--color-forest-green)'}>
                                                 <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
                                                 </svg>
-                                                ดาวน์โหลด
+                                                {t('download')}
                                                 <span className="text-[9px]">▼</span>
                                             </button>
 
                                             {/* เมนูย่อยเลือกไฟล์ที่จะโหลด */}
                                             {downloadDropdownOpen === itemId && (
-                                                <div className="absolute right-0 top-full mt-1 w-32 bg-white rounded-lg border border-gray-200 shadow-lg z-20 py-1 text-xs">
+                                                <div className="absolute right-0 top-full mt-1 w-32 rounded-lg z-20 py-1 text-xs" style={{
+                                                    background: 'var(--color-white)',
+                                                    border: '1px solid var(--color-border)',
+                                                    boxShadow: '0 8px 24px var(--color-shadow-lg)',
+                                                }}>
                                                     <button
                                                         onClick={() => downloadCSV(item)}
-                                                        className="w-full text-left px-3 py-1.5 hover:bg-emerald-50 text-emerald-800 font-medium flex items-center gap-1.5 cursor-pointer">
-                                                        📄 CSV / Excel
+                                                        className="w-full text-left px-3 py-1.5 font-medium flex items-center gap-1.5 cursor-pointer transition-all"
+                                                        style={{ color: 'var(--color-forest-green)' }}
+                                                        onMouseEnter={(e) => e.currentTarget.style.background = 'var(--color-surface-2)'}
+                                                        onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}>
+                                                        📄 {t('opendata_download_csv')}
                                                     </button>
                                                     <button
                                                         onClick={() => downloadJSON(item)}
-                                                        className="w-full text-left px-3 py-1.5 hover:bg-amber-50 text-amber-800 font-medium flex items-center gap-1.5 cursor-pointer">
-                                                        📜 JSON
+                                                        className="w-full text-left px-3 py-1.5 font-medium flex items-center gap-1.5 cursor-pointer transition-all"
+                                                        style={{ color: 'var(--color-gold-hover)' }}
+                                                        onMouseEnter={(e) => e.currentTarget.style.background = 'var(--color-gold-subtle)'}
+                                                        onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}>
+                                                        📜 {t('opendata_download_json')}
                                                     </button>
                                                     <button
                                                         onClick={() => downloadPDF(item)}
-                                                        className="w-full text-left px-3 py-1.5 hover:bg-red-50 text-red-800 font-medium flex items-center gap-1.5 cursor-pointer">
-                                                        📕 PDF
+                                                        className="w-full text-left px-3 py-1.5 font-medium flex items-center gap-1.5 cursor-pointer transition-all"
+                                                        style={{ color: 'var(--color-error)' }}
+                                                        onMouseEnter={(e) => e.currentTarget.style.background = 'var(--color-surface-2)'}
+                                                        onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}>
+                                                        📕 {t('opendata_download_pdf')}
                                                     </button>
                                                 </div>
                                             )}
@@ -340,27 +372,40 @@ const downloadPDF = (item) => {
 
             {/* Modal ดูตัวอย่าง */}
             {previewItem && (
-                <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-                    <div className="bg-white rounded-2xl max-w-xl w-full p-5 max-h-[80vh] overflow-y-auto relative shadow-xl">
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ background: 'rgba(61, 66, 48, 0.5)' }}>
+                    <div className="rounded-2xl max-w-xl w-full p-5 max-h-[80vh] overflow-y-auto relative" style={{
+                        background: 'var(--color-white)',
+                        boxShadow: '0 20px 48px var(--color-shadow-lg)',
+                    }}>
                         <button
                             onClick={() => setPreviewItem(null)}
-                            className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 font-bold cursor-pointer">
+                            className="absolute top-4 right-4 font-bold cursor-pointer transition-all"
+                            style={{ color: 'var(--color-placeholder)' }}
+                            onMouseEnter={(e) => e.currentTarget.style.color = 'var(--color-deep-text)'}
+                            onMouseLeave={(e) => e.currentTarget.style.color = 'var(--color-placeholder)'}>
                             ✕
                         </button>
                         
-                        <h2 className="text-sm font-bold mb-3 text-[#2d5a3d]">
-                            🔍 ตัวอย่างข้อมูล: {lang === 'TH' ? (previewItem.royal_name || previewItem.asset_name) : (previewItem.royal_name_eng || previewItem.asset_name_eng)}
+                        <h2 className="text-sm font-bold mb-3" style={{ color: 'var(--color-forest-green)' }}>
+                            🔍 {t('opendata_preview_title')}: {lang === 'TH' ? (previewItem.royal_name || previewItem.asset_name) : (previewItem.royal_name_eng || previewItem.asset_name_eng)}
                         </h2>
 
-                        <div className="bg-gray-50 p-3 rounded-xl text-xs font-mono text-gray-700 border border-gray-200 overflow-x-auto">
+                        <div className="p-3 rounded-xl text-xs font-mono overflow-x-auto" style={{
+                            background: 'var(--color-surface)',
+                            color: 'var(--color-deep-text)',
+                            border: '1px solid var(--color-border)',
+                        }}>
                             <pre>{JSON.stringify(previewItem, null, 2)}</pre>
                         </div>
 
                         <div className="mt-4 flex justify-end print-hide">
                             <button
                                 onClick={() => setPreviewItem(null)}
-                                className="px-4 py-1.5 text-xs border border-gray-300 rounded-lg hover:bg-gray-100 cursor-pointer">
-                                ปิด
+                                className="px-4 py-1.5 text-xs rounded-lg cursor-pointer transition-all"
+                                style={{ border: '1px solid var(--color-border)', color: 'var(--color-deep-text)' }}
+                                onMouseEnter={(e) => e.currentTarget.style.background = 'var(--color-surface)'}
+                                onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}>
+                                {t('opendata_close')}
                             </button>
                         </div>
                     </div>

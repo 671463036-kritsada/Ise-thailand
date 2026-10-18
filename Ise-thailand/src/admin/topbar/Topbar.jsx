@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useAuth } from "../../hook/useAuth";
 
-const profileLinks = ["Home", "Inbox", "Chat", "Activity", "Account Settings"];
+// const profileLinks = ["Home", "Inbox", "Chat", "Activity", "Account Settings"];
 
 export default function Topbar() {
   const [showProfile, setShowProfile] = useState(false);
@@ -44,7 +44,7 @@ export default function Topbar() {
                     {user?.role === 1 ? 'Administrator' : 'User'}
                   </p>
                 </div>
-                {profileLinks.map((l) => (
+                {/* {profileLinks.map((l) => (
 
                   <a key={l}
                     href="#"
@@ -52,7 +52,7 @@ export default function Topbar() {
                   >
                     {l}
                   </a>
-                ))}
+                ))} */}
               </div>
             )}
           </div>

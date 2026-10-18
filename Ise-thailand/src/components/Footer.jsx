@@ -1,5 +1,5 @@
 // src/components/Footer.jsx
-import { MapPin, Phone, Mail, Database } from 'lucide-react'
+import { MapPin, Phone, Mail } from 'lucide-react'
 import { useTranslation } from 'react-i18next';
 
 export default function Footer() {
@@ -9,15 +9,13 @@ export default function Footer() {
         { label: t('footer_nav_home'), href: '/' },
         { label: t('footer_nav_about'), href: '/institute' },
         { label: t('footer_nav_research'), href: '/research' },
-        //  เพิ่มเมนู Open Data ใน Nav Links
-        { label: t('ชุดข้อมูลเปิด (Open Data)'), href: '/opendata', isHighlight: true },
+        { label: t('footer_opendata'), href: '/opendata', isHighlight: true },
         { label: t('footer_nav_news'), href: '#' },
     ]
 
     const policyLinks = [
         { label: t('footer_privacy'), href: '#' },
         { label: t('footer_terms'), href: '#' },
-        //  หรือเพิ่มสั้นๆ ไว้แถบล่างสุดด้วย
         { label: 'Open Data', href: '/opendata' },
     ]
 
@@ -52,7 +50,6 @@ export default function Footer() {
                                                 : 'text-green-light hover:text-white'
                                         }`}
                                     >
-                                        {item.isHighlight && <Database size={14} className="shrink-0" />}
                                         {item.label}
                                     </a>
                                 </li>
