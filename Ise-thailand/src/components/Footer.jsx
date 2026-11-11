@@ -1,9 +1,11 @@
 // src/components/Footer.jsx
-import { MapPin, Phone, Mail, Database } from 'lucide-react'
+import { MapPin, Phone, Mail, Database, Eye } from 'lucide-react'
 import { useTranslation } from 'react-i18next';
+import { useSiteViews } from '../hook/useSiteViews';
 
 export default function Footer() {
     const { t } = useTranslation()
+    const { views, viewsData, loading } = useSiteViews()
 
     const navLinks = [
         { label: t('footer_nav_home'), href: '/' },
@@ -87,6 +89,22 @@ export default function Footer() {
                     <p className="text-green-light/60 text-xs">
                         {t('footer_copyright')}
                     </p>
+
+                    {/* Visitor Counter */}
+                    <div 
+                        className="flex items-center gap-1.5 text-green-light/60 text-xs"
+                        title={viewsData ? `ยอดรวม: ${viewsData.totalViews?.toLocaleString()} (ยอดเดิม: ${viewsData.oldViews?.toLocaleString()} + ยอดใหม่: ${viewsData.siteViews?.toLocaleString()})` : undefined}
+                    >
+                        <Eye size={13} className="shrink-0" />
+                        <span>
+                            {loading
+                                ? 'กำลังโหลด...'
+                                : views !== null
+                                    ? `ผู้เข้าชม: ${Number(views).toLocaleString()} ครั้ง`
+                                    : ''}
+                        </span>
+                    </div>
+
                     <div className="flex gap-5">
                         {policyLinks.map((item) => (
                             <a key={item.label}
